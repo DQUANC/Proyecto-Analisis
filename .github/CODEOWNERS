@@ -1,0 +1,9 @@
+# DevOps owns CI/CD and solution config
+/.github/    @devops
+*.sln        @devops
+
+# Backend team owns the .NET source
+/backend/    @backend
+
+# Frontend team owns the frontend
+/frontend/   @frontend

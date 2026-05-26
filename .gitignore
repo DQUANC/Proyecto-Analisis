@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.angular/
+
+# Environment secrets — never commit real .env files
+.env
+*.env
+.env.local
+.env.*.local
+!.env.example
+
+# TypeScript build info
+*.tsbuildinfo
+*.js.map
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+*.db
+migrations/
