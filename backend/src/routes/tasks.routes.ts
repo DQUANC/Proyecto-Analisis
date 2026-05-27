@@ -1,13 +1,18 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth.middleware';
-import { getAll, getById, create, update, remove } from '../controllers/tasks.controller';
+import { requireRole } from '../middleware/role.middleware';
+import * as tasksController from '../controllers/tasks.controller';
 
-export const taskRoutes = Router();
+const router = Router();
 
-taskRoutes.use(authMiddleware);
+router.use(authMiddleware);
 
-taskRoutes.get('/', getAll);
-taskRoutes.post('/', create);
-taskRoutes.get('/:id', getById);
-taskRoutes.put('/:id', update);
-taskRoutes.delete('/:id', remove);
+router.get('/history', tasksController.getHistory);
+router.get('/', tasksController.getAll);
+router.get('/:id', tasksController.getById);
+router.post('/', requireRole('ADMIN'), tasksController.create);
+router.put('/:id', tasksController.update);
+router.delete('/:id', requireRole('ADMIN'), tasksController.remove);
+router.post('/:id/evaluate', requireRole('ADMIN'), tasksController.evaluate);
+
+export default router;

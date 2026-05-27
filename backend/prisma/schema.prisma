@@ -7,31 +7,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Department {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String
+  name      String   @unique
+  users     User[]
   tasks     Task[]
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id           Int         @id @default(autoincrement())
+  email        String      @unique
+  password     String
+  name         String
+  role         Role        @default(WORKER)
+  departmentId Int?
+  department   Department? @relation(fields: [departmentId], references: [id])
+
+  createdTasks  Task[]              @relation("CreatedBy")
+  assignedTasks Task[]              @relation("AssignedTo")
+  statusChanges TaskStatusHistory[]
+  evaluations   TaskEvaluation[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+enum Role {
+  ADMIN
+  WORKER
+}
+
 model Task {
-  id          Int        @id @default(autoincrement())
-  title       String
-  description String?
-  status      TaskStatus @default(PENDING)
-  priority    Priority   @default(MEDIUM)
-  dueDate     DateTime?
-  userId      Int
-  user        User       @relation(fields: [userId], references: [id])
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id           Int        @id @default(autoincrement())
+  title        String
+  description  String?
+  status       TaskStatus @default(TO_DO)
+  priority     Priority   @default(MEDIUM)
+  dueDate      DateTime?
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  createdById  Int
+  createdBy    User  @relation("CreatedBy", fields: [createdById], references: [id])
+  assignedToId Int?
+  assignedTo   User? @relation("AssignedTo", fields: [assignedToId], references: [id])
+
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  statusHistory TaskStatusHistory[]
+  evaluation    TaskEvaluation?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum TaskStatus {
-  PENDING
+  TO_DO
   IN_PROGRESS
   DONE
 }
@@ -40,4 +73,27 @@ enum Priority {
   LOW
   MEDIUM
   HIGH
+}
+
+model TaskStatusHistory {
+  id          Int        @id @default(autoincrement())
+  taskId      Int
+  task        Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  oldStatus   TaskStatus
+  newStatus   TaskStatus
+  changedById Int
+  changedBy   User       @relation(fields: [changedById], references: [id])
+  changedAt   DateTime   @default(now())
+}
+
+model TaskEvaluation {
+  id            Int      @id @default(autoincrement())
+  taskId        Int      @unique
+  task          Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  feedback      String?
+  score         Int?
+  evaluatedById Int
+  evaluatedBy   User     @relation(fields: [evaluatedById], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
