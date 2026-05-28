@@ -11,6 +11,9 @@
   },
   "private": true,
   "packageManager": "npm@11.3.0",
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
