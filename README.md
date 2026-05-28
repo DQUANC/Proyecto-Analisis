@@ -121,14 +121,6 @@ Health check: `GET /health`
 
 ## Flujo de trabajo con Git
 
-### Estrategia de branches
-
-| Branch | Propósito |
-|---|---|
-| `main` | Producción. Branch protegida — no hacer push directo. |
-| `feature/<nombre>` | Nueva funcionalidad |
-| `fix/<nombre>` | Corrección de bug |
-| `chore/<nombre>` | Tareas técnicas (config, dependencias, refactor) |
 
 ### Crear una rama y hacer PR
 
