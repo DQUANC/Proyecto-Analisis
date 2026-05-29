@@ -1,0 +1,169 @@
+<div class="container">
+
+    <!-- Versión de prototiipo: 1, 28/05/2026 -->
+
+    <div class="sidebar">
+
+        <h2>Control de Tareas UDEO</h2>
+
+        <ul>
+            <li>Dashboard</li>
+            <li>Tareas</li>
+            <li>Reportes</li>
+            <li>Archivos</li>
+            <li>Usuarios</li> <!---Consultar con los compañeros si es necesario-->
+            <li>Configuración</li>
+        </ul>
+
+    </div>
+
+  
+
+    <div class="main-content">
+
+       
+
+        <div class="header">
+
+            <div>
+                <h1>Sistema de Control de Tareas Udeo</h1>
+                <p>Monitoreo y seguimiento en tiempo real</p>
+            </div>
+
+            <div>
+                <p><strong>Usuario:</strong> Administrador</p>
+                <p class="status">● Horario Laboral Activo</p>
+            </div>
+
+        </div>
+
+     
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Tareas Activas</h3>
+                <h2>12</h2>
+            </div>
+
+            <div class="card">
+                <h3>Tareas Finalizadas</h3>
+                <h2>8</h2>
+            </div>
+
+            <div class="card">
+                <h3>Tareas Pendientes</h3>
+                <h2>5</h2>
+            </div>
+
+            <div class="card">
+                <h3>Alertas</h3>
+                <h2>2</h2>
+            </div>
+
+        </div>
+
+        <!-- tablasde ls tareeas -->
+
+        <div class="table-section">
+
+            <h2>Listado de Tareas</h2>
+
+            <table>
+
+                <tr>
+                    <th>ID</th>
+                    <th>Tarea</th>
+                    <th>Operario</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Progreso</th>
+                    <th>Acción</th>
+                </tr>
+
+                <tr>
+                    <td>001</td>
+                    <td>Revisión Canal A</td>
+                    <td>Alexander Oliva</td>
+                    <td>28/05/2026</td>
+                    <td>
+                        <span class="estado proceso">
+                            En proceso
+                        </span>
+                    </td>
+                    <td>70%</td>
+                    <td>
+                        <button>Ver</button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>002</td>
+                    <td>Actualizar Reporte</td>
+                    <td>Ana López</td>
+                    <td>28/05/2026</td>
+                    <td>
+                        <span class="estado finalizada">
+                            Finalizada
+                        </span>
+                    </td>
+                    <td>100%</td>
+                    <td>
+                        <button disabled>
+                            Bloqueada
+                        </button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>003</td>
+                    <td>Validar Sistema</td>
+                    <td>Rony Melgar</td>
+                    <td>28/05/2026</td>
+                    <td>
+                        <span class="estado pendiente">
+                            Pendiente
+                        </span>
+                    </td>
+                    <td>20%</td>
+                    <td>
+                        <button>Asignar</button>
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+        <!-- Formulario que se debe quitar según la Daily -->
+
+        <div class="form-section">
+
+            <h2>Agregar Informe</h2>
+
+            <input type="text" placeholder="Nombre de la tarea">
+
+            <textarea rows="5" placeholder="Escriba el informe realizado"></textarea>
+
+            <input type="file">
+
+            <select>
+                <option>Seleccionar estado</option>
+                <option>En proceso</option>
+                <option>Finalizada</option>
+                <option>Pendiente</option>
+            </select>
+
+            <button>Guardar Informe</button>
+
+        </div>
+
+        <!-- Retirar Alerta-->
+
+        <div class="alert">
+            Esta tarea ya fue asignada a otro operario.
+        </div>
+
+    </div>
+
+</div>
