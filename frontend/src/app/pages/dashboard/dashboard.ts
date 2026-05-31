@@ -42,12 +42,12 @@ export class Dashboard implements OnInit {
         this.summary = data;
         this.loading = false;
         this.buildChart(data);
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
         this.error = err?.error?.message ?? 'Failed to load (admin only)';
         this.loading = false;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }
     });
     this.dashService.getByDepartment().subscribe({

@@ -64,8 +64,8 @@ export class TasksComponent implements OnInit {
   load() {
     this.loading = true;
     this.tasksService.getAll().subscribe({
-      next: (res: TasksResponse) => { this.tasks = res.tasks; this.loading = false; this.cdr.markForCheck(); },
-      error: (err: any) => { this.error = err?.error?.message ?? 'Failed to load'; this.loading = false; this.cdr.markForCheck(); }
+      next: (res: TasksResponse) => { this.tasks = res.tasks; this.loading = false; this.cdr.detectChanges(); },
+      error: (err: any) => { this.error = err?.error?.message ?? 'Failed to load'; this.loading = false; this.cdr.detectChanges(); }
     });
   }
 
