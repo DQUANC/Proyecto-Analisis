@@ -9,8 +9,19 @@ import { errorMiddleware } from './middleware/error.middleware';
 
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:4200',
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL ?? 'http://localhost:4200',
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.railway.app')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
