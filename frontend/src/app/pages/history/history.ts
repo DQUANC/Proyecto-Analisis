@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
 import { TasksService, Task } from '../../services/tasks.service';
@@ -15,6 +15,7 @@ export class HistoryComponent implements OnInit {
   private tasksService = inject(TasksService);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   tasks: Task[] = [];
   loading = true;
@@ -23,9 +24,11 @@ export class HistoryComponent implements OnInit {
   readonly isAdmin = this.auth.isAdmin();
 
   ngOnInit() {
-    this.tasksService.getHistory().subscribe({
-      next: (res) => { this.tasks = res.tasks; this.loading = false; },
-      error: (err: any) => { this.error = err?.error?.message ?? 'Failed to load history'; this.loading = false; }
+    setTimeout(() => {
+      this.tasksService.getHistory().subscribe({
+        next: (res) => { this.tasks = res.tasks; this.loading = false; this.cdr.detectChanges(); },
+        error: (err: any) => { this.error = err?.error?.message ?? 'Failed to load history'; this.loading = false; this.cdr.detectChanges(); }
+      });
     });
   }
 

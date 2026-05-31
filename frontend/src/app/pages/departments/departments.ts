@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIf, NgFor } from '@angular/common';
@@ -12,6 +12,7 @@ import { DepartmentsService, Department } from '../../services/departments.servi
 })
 export class DepartmentsComponent implements OnInit {
   private service = inject(DepartmentsService);
+  private cdr = inject(ChangeDetectorRef);
 
   departments: Department[] = [];
   loading = true;
@@ -20,13 +21,13 @@ export class DepartmentsComponent implements OnInit {
   editId: number | null = null;
   editName = '';
 
-  ngOnInit() { this.load(); }
+  ngOnInit() { setTimeout(() => this.load()); }
 
   load() {
     this.loading = true;
     this.service.getAll().subscribe({
-      next: (res) => { this.departments = res.departments; this.loading = false; },
-      error: (err) => { this.error = err?.error?.message ?? 'Failed to load'; this.loading = false; }
+      next: (res) => { this.departments = res.departments; this.loading = false; this.cdr.detectChanges(); },
+      error: (err) => { this.error = err?.error?.message ?? 'Failed to load'; this.loading = false; this.cdr.detectChanges(); }
     });
   }
 
