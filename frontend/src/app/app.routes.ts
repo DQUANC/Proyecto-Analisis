@@ -1,12 +1,3 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [
-  {
-    path: '',
-    loadComponent: () => import('./pages/coming-soon/coming-soon').then(m => m.ComingSoonComponent)
-  },
-  {
-    path: '**',
-    redirectTo: ''
-  }
-];
+export const routes: Routes = [];
