@@ -13,10 +13,14 @@
     <label>Department
       <select [(ngModel)]="departmentId" name="departmentId">
         <option [value]="null">-- Select department --</option>
-        <option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</option>
+        @for (d of departments; track d.id) {
+          <option [value]="d.id">{{ d.name }}</option>
+        }
       </select>
     </label>
-    <p class="error" *ngIf="error">{{ error }}</p>
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
     <button type="submit" [disabled]="loading">{{ loading ? 'Registering...' : 'Register' }}</button>
   </form>
   <p>Already have an account? <a routerLink="/login">Login</a></p>
