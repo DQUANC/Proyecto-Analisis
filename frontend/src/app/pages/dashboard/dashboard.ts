@@ -1,4 +1,4 @@
-﻿import { Component, inject, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIf, NgFor, KeyValuePipe } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
@@ -16,6 +16,7 @@ export class Dashboard implements OnInit {
   private dashService = inject(DashboardService);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   summary: DashboardSummary | null = null;
   departments: DepartmentStat[] = [];
@@ -37,10 +38,12 @@ export class Dashboard implements OnInit {
         this.summary = data;
         this.loading = false;
         this.buildChart(data);
+        this.cdr.markForCheck();
       },
       error: (err: any) => {
         this.error = err?.error?.message ?? 'Failed to load (admin only)';
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
     this.dashService.getByDepartment().subscribe({

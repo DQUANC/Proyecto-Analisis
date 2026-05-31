@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
@@ -23,6 +23,7 @@ export class TasksComponent implements OnInit {
   private usersService = inject(UsersService);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   tasks: Task[] = [];
   departments: Department[] = [];
@@ -61,8 +62,8 @@ export class TasksComponent implements OnInit {
   load() {
     this.loading = true;
     this.tasksService.getAll().subscribe({
-      next: (res: TasksResponse) => { this.tasks = res.tasks; this.loading = false; },
-      error: (err: any) => { this.error = err?.error?.message ?? 'Failed to load'; this.loading = false; }
+      next: (res: TasksResponse) => { this.tasks = res.tasks; this.loading = false; this.cdr.markForCheck(); },
+      error: (err: any) => { this.error = err?.error?.message ?? 'Failed to load'; this.loading = false; this.cdr.markForCheck(); }
     });
   }
 
