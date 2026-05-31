@@ -13,7 +13,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 const angularApp = new AngularNodeAppEngine({
-  allowedHosts: [/\.railway\.app$/, /^localhost$/],
+  allowedHosts: ['analisis-front-production.up.railway.app', 'localhost'],
 });
 
 /**
