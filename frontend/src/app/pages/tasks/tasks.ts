@@ -46,17 +46,19 @@ export class TasksComponent implements OnInit {
   evalForm: EvaluateTaskPayload = { feedback: '', score: undefined };
 
   ngOnInit() {
-    this.load();
-    if (this.isAdmin) {
-      this.deptService.getAll().subscribe({
-        next: (res) => this.departments = res.departments,
-        error: () => {}
-      });
-      this.usersService.getWorkers().subscribe({
-        next: (res) => this.workers = res.users,
-        error: () => {}
-      });
-    }
+    setTimeout(() => {
+      this.load();
+      if (this.isAdmin) {
+        this.deptService.getAll().subscribe({
+          next: (res) => this.departments = res.departments,
+          error: () => {}
+        });
+        this.usersService.getWorkers().subscribe({
+          next: (res) => this.workers = res.users,
+          error: () => {}
+        });
+      }
+    });
   }
 
   load() {

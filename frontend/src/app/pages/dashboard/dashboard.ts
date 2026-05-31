@@ -33,6 +33,10 @@ export class Dashboard implements OnInit {
   };
 
   ngOnInit() {
+    setTimeout(() => this.loadData());
+  }
+
+  private loadData() {
     this.dashService.getSummary().subscribe({
       next: (data: DashboardSummary) => {
         this.summary = data;
