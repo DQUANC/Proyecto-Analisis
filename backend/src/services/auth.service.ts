@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../prisma';
 import { hashPassword, comparePassword } from '../utils/password.utils';
 import { signToken } from '../utils/jwt.utils';
-
-const prisma = new PrismaClient();
 
 export async function register(data: {
   name: string;

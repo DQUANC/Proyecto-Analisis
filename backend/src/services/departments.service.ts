@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../prisma';
 
 export async function getAll() {
   return prisma.department.findMany({ orderBy: { name: 'asc' } });
