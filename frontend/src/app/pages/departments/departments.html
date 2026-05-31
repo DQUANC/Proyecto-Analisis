@@ -1,0 +1,33 @@
+<div class="page">
+  <header>
+    <h1>Departments</h1>
+    <a routerLink="/dashboard">← Dashboard</a>
+  </header>
+
+  <div class="form-row">
+    <input type="text" [(ngModel)]="newName" placeholder="New department name" />
+    <button (click)="create()">Add</button>
+  </div>
+
+  <p *ngIf="loading">Loading...</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <table *ngIf="!loading && departments.length">
+    <thead><tr><th>Name</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let d of departments">
+        <td>
+          <span *ngIf="editId !== d.id">{{ d.name }}</span>
+          <input *ngIf="editId === d.id" type="text" [(ngModel)]="editName" />
+        </td>
+        <td>
+          <button *ngIf="editId !== d.id" (click)="startEdit(d)">Edit</button>
+          <button *ngIf="editId === d.id" (click)="saveEdit()">Save</button>
+          <button class="del" (click)="remove(d.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loading && !departments.length && !error">No departments yet.</p>
+</div>

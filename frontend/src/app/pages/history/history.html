@@ -1,0 +1,59 @@
+<div class="page">
+  <header>
+    <h1>Task History</h1>
+    <div>
+      <a *ngIf="isAdmin" routerLink="/dashboard">← Dashboard</a>
+      <a routerLink="/tasks">Tasks</a>
+      <button class="logout" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <p *ngIf="loading">Loading...</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <div class="table-wrap" *ngIf="!loading && tasks.length">
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Priority</th>
+          <th *ngIf="isAdmin">Assigned to</th>
+          <th *ngIf="isAdmin">Department</th>
+          <th>Created</th>
+          <th>Started</th>
+          <th>Completed</th>
+          <th>Due Date</th>
+          <th>Active Time</th>
+          <th *ngIf="isAdmin">Score</th>
+          <th *ngIf="isAdmin">Feedback</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of tasks">
+          <td>
+            <span class="task-title">{{ t.title }}</span>
+            <span class="task-desc" *ngIf="t.description">{{ t.description }}</span>
+          </td>
+          <td>
+            <span class="badge priority-{{ t.priority.toLowerCase() }}">{{ t.priority }}</span>
+          </td>
+          <td *ngIf="isAdmin">{{ t.assignedTo?.name ?? '—' }}</td>
+          <td *ngIf="isAdmin">{{ t.department?.name ?? '—' }}</td>
+          <td class="date">{{ t.createdAt | slice:0:10 }}</td>
+          <td class="date">{{ t.startedAt   ? (t.startedAt   | slice:0:10) : '—' }}</td>
+          <td class="date">{{ t.completedAt ? (t.completedAt | slice:0:10) : '—' }}</td>
+          <td class="date">{{ t.dueDate     ? (t.dueDate     | slice:0:10) : '—' }}</td>
+          <td class="date">{{ formatSeconds(t.activeTimeSeconds ?? null) }}</td>
+          <td *ngIf="isAdmin">
+            <span *ngIf="t.evaluation?.score !== null && t.evaluation?.score !== undefined"
+                  class="score">★ {{ t.evaluation!.score }}/10</span>
+            <span *ngIf="!t.evaluation?.score" class="no-eval">—</span>
+          </td>
+          <td *ngIf="isAdmin" class="feedback">{{ t.evaluation?.feedback ?? '—' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p *ngIf="!loading && !tasks.length && !error">No completed tasks yet.</p>
+</div>

@@ -1,0 +1,23 @@
+<div class="container">
+  <h2>Register</h2>
+  <form (ngSubmit)="submit()">
+    <label>Name
+      <input type="text" [(ngModel)]="name" name="name" required />
+    </label>
+    <label>Email
+      <input type="email" [(ngModel)]="email" name="email" required />
+    </label>
+    <label>Password
+      <input type="password" [(ngModel)]="password" name="password" required />
+    </label>
+    <label>Department
+      <select [(ngModel)]="departmentId" name="departmentId">
+        <option [value]="null">-- Select department --</option>
+        <option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</option>
+      </select>
+    </label>
+    <p class="error" *ngIf="error">{{ error }}</p>
+    <button type="submit" [disabled]="loading">{{ loading ? 'Registering...' : 'Register' }}</button>
+  </form>
+  <p>Already have an account? <a routerLink="/login">Login</a></p>
+</div>

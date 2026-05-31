@@ -40,14 +40,5 @@ testem.log
 __screenshots__/
 
 # System files
-node_modules/
-dist/
-.env
-*.env
-!*.env.example
-.angular/
-*.js.map
-coverage/
-
 .DS_Store
 Thumbs.db
