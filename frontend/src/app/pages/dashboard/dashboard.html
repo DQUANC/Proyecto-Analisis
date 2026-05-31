@@ -3,7 +3,6 @@
     <h1>Dashboard</h1>
     <nav>
       <a routerLink="/tasks">Tasks</a>
-      <a routerLink="/departments">Departments</a>
       <a routerLink="/history">History</a>
       <button (click)="logout()">Logout</button>
     </nav>
@@ -22,10 +21,6 @@
       <div class="card">
         <span class="label">Users</span>
         <span class="value">{{ summary.totalUsers }}</span>
-      </div>
-      <div class="card">
-        <span class="label">Departments</span>
-        <span class="value">{{ summary.totalDepartments }}</span>
       </div>
       <div class="card" *ngFor="let s of summary.tasksByStatus | keyvalue">
         <span class="label">{{ s.key }}</span>
