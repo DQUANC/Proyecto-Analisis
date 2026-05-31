@@ -1,3 +1,8 @@
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err.message, err.stack);
+  process.exit(1);
+});
+
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
