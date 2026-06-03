@@ -34,6 +34,18 @@ async function main() {
     },
   });
 
+    await prisma.user.upsert({
+    where: { email: 'worker2@test.com' },
+    update: {},
+    create: {
+      name: 'Worker2',
+      email: 'worker2@test.com',
+      password: await bcrypt.hash('worker456', 10),
+      role: 'WORKER',
+      departmentId: department.id,
+    },
+  });
+
   console.log('Seed completed');
 }
 
