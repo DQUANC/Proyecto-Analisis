@@ -1,31 +1,31 @@
 <div class="page">
   <header>
-    <h1>Task History</h1>
+    <h1>Historial De Tareas</h1>
     <div>
-      <a *ngIf="isAdmin" routerLink="/dashboard">← Dashboard</a>
-      <a routerLink="/tasks">Tasks</a>
-      <button class="logout" (click)="logout()">Logout</button>
+      <a *ngIf="isAdmin" routerLink="/dashboard">← Panel De Control</a>
+      <a routerLink="/tasks">Tareas</a>
+      <button class="logout" (click)="logout()">cerrar sesion</button>
     </div>
   </header>
 
-  <p *ngIf="loading">Loading...</p>
+  <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
   <div class="table-wrap" *ngIf="!loading && tasks.length">
     <table>
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Priority</th>
-          <th *ngIf="isAdmin">Assigned to</th>
-          <th *ngIf="isAdmin">Department</th>
-          <th>Created</th>
-          <th>Started</th>
-          <th>Completed</th>
-          <th>Due Date</th>
-          <th>Active Time</th>
-          <th *ngIf="isAdmin">Score</th>
-          <th *ngIf="isAdmin">Feedback</th>
+          <th>Titulo</th>
+          <th>Prioridad</th>
+          <th *ngIf="isAdmin">Asignado a </th>
+          <th *ngIf="isAdmin">Area De Trabajo</th>
+          <th>Fecha De Creacion</th>
+          <th>Fecha De Inicio</th>
+          <th>Fecha De Finalizacion</th>
+          <th>Fecha Limite</th>
+          <th>Tiempo Activo</th>
+          <th *ngIf="isAdmin">Puntuacion</th>
+          <th *ngIf="isAdmin">RetroAlimentacion</th>
         </tr>
       </thead>
       <tbody>
@@ -55,5 +55,5 @@
     </table>
   </div>
 
-  <p *ngIf="!loading && !tasks.length && !error">No completed tasks yet.</p>
+  <p *ngIf="!loading && !tasks.length && !error">No Hay Tareas Completadas.</p>
 </div>

@@ -1,25 +1,25 @@
 <div class="page">
   <header>
-    <h1>Dashboard</h1>
+    <h1>Panel de control</h1>
     <nav>
-      <a routerLink="/tasks">Tasks</a>
-      <a routerLink="/history">History</a>
-      <button (click)="logout()">Logout</button>
+      <a routerLink="/tasks">Tareas</a>
+      <a routerLink="/history">Historial</a>
+      <button (click)="logout()">cerrar sesion</button>
     </nav>
   </header>
 
-  <p *ngIf="loading">Loading...</p>
+  <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
   <div class="top-row" *ngIf="summary">
     <!-- Stat cards -->
     <div class="cards">
       <div class="card">
-        <span class="label">Total Tasks</span>
+        <span class="label">total de tareas</span>
         <span class="value">{{ summary.totalTasks }}</span>
       </div>
       <div class="card">
-        <span class="label">Users</span>
+        <span class="label">Usuarios</span>
         <span class="value">{{ summary.totalUsers }}</span>
       </div>
       <div class="card" *ngFor="let s of summary.tasksByStatus | keyvalue">
@@ -30,15 +30,15 @@
 
     <!-- Pie chart -->
     <div class="chart-box">
-      <h2>Tasks by Status</h2>
+      <h2>Tareas por estado</h2>
       <p-chart type="pie" [data]="chartData" [options]="chartOptions" width="280px" />
     </div>
   </div>
 
   <section *ngIf="departments.length">
-    <h2>By Department</h2>
+    <h2></h2>
     <table>
-      <thead><tr><th>Department</th><th>Total</th><th>Status Breakdown</th></tr></thead>
+      <thead><tr><th>Area De Trabajo</th><th>Total</th><th>Distribucion Por Estado</th></tr></thead>
       <tbody>
         <tr *ngFor="let d of departments">
           <td>{{ d.departmentName }}</td>
@@ -52,9 +52,9 @@
   </section>
 
   <section *ngIf="users.length">
-    <h2>By User</h2>
+    <h2>Por Usuarios</h2>
     <table>
-      <thead><tr><th>User</th><th>Department</th><th>Assigned</th><th>Status Breakdown</th></tr></thead>
+      <thead><tr><th>usuarios</th><th></th><th>Asignado a</th><th>Distribucion por Estado</th></tr></thead>
       <tbody>
         <tr *ngFor="let u of users">
           <td>{{ u.userName }}</td>
