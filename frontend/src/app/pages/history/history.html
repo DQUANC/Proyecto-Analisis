@@ -35,7 +35,7 @@
             <span class="task-desc" *ngIf="t.description">{{ t.description }}</span>
           </td>
           <td>
-            <span class="badge priority-{{ t.priority.toLowerCase() }}">{{ t.priority }}</span>
+            <span class="badge priority-{{ t.priority.toLowerCase() }}">{{ priorityLabel(t.priority) }}</span>
           </td>
           <td *ngIf="isAdmin">{{ t.assignedTo?.name ?? '—' }}</td>
           <td *ngIf="isAdmin">{{ t.department?.name ?? '—' }}</td>

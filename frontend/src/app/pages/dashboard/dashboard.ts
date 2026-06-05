@@ -62,9 +62,9 @@ export class Dashboard implements OnInit {
 
   private buildChart(data: DashboardSummary) {
     const statusLabels: Record<string, string> = {
-      TO_DO: 'To Do',
-      IN_PROGRESS: 'In Progress',
-      DONE: 'Done',
+      TO_DO: 'Pendiente',
+      IN_PROGRESS: 'En progreso',
+      DONE: 'Completado',
     };
     const colors: Record<string, string> = {
       TO_DO:       '#94a3b8',
@@ -89,5 +89,23 @@ export class Dashboard implements OnInit {
   logout() {
     this.auth.logout();
     this.router.navigate(['/login']);
+  }
+
+  statusLabel(key: string): string {
+    const map: Record<string, string> = {
+      TO_DO: 'Pendiente',
+      IN_PROGRESS: 'En progreso',
+      DONE: 'Completado',
+    };
+    return map[key] ?? key;
+  }
+
+  priorityLabel(key: string): string {
+    const map: Record<string, string> = {
+      LOW: 'Baja',
+      MEDIUM: 'Media',
+      HIGH: 'Alta',
+    };
+    return map[key] ?? key;
   }
 }

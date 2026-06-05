@@ -23,7 +23,7 @@
         <span class="value">{{ summary.totalUsers }}</span>
       </div>
       <div class="card" *ngFor="let s of summary.tasksByStatus | keyvalue">
-        <span class="label">{{ s.key }}</span>
+        <span class="label">{{ statusLabel(s.key) }}</span>
         <span class="value">{{ s.value }}</span>
       </div>
     </div>
@@ -44,7 +44,7 @@
           <td>{{ d.departmentName }}</td>
           <td>{{ d.totalTasks }}</td>
           <td>
-            <span *ngFor="let s of d.tasksByStatus | keyvalue" class="badge">{{ s.key }}: {{ s.value }}</span>
+            <span *ngFor="let s of d.tasksByStatus | keyvalue" class="badge">{{ statusLabel(s.key) }}: {{ s.value }}</span>
           </td>
         </tr>
       </tbody>
@@ -61,7 +61,7 @@
           <td>{{ u.department?.name ?? '—' }}</td>
           <td>{{ u.totalAssigned }}</td>
           <td>
-            <span *ngFor="let s of u.tasksByStatus | keyvalue" class="badge">{{ s.key }}: {{ s.value }}</span>
+            <span *ngFor="let s of u.tasksByStatus | keyvalue" class="badge">{{ statusLabel(s.key) }}: {{ s.value }}</span>
           </td>
         </tr>
       </tbody>
