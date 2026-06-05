@@ -39,3 +39,30 @@ nav button {
 nav button:hover {
     background: #dc2626;
 }
+
+.card {
+    border-radius: 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    transition: 0.25s ease;
+    border-left: 5px solid #3b82f6;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.09);
+}
+
+.label {
+    font-weight: 700;
+}
+
+.value {
+    font-weight: 800;
+}
+
+.chart-box {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+}
