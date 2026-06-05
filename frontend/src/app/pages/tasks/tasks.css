@@ -329,3 +329,9 @@ tr:hover td {
     color: #166534;
     border: 1px solid #86efac;
 }
+
+header h1 {
+    margin: 0;
+    color: #ffffff;
+    font-weight: 700;
+}
