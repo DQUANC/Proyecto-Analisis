@@ -100,7 +100,9 @@
           <!-- El select de estado guarda TO_DO/IN_PROGRESS/DONE en el backend,
                pero muestra el texto en español al usuario -->
           <td>
-            <select [value]="t.status" (change)="updateStatus(t, $any($event.target).value)">
+            <select [value]="t.status" (change)="updateStatus(t, $any($event.target).value)" class="task-status"
+              [class.status-todo]="t.status === 'TO_DO'" [class.status-progress]="t.status === 'IN_PROGRESS'"
+              [class.status-done]="t.status === 'DONE'">
               <option value="TO_DO">Pendiente</option>
               <option value="IN_PROGRESS">En progreso</option>
               <option value="DONE">Completado</option>
@@ -109,9 +111,9 @@
 
           <td *ngIf="isAdmin">{{ t.assignedTo?.name ?? '—' }}</td>
           <td class="date">{{ t.createdAt | slice:0:10 }}</td>
-          <td class="date">{{ t.startedAt   ? (t.startedAt   | slice:0:10) : '—' }}</td>
+          <td class="date">{{ t.startedAt ? (t.startedAt | slice:0:10) : '—' }}</td>
           <td class="date">{{ t.completedAt ? (t.completedAt | slice:0:10) : '—' }}</td>
-          <td class="date">{{ t.dueDate     ? (t.dueDate     | slice:0:10) : '—' }}</td>
+          <td class="date">{{ t.dueDate ? (t.dueDate | slice:0:10) : '—' }}</td>
 
           <!-- CAMBIO: si la tarea ya tiene evaluación muestra la estrella con el puntaje,
                si no tiene muestra 'Evaluar' (antes decía 'Evaluate') -->
@@ -124,7 +126,7 @@
           <!-- CAMBIO: botones de acción traducidos. Antes 'Edit'/'Delete' -->
           <td *ngIf="isAdmin" class="actions">
             <button class="btn-edit" (click)="openEdit(t)">Editar</button>
-            <button class="btn-del"  (click)="remove(t.id)">Eliminar</button>
+            <button class="btn-del" (click)="remove(t.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>
