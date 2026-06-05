@@ -67,8 +67,8 @@ export class Dashboard implements OnInit {
       DONE: 'Completado',
     };
     const colors: Record<string, string> = {
-      TO_DO:       '#94a3b8',
-      IN_PROGRESS: '#f59e0b',
+      TO_DO:       '#ef4444',
+      IN_PROGRESS: '#3b82f6',
       DONE:        '#22c55e',
     };
 
