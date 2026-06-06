@@ -190,6 +190,14 @@ tbody tr:hover {
     font-weight: 600;
 }
 
+.badge {
+    display: inline-block;
+    padding: 8px 16px;
+    margin: 4px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
 .clase_completado {
     background-color: #22c55e;
     color: white;
