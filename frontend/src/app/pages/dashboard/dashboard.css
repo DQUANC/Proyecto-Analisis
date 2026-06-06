@@ -190,17 +190,23 @@ tbody tr:hover {
     font-weight: 600;
 }
 
-.clase_completado {
-    background-color: #22c55e;
+/* ── Badges de estado en tablas de departamentos y usuarios ────────────────
+   SOLUCIÓN ERROR 2: estas clases se renombraron porque en el HTML las condiciones
+   del [ngClass] usaban nombres incorrectos ('clase_completado', 'clase_en_progreso',
+   'clase_pendiente') que no coincidían con nada, así que los colores nunca se aplicaban.
+   Ahora los nombres son badge-done, badge-progress, badge-todo y las condiciones
+   en el HTML comparan con las claves reales del backend: DONE, IN_PROGRESS, TO_DO. */
+.badge-done {
+    background-color: #22c55e; /* verde — tarea completada */
     color: white;
 }
 
-.clase_en_progreso {
-    background-color: #3b82f6;
+.badge-progress {
+    background-color: #3b82f6; /* azul — tarea en progreso */
     color: white;
 }
 
-.clase_pendiente {
-    background-color: #ef4444;
+.badge-todo {
+    background-color: #ef4444; /* rojo — tarea pendiente */
     color: white;
 }

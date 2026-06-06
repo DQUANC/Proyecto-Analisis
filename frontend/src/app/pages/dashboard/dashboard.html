@@ -4,7 +4,7 @@
     <nav>
       <a routerLink="/tasks">Tareas</a>
       <a routerLink="/history">Historial</a>
-      <button (click)="logout()">cerrar sesion</button>
+      <button (click)="logout()">Cerrar sesión</button>
     </nav>
   </header>
 
@@ -12,56 +12,92 @@
   <p class="error" *ngIf="error">{{ error }}</p>
 
   <div class="top-row" *ngIf="summary">
-    <!-- Stat cards -->
+    <!-- Tarjetas de resumen -->
     <div class="cards">
       <div class="card">
-        <span class="label">total de tareas</span>
+        <span class="label">Total de tareas</span>
         <span class="value">{{ summary.totalTasks }}</span>
       </div>
       <div class="card">
         <span class="label">Usuarios</span>
         <span class="value">{{ summary.totalUsers }}</span>
       </div>
+      <!-- Una tarjeta por cada estado. statusLabel() traduce TO_DO/IN_PROGRESS/DONE al español -->
       <div class="card" *ngFor="let s of summary.tasksByStatus | keyvalue">
         <span class="label">{{ statusLabel(s.key) }}</span>
         <span class="value">{{ s.value }}</span>
       </div>
     </div>
 
-    <!-- Pie chart -->
+    <!-- Gráfico de torta con la distribución de tareas por estado -->
     <div class="chart-box">
       <h2>Tareas por estado</h2>
       <p-chart type="pie" [data]="chartData" [options]="chartOptions" width="280px" />
     </div>
   </div>
 
+  <!-- Tabla de tareas por departamento -->
   <section *ngIf="departments.length">
-    <h2></h2>
+    <h2>Por Área de Trabajo</h2>
     <table>
-      <thead><tr><th>Area De Trabajo</th><th>Total</th><th>Distribucion Por Estado</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Área de Trabajo</th>
+          <th>Total</th>
+          <th>Distribución Por Estado</th>
+        </tr>
+      </thead>
       <tbody>
         <tr *ngFor="let d of departments">
           <td>{{ d.departmentName }}</td>
           <td>{{ d.totalTasks }}</td>
           <td>
-            <span *ngFor="let s of d.tasksByStatus | keyvalue" class="badge" [ngClass]="{'clase_completado': s.key === 'completed', 'clase_en_progreso': s.key === 'in_progress', 'clase_pendiente': s.key === 'pending'}">{{ statusLabel(s.key) }}: {{ s.value }}</span>
+            <!-- SOLUCIÓN ERROR 2: [ngClass] ahora compara con las claves reales del backend
+                 (DONE, IN_PROGRESS, TO_DO en MAYÚSCULAS).
+                 Antes comparaba con 'completed', 'in_progress', 'pending' (minúsculas)
+                 que nunca coincidían, por eso los badges no tenían color.
+                 Las clases CSS badge-done/badge-progress/badge-todo están en dashboard.css -->
+            <span *ngFor="let s of d.tasksByStatus | keyvalue" class="badge"
+              [ngClass]="{
+                'badge-done':     s.key === 'DONE',
+                'badge-progress': s.key === 'IN_PROGRESS',
+                'badge-todo':     s.key === 'TO_DO'
+              }">
+              {{ statusLabel(s.key) }}: {{ s.value }}
+            </span>
           </td>
         </tr>
       </tbody>
     </table>
   </section>
 
+  <!-- Tabla de tareas por usuario -->
   <section *ngIf="users.length">
     <h2>Por Usuarios</h2>
     <table>
-      <thead><tr><th>usuarios</th><th></th><th>Asignado a</th><th>Distribucion por Estado</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Departamento</th>
+          <th>Asignadas</th>
+          <th>Distribución por Estado</th>
+        </tr>
+      </thead>
       <tbody>
         <tr *ngFor="let u of users">
           <td>{{ u.userName }}</td>
           <td>{{ u.department?.name ?? '—' }}</td>
           <td>{{ u.totalAssigned }}</td>
           <td>
-            <span *ngFor="let s of u.tasksByStatus | keyvalue" class="badge" [ngClass]="{'clase_completado': s.key === 'completed', 'clase_en_progreso': s.key === 'in_progress', 'clase_pendiente': s.key === 'pending'}">{{ statusLabel(s.key) }}: {{ s.value }}</span>
+            <!-- Mismo fix que la tabla de departamentos: claves en MAYÚSCULAS -->
+            <span *ngFor="let s of u.tasksByStatus | keyvalue" class="badge"
+              [ngClass]="{
+                'badge-done':     s.key === 'DONE',
+                'badge-progress': s.key === 'IN_PROGRESS',
+                'badge-todo':     s.key === 'TO_DO'
+              }">
+              {{ statusLabel(s.key) }}: {{ s.value }}
+            </span>
           </td>
         </tr>
       </tbody>
