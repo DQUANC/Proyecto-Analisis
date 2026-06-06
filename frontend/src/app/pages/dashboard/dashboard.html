@@ -52,6 +52,7 @@
           <td>{{ d.departmentName }}</td>
           <td>{{ d.totalTasks }}</td>
           <td>
+<<<<<<< HEAD
             <!-- SOLUCIÓN ERROR 2: [ngClass] ahora compara con las claves reales del backend
                  (DONE, IN_PROGRESS, TO_DO en MAYÚSCULAS).
                  Antes comparaba con 'completed', 'in_progress', 'pending' (minúsculas)
@@ -65,6 +66,9 @@
               }">
               {{ statusLabel(s.key) }}: {{ s.value }}
             </span>
+=======
+            <span *ngFor="let s of d.tasksByStatus | keyvalue" class="badge" [class.clase_completado]="s.key === 'DONE'" [class.clase_en_progreso]="s.key === 'IN_PROGRESS'" [class.clase_pendiente]="s.key === 'TO_DO'">{{ statusLabel(s.key) }}: {{ s.value }}</span>
+>>>>>>> cccd31c41982e7bcf5294bdef66ffd4a47d789c7
           </td>
         </tr>
       </tbody>
@@ -89,6 +93,7 @@
           <td>{{ u.department?.name ?? '—' }}</td>
           <td>{{ u.totalAssigned }}</td>
           <td>
+<<<<<<< HEAD
             <!-- Mismo fix que la tabla de departamentos: claves en MAYÚSCULAS -->
             <span *ngFor="let s of u.tasksByStatus | keyvalue" class="badge"
               [ngClass]="{
@@ -98,6 +103,9 @@
               }">
               {{ statusLabel(s.key) }}: {{ s.value }}
             </span>
+=======
+            <span *ngFor="let s of u.tasksByStatus | keyvalue" class="badge" [class.clase_completado]="s.key === 'DONE'" [class.clase_en_progreso]="s.key === 'IN_PROGRESS'" [class.clase_pendiente]="s.key === 'TO_DO'">{{ statusLabel(s.key) }}: {{ s.value }}</span>
+>>>>>>> cccd31c41982e7bcf5294bdef66ffd4a47d789c7
           </td>
         </tr>
       </tbody>
