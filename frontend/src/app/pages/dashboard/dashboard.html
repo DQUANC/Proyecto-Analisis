@@ -44,7 +44,7 @@
           <td>{{ d.departmentName }}</td>
           <td>{{ d.totalTasks }}</td>
           <td>
-            <span *ngFor="let s of d.tasksByStatus | keyvalue" class="badge">{{ statusLabel(s.key) }}: {{ s.value }}</span>
+            <span *ngFor="let s of d.tasksByStatus | keyvalue" class="badge" [ngClass]="{'clase_completado': s.key === 'completed', 'clase_en_progreso': s.key === 'in_progress', 'clase_pendiente': s.key === 'pending'}">{{ statusLabel(s.key) }}: {{ s.value }}</span>
           </td>
         </tr>
       </tbody>
@@ -61,7 +61,7 @@
           <td>{{ u.department?.name ?? '—' }}</td>
           <td>{{ u.totalAssigned }}</td>
           <td>
-            <span *ngFor="let s of u.tasksByStatus | keyvalue" class="badge">{{ statusLabel(s.key) }}: {{ s.value }}</span>
+            <span *ngFor="let s of u.tasksByStatus | keyvalue" class="badge" [ngClass]="{'clase_completado': s.key === 'completed', 'clase_en_progreso': s.key === 'in_progress', 'clase_pendiente': s.key === 'pending'}">{{ statusLabel(s.key) }}: {{ s.value }}</span>
           </td>
         </tr>
       </tbody>
