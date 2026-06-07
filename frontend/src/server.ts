@@ -14,6 +14,7 @@ app.set('trust proxy', 1);
 
 const allowedHosts = [
   'localhost',
+  ...(process.env['RAILWAY_PUBLIC_DOMAIN'] ? [process.env['RAILWAY_PUBLIC_DOMAIN']] : []),
   ...(process.env['ALLOWED_HOSTS'] ?? '').split(',').map(s => s.trim()).filter(Boolean),
 ];
 
