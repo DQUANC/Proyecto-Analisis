@@ -16,6 +16,7 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:4200',
+  ...(process.env['RAILWAY_PUBLIC_DOMAIN'] ? [`https://${process.env['RAILWAY_PUBLIC_DOMAIN'].replace('-back-', '-front-')}`] : []),
   ...(process.env['FRONTEND_URL'] ?? '').split(',').map(s => s.trim()).filter(Boolean),
 ];
 
