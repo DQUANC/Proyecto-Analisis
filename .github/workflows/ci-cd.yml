@@ -55,6 +55,6 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      - name: Validar build de configuración QA
+      - name: Validar build de configuración sandbox
         working-directory: frontend
-        run: npx ng build --configuration sandbox
+        run: npm run build -- --configuration sandbox
