@@ -55,9 +55,15 @@ export async function getTaskById(
   id: number,
   user: { id: number; role: string; departmentId: number | null }
 ) {
+  const include: Prisma.TaskInclude = {
+    ...taskInclude,
+    evaluation: user.role === 'ADMIN',
+    statusHistory: { include: { changedBy: { select: { id: true, name: true } } }, orderBy: { changedAt: 'desc' } },
+  };
+
   const task = await prisma.task.findUnique({
     where: { id },
-    include: { ...taskInclude, statusHistory: { include: { changedBy: { select: { id: true, name: true } } }, orderBy: { changedAt: 'desc' } } },
+    include,
   });
 
   if (!task) {
@@ -178,7 +184,7 @@ export async function deleteTask(id: number) {
 
 export async function getHistory(
   user: { id: number; role: string; departmentId: number | null },
-  filters: { departmentId?: number; assignedToId?: number }
+  filters: { departmentId?: number; assignedToId?: number; dateFrom?: string; dateTo?: string }
 ) {
   const where: Prisma.TaskWhereInput = { status: 'DONE' };
 
@@ -187,6 +193,12 @@ export async function getHistory(
   }
   if (filters.departmentId && user.role === 'ADMIN') where.departmentId = filters.departmentId;
   if (filters.assignedToId) where.assignedToId = filters.assignedToId;
+  if (filters.dateFrom || filters.dateTo) {
+    where.completedAt = {
+      ...(filters.dateFrom ? { gte: new Date(filters.dateFrom) } : {}),
+      ...(filters.dateTo ? { lte: new Date(filters.dateTo) } : {}),
+    };
+  }
 
   const tasks = await prisma.task.findMany({
     where,
@@ -195,6 +207,30 @@ export async function getHistory(
   });
 
   return tasks.map(withActiveTime);
+}
+
+export async function getTaskStatusHistory(
+  id: number,
+  user: { id: number; role: string; departmentId: number | null }
+) {
+  const task = await prisma.task.findUnique({ where: { id } });
+  if (!task) {
+    const err = new Error('Tarea no encontrada') as Error & { statusCode: number };
+    err.statusCode = 404;
+    throw err;
+  }
+
+  if (user.role === 'WORKER' && task.assignedToId !== user.id && task.departmentId !== user.departmentId) {
+    const err = new Error('Acceso denegado') as Error & { statusCode: number };
+    err.statusCode = 403;
+    throw err;
+  }
+
+  return prisma.taskStatusHistory.findMany({
+    where: { taskId: id },
+    include: { changedBy: { select: { id: true, name: true } } },
+    orderBy: { changedAt: 'asc' },
+  });
 }
 
 export async function evaluateTask(
