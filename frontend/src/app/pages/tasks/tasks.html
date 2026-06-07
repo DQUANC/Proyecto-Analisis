@@ -1,72 +1,86 @@
 <div class="page">
   <header>
-    <h1>Tasks</h1>
+    <h1>Tareas</h1>
     <div>
-      <a *ngIf="isAdmin" routerLink="/dashboard">← Dashboard</a>
-      <a routerLink="/history">History</a>
+      <a *ngIf="isAdmin" routerLink="/dashboard">← Panel De Control</a>
+      <a routerLink="/history">Historial</a>
+
+      <!-- CAMBIO: el botón alterna entre mostrar/ocultar el formulario de creación.
+           Antes decía 'Cancel' / '+ New Task', ahora está en español -->
       <button *ngIf="isAdmin" (click)="showCreateForm = !showCreateForm">
-        {{ showCreateForm ? 'Cancel' : '+ New Task' }}
+        {{ showCreateForm ? 'Cancelar' : '+ Nueva Tarea' }}
       </button>
-      <button class="logout" (click)="logout()">Logout</button>
+      <button class="logout" (click)="logout()">Cerrar Sesión</button>
     </div>
   </header>
 
-  <!-- ── Create form (admin only) ── -->
+  <!-- ── Formulario de creación (solo admin) ── -->
+  <!-- Este bloque solo se muestra si el usuario es admin Y presionó "+ Nueva Tarea" -->
   <div class="form-box" *ngIf="isAdmin && showCreateForm">
-    <h3>New Task</h3>
+    <h3>Nueva Tarea</h3>
     <form (ngSubmit)="create()">
       <div class="form-grid">
-        <label>Title *
+        <label>Titulo *
           <input type="text" [(ngModel)]="createForm.title" name="title" required />
         </label>
-        <label>Priority
+
+        <!-- CAMBIO: las opciones del select guardan el valor en inglés (LOW/MEDIUM/HIGH)
+             porque así lo espera el backend, pero el texto visible está en español -->
+        <label>Prioridad
           <select [(ngModel)]="createForm.priority" name="priority">
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
+            <option value="LOW">Baja</option>
+            <option value="MEDIUM">Media</option>
+            <option value="HIGH">Alta</option>
           </select>
         </label>
-        <label>Description
+
+        <label>Descripcion
           <input type="text" [(ngModel)]="createForm.description" name="description" />
         </label>
-        <label>Due Date
+
+        <!-- CAMBIO: antes decía 'Due Date', ahora 'Fecha Límite' -->
+        <label>Fecha Límite
           <input type="date" [(ngModel)]="createForm.dueDate" name="dueDate" />
         </label>
-        <label>Department *
+
+        <!-- CAMBIO: el placeholder del select pasó de '-- Select --' a '-- Seleccionar --' -->
+        <label>Area De Trabajo *
           <select [(ngModel)]="createForm.departmentId" name="departmentId" required>
-            <option [value]="0">-- Select --</option>
+            <option [value]="0">-- Seleccionar --</option>
             <option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</option>
           </select>
         </label>
-        <label>Assign to Worker
+
+        <!-- CAMBIO: el placeholder pasó de '-- Unassigned --' a '-- Sin asignar --' -->
+        <label>Asignado A
           <select [(ngModel)]="createForm.assignedToId" name="assignedToId">
-            <option [value]="undefined">-- Unassigned --</option>
+            <option [value]="undefined">-- Sin asignar --</option>
             <option *ngFor="let w of workers" [value]="w.id">{{ w.name }}</option>
           </select>
         </label>
       </div>
-      <button type="submit" class="btn-primary">Create Task</button>
+      <button type="submit" class="btn-primary">Crear Tarea</button>
     </form>
   </div>
 
-  <p *ngIf="loading">Loading...</p>
+  <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
-  <!-- ── Task table ── -->
+  <!-- ── Tabla de tareas ── -->
   <div class="table-wrap" *ngIf="!loading && tasks.length">
     <table>
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Priority</th>
-          <th>Status</th>
-          <th *ngIf="isAdmin">Assigned to</th>
-          <th>Created</th>
-          <th>Started</th>
-          <th>Completed</th>
-          <th>Due Date</th>
-          <th *ngIf="isAdmin">Eval</th>
-          <th *ngIf="isAdmin">Actions</th>
+          <th>Titulo</th>
+          <th>Prioridad</th>
+          <th>Estado De Tarea</th>
+          <th *ngIf="isAdmin">Asignado A</th>
+          <th>Fecha De Creacion</th>
+          <th>Fecha De Inicio</th>
+          <th>Fecha De Finalizacion</th>
+          <th>Fecha Limite</th>
+          <th *ngIf="isAdmin">Calificacion</th>
+          <th *ngIf="isAdmin">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -75,86 +89,116 @@
             <span class="task-title">{{ t.title }}</span>
             <span class="task-desc" *ngIf="t.description">{{ t.description }}</span>
           </td>
+
+          <!-- CAMBIO: antes mostraba t.priority en crudo (HIGH/MEDIUM/LOW).
+               Ahora llama a priorityLabel() definido en el .ts que lo traduce.
+               La clase CSS usa el valor original en minúsculas para los colores del badge -->
           <td>
-            <span class="badge priority-{{t.priority.toLowerCase()}}">{{ t.priority }}</span>
+            <span class="badge priority-{{t.priority.toLowerCase()}}">{{ priorityLabel(t.priority) }}</span>
           </td>
+
+          <!-- El select de estado guarda TO_DO/IN_PROGRESS/DONE en el backend,
+               pero muestra el texto en español al usuario -->
           <td>
-            <select [value]="t.status" (change)="updateStatus(t, $any($event.target).value)">
-              <option value="TO_DO">To Do</option>
-              <option value="IN_PROGRESS">In Progress</option>
-              <option value="DONE">Done</option>
+            <select [value]="t.status" (change)="updateStatus(t, $any($event.target).value)" class="task-status"
+              [class.status-todo]="t.status === 'TO_DO'" [class.status-progress]="t.status === 'IN_PROGRESS'"
+              [class.status-done]="t.status === 'DONE'">
+              <option value="TO_DO">Pendiente</option>
+              <option value="IN_PROGRESS">En progreso</option>
+              <option value="DONE">Completado</option>
             </select>
           </td>
+
           <td *ngIf="isAdmin">{{ t.assignedTo?.name ?? '—' }}</td>
           <td class="date">{{ t.createdAt | slice:0:10 }}</td>
-          <td class="date">{{ t.startedAt   ? (t.startedAt   | slice:0:10) : '—' }}</td>
+          <td class="date">{{ t.startedAt ? (t.startedAt | slice:0:10) : '—' }}</td>
           <td class="date">{{ t.completedAt ? (t.completedAt | slice:0:10) : '—' }}</td>
-          <td class="date">{{ t.dueDate     ? (t.dueDate     | slice:0:10) : '—' }}</td>
+          <td class="date">{{ t.dueDate ? (t.dueDate | slice:0:10) : '—' }}</td>
+
+          <!-- CAMBIO: si la tarea ya tiene evaluación muestra la estrella con el puntaje,
+               si no tiene muestra 'Evaluar' (antes decía 'Evaluate') -->
           <td *ngIf="isAdmin">
             <button class="btn-eval" (click)="openEval(t)">
-              {{ t.evaluation ? '★ ' + t.evaluation.score : 'Evaluate' }}
+              {{ t.evaluation ? '★ ' + t.evaluation.score : 'Evaluar' }}
             </button>
           </td>
+
+          <!-- CAMBIO: botones de acción traducidos. Antes 'Edit'/'Delete' -->
           <td *ngIf="isAdmin" class="actions">
-            <button class="btn-edit" (click)="openEdit(t)">Edit</button>
-            <button class="btn-del"  (click)="remove(t.id)">Delete</button>
+            <button class="btn-edit" (click)="openEdit(t)">Editar</button>
+            <button class="btn-del" (click)="remove(t.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <p *ngIf="!loading && !tasks.length && !error">No tasks yet.</p>
+  <!-- CAMBIO: mensaje vacío traducido. Antes 'No tasks yet.' -->
+  <p *ngIf="!loading && !tasks.length && !error">No hay tareas aún.</p>
 
-  <!-- ── Edit modal (admin only) ── -->
+  <!-- ── Modal de edición (solo admin) ── -->
+  <!-- Se abre al hacer click en "Editar". Clic fuera del modal lo cierra -->
   <div class="modal-backdrop" *ngIf="editingTask" (click)="editingTask = null">
     <div class="modal" (click)="$event.stopPropagation()">
-      <h3>Edit Task</h3>
+      <h3>Editar Tareas</h3>
       <form (ngSubmit)="saveEdit()">
-        <label>Title
+        <label>Titulo
           <input type="text" [(ngModel)]="editForm.title" name="title" required />
         </label>
-        <label>Description
+        <label>Descripcion
           <input type="text" [(ngModel)]="editForm.description" name="description" />
         </label>
-        <label>Priority
+
+        <!-- Mismo patrón que el formulario de creación:
+             value en inglés para el backend, texto visible en español -->
+        <label>Prioridad
           <select [(ngModel)]="editForm.priority" name="priority">
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
+            <option value="LOW">Baja</option>
+            <option value="MEDIUM">Media</option>
+            <option value="HIGH">Alta</option>
           </select>
         </label>
-        <label>Due Date
+
+        <label>Fecha Limite
           <input type="date" [(ngModel)]="editForm.dueDate" name="dueDate" />
         </label>
-        <label>Assign to Worker
+
+        <!-- CAMBIO: '-- Unassigned --' → '-- Sin asignar --' -->
+        <label>Asignado A
           <select [(ngModel)]="editForm.assignedToId" name="assignedToId">
-            <option [value]="undefined">-- Unassigned --</option>
+            <option [value]="undefined">-- Sin asignar --</option>
             <option *ngFor="let w of workers" [value]="w.id">{{ w.name }}</option>
           </select>
         </label>
+
         <div class="modal-actions">
-          <button type="button" class="btn-cancel" (click)="editingTask = null">Cancel</button>
-          <button type="submit" class="btn-primary">Save Changes</button>
+          <button type="button" class="btn-cancel" (click)="editingTask = null">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar cambios</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ── Evaluation modal (admin only) ── -->
+  <!-- ── Modal de evaluación (solo admin) ── -->
+  <!-- Se abre al hacer click en "Evaluar". Permite poner puntaje y retroalimentación -->
   <div class="modal-backdrop" *ngIf="evaluatingTask" (click)="evaluatingTask = null">
     <div class="modal" (click)="$event.stopPropagation()">
-      <h3>Evaluate: {{ evaluatingTask.title }}</h3>
+      <!-- CAMBIO: título del modal. Antes 'Evaluate: ...' -->
+      <h3>Evaluar: {{ evaluatingTask.title }}</h3>
       <form (ngSubmit)="submitEval()">
-        <label>Score (1–10)
+        <!-- CAMBIO: label 'Score (1–10)' → 'Puntuación (1–10)' -->
+        <label>Puntuación (1–10)
           <input type="number" [(ngModel)]="evalForm.score" name="score" min="1" max="10" required />
         </label>
-        <label>Feedback
+
+        <!-- CAMBIO: label 'Feedback' → 'Retroalimentación' -->
+        <label>Retroalimentación
           <textarea [(ngModel)]="evalForm.feedback" name="feedback" rows="4"></textarea>
         </label>
+
         <div class="modal-actions">
-          <button type="button" class="btn-cancel" (click)="evaluatingTask = null">Cancel</button>
-          <button type="submit" class="btn-primary">Save Evaluation</button>
+          <button type="button" class="btn-cancel" (click)="evaluatingTask = null">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Evaluacion</button>
         </div>
       </form>
     </div>

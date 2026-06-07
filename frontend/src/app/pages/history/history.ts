@@ -44,4 +44,13 @@ export class HistoryComponent implements OnInit {
     this.auth.logout();
     this.router.navigate(['/login']);
   }
+
+  priorityLabel(key: string): string {
+    const map: Record<string, string> = {
+      LOW: 'Baja',
+      MEDIUM: 'Media',
+      HIGH: 'Alta',
+    };
+    return map[key] ?? key;
+  }
 }

@@ -1,26 +1,212 @@
-.page { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+.page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #0f172a;
+    background: #f0f7ff;
+    min-height: 100vh;
+}
 
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-nav { display: flex; gap: 1rem; align-items: center; }
-nav a { color: #3b82f6; text-decoration: none; }
-nav button { padding: 0.4rem 0.8rem; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; }
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+}
 
-/* Top row: cards + chart side by side */
-.top-row { display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; }
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: white;
+}
 
-.cards { display: flex; flex-wrap: wrap; gap: 1rem; flex: 1; }
-.card { padding: 1.2rem 1.5rem; border: 1px solid #e5e7eb; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; min-width: 110px; background: #fafafa; }
-.label { font-size: 0.78rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; }
-.value { font-size: 1.8rem; font-weight: 700; color: #111827; }
+nav {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
 
-.chart-box { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; background: #fafafa; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; min-width: 300px; }
-.chart-box h2 { margin: 0; font-size: 1rem; color: #374151; }
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.45rem 0.8rem;
+    border-radius: 6px;
+    transition: 0.2s ease;
+}
 
-section { margin-bottom: 2rem; }
-h2 { margin-bottom: 1rem; font-size: 1.1rem; }
-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-th, td { padding: 0.6rem 1rem; border: 1px solid #e5e7eb; text-align: left; }
-th { background: #f9fafb; font-weight: 600; }
-.badge { display: inline-block; margin-right: 0.4rem; padding: 0.2rem 0.5rem; background: #e5e7eb; border-radius: 4px; font-size: 0.78rem; }
+nav a:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
 
-.error { color: #dc2626; }
+nav button {
+    padding: 0.5rem 1rem;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+nav button:hover {
+    background: #dc2626;
+}
+
+.top-row {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    flex: 1;
+}
+
+.card {
+    padding: 1.2rem 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 130px;
+    background: white;
+    border-top: 4px solid #3b82f6;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+    transition: 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+}
+
+.label {
+    font-size: 0.78rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    text-align: center;
+}
+
+.value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1d4ed8;
+}
+
+.chart-box {
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 300px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+}
+
+.chart-box h2 {
+    margin: 0;
+    font-size: 1rem;
+    color: #1e40af;
+    font-weight: 700;
+}
+
+section {
+    margin-bottom: 2rem;
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+}
+
+h2 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #1e40af;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+th,
+td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #dbeafe;
+    text-align: left;
+}
+
+th {
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fbff;
+}
+
+tbody tr:hover {
+    background: #dbeafe;
+}
+
+.badge {
+    display: inline-block;
+    margin-right: 0.4rem;
+    margin-bottom: 0.2rem;
+    padding: 0.3rem 0.7rem;
+    background: #dbeafe;
+    color: #1e40af;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.error {
+    color: #b91c1c;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+/* ── Badges de estado en tablas de departamentos y usuarios ────────────────
+   SOLUCIÓN ERROR 2: estas clases se renombraron porque en el HTML las condiciones
+   del [ngClass] usaban nombres incorrectos ('clase_completado', 'clase_en_progreso',
+   'clase_pendiente') que no coincidían con nada, así que los colores nunca se aplicaban.
+   Ahora los nombres son badge-done, badge-progress, badge-todo y las condiciones
+   en el HTML comparan con las claves reales del backend: DONE, IN_PROGRESS, TO_DO. */
+.badge-done {
+    background-color: #22c55e; /* verde — tarea completada */
+    color: white;
+}
+
+.badge-progress {
+    background-color: #3b82f6; /* azul — tarea en progreso */
+    color: white;
+}
+
+.badge-todo {
+    background-color: #ef4444; /* rojo — tarea pendiente */
+    color: white;
+}
