@@ -9,6 +9,7 @@ router.use(authMiddleware);
 
 router.get('/history', tasksController.getHistory);
 router.get('/', tasksController.getAll);
+router.get('/:id/history', tasksController.getStatusHistory);
 router.get('/:id', tasksController.getById);
 router.post('/', requireRole('ADMIN'), tasksController.create);
 router.put('/:id', tasksController.update);

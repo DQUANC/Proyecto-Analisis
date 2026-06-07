@@ -197,6 +197,30 @@ export async function getHistory(
   return tasks.map(withActiveTime);
 }
 
+export async function getTaskStatusHistory(
+  id: number,
+  user: { id: number; role: string; departmentId: number | null }
+) {
+  const task = await prisma.task.findUnique({ where: { id } });
+  if (!task) {
+    const err = new Error('Tarea no encontrada') as Error & { statusCode: number };
+    err.statusCode = 404;
+    throw err;
+  }
+
+  if (user.role === 'WORKER' && task.assignedToId !== user.id && task.departmentId !== user.departmentId) {
+    const err = new Error('Acceso denegado') as Error & { statusCode: number };
+    err.statusCode = 403;
+    throw err;
+  }
+
+  return prisma.taskStatusHistory.findMany({
+    where: { taskId: id },
+    include: { changedBy: { select: { id: true, name: true } } },
+    orderBy: { changedAt: 'asc' },
+  });
+}
+
 export async function evaluateTask(
   taskId: number,
   data: { feedback?: string; score?: number },

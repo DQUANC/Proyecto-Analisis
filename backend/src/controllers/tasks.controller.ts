@@ -70,6 +70,15 @@ export async function getHistory(req: Request, res: Response, next: NextFunction
   }
 }
 
+export async function getStatusHistory(req: Request, res: Response, next: NextFunction) {
+  try {
+    const history = await tasksService.getTaskStatusHistory(Number(req.params.id), req.user!);
+    res.json({ history });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function evaluate(req: Request, res: Response, next: NextFunction) {
   try {
     const evaluation = await tasksService.evaluateTask(
