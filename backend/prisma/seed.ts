@@ -219,7 +219,7 @@ await prisma.user.upsert({
         email: 'worker2@test.com',
         password: await bcrypt.hash('worker456', 10),
         role: 'WORKER',
-        departmentId: department.id,
+        departmentId: ingenieria.id,
       },
     });
 
