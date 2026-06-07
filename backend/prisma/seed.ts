@@ -59,12 +59,12 @@ async function main() {
       },
     }),
     prisma.user.upsert({
-      where: { email: 'worker2@test.com' },
+      where: { email: 'worker3@test.com' },
       update: {},
       create: {
         name: 'María Torres',
-        email: 'worker2@test.com',
-        password: await bcrypt.hash('worker456', 10),
+        email: 'worker3@test.com',
+        password: await bcrypt.hash('worker123', 10),
         role: Role.WORKER,
         departmentId: soporte.id,
       },
