@@ -54,3 +54,7 @@ jobs:
       - name: Build
         working-directory: frontend
         run: npm run build
+
+      - name: Validar build de configuración QA
+        working-directory: frontend
+        run: npx ng build --configuration qa
