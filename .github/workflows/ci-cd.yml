@@ -54,3 +54,11 @@ jobs:
       - name: Build
         working-directory: frontend
         run: npm run build
+
+      - name: Validar build de configuración sandbox
+        working-directory: frontend
+        run: |
+          npm run build -- --configuration sandbox || {
+            echo "=== angular-errors.log ===" && cat /tmp/ng-*/angular-errors.log 2>/dev/null || echo "(log no encontrado)"
+            exit 1
+          }

@@ -63,6 +63,28 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "sandbox": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.sandbox.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true
             }
           },
           "defaultConfiguration": "production"
@@ -75,6 +97,9 @@
             },
             "development": {
               "buildTarget": "frontend:build:development"
+            },
+            "sandbox": {
+              "buildTarget": "frontend:build:sandbox"
             }
           },
           "defaultConfiguration": "development"

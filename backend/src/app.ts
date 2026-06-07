@@ -16,12 +16,12 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:4200',
-  process.env.FRONTEND_URL,
-].filter(Boolean) as string[];
+  ...(process.env['FRONTEND_URL'] ?? '').split(',').map(s => s.trim()).filter(Boolean),
+];
 
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.railway.app')) {
+    if (!origin || allowedOrigins.includes(origin)) {
       cb(null, true);
     } else {
       cb(new Error('Not allowed by CORS'));
