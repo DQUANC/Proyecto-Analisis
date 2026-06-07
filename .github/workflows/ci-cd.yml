@@ -57,4 +57,4 @@ jobs:
 
       - name: Validar build de configuración QA
         working-directory: frontend
-        run: npx ng build --configuration qa
+        run: npx ng build --configuration sandbox

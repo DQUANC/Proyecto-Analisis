@@ -64,11 +64,11 @@
               "extractLicenses": false,
               "sourceMap": true
             },
-            "qa": {
+            "sandbox": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.qa.ts"
+                  "with": "src/environments/environment.sandbox.ts"
                 }
               ],
               "outputHashing": "all"
@@ -85,8 +85,8 @@
             "development": {
               "buildTarget": "frontend:build:development"
             },
-            "qa": {
-              "buildTarget": "frontend:build:qa"
+            "sandbox": {
+              "buildTarget": "frontend:build:sandbox"
             }
           },
           "defaultConfiguration": "development"
