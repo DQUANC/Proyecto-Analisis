@@ -13,7 +13,7 @@ async function main() {
   ]);
 
   // ── Usuarios ──────────────────────────────────────────────────────────────
-  const [admin, ana, carlos, luis, worker2] = await Promise.all([
+  const [admin, ana, carlos, luis, maria] = await Promise.all([
     prisma.user.upsert({
       where: { email: 'admin@test.com' },
       update: {},
@@ -59,11 +59,11 @@ async function main() {
       },
     }),
     prisma.user.upsert({
-      where: { email: 'worker3@test.com' },
+      where: { email: 'maria@test.com' },
       update: {},
       create: {
         name: 'María Torres',
-        email: 'worker3@test.com',
+        email: 'maria@test.com',
         password: await bcrypt.hash('worker123', 10),
         role: Role.WORKER,
         departmentId: soporte.id,
@@ -150,7 +150,7 @@ async function main() {
       dueDate: diasDesdeAhora(7),
       departmentId: soporte.id,
       createdById: admin.id,
-      assignedToId: worker2.id,
+      assignedToId: maria.id,
     },
   });
 
@@ -210,18 +210,6 @@ async function main() {
       evaluatedById: admin.id,
     },
   });
-
-await prisma.user.upsert({
-      where: { email: 'worker2@test.com' },
-      update: {},
-      create: {
-        name: 'Worker2',
-        email: 'worker2@test.com',
-        password: await bcrypt.hash('worker456', 10),
-        role: 'WORKER',
-        departmentId: ingenieria.id,
-      },
-    });
 
     console.log('Seed completado');
 }
