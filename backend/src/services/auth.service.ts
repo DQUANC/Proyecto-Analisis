@@ -44,16 +44,16 @@ export async function login(email: string, password: string) {
     throw err;
   }
 
+  if (await isUserDisabled(user.id)) {
+    const err = new Error('Tu cuenta está deshabilitada. Contacta al administrador.') as Error & { statusCode: number };
+    err.statusCode = 403;
+    throw err;
+  }
+
   const valid = await comparePassword(password, user.password);
   if (!valid) {
     const err = new Error('Credenciales inválidas') as Error & { statusCode: number };
     err.statusCode = 401;
-    throw err;
-  }
-
-  if (await isUserDisabled(user.id)) {
-    const err = new Error('Tu cuenta está deshabilitada. Contacta al administrador.') as Error & { statusCode: number };
-    err.statusCode = 403;
     throw err;
   }
 
