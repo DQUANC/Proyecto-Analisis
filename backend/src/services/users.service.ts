@@ -11,6 +11,7 @@ function safe<T extends { password: string }>(user: T) {
 
 export async function initDisabledUsersTable() {
   await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS disabled_users (user_id INTEGER PRIMARY KEY)`;
+  await loadDisabledCache();
 }
 
 type DisabledRow = { user_id: number };
