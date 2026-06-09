@@ -24,6 +24,7 @@ export class UsersComponent implements OnInit {
   departments: Department[] = [];
   loading = true;
   error   = '';
+  currentUserId: number | null = null;
 
   showCreateForm = false;
   createForm: CreateUserPayload = {
@@ -40,6 +41,7 @@ export class UsersComponent implements OnInit {
   editErrors: Record<string, string> = {};
 
   ngOnInit() {
+    this.currentUserId = this.auth.getUser()?.id ?? null;
     setTimeout(() => {
       this.load();
       this.deptService.getAll().subscribe({

@@ -83,6 +83,7 @@
           <td class="actions">
             <button class="btn-edit" (click)="openEdit(u)">Editar</button>
             <button class="btn-toggle"
+              *ngIf="u.id !== currentUserId"
               [class.btn-disable]="u.isActive !== false"
               [class.btn-enable]="u.isActive === false"
               (click)="toggleActive(u)">

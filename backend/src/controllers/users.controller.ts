@@ -54,7 +54,12 @@ export async function remove(req: Request, res: Response, next: NextFunction) {
 
 export async function disable(req: Request, res: Response, next: NextFunction) {
   try {
-    await usersService.disableUser(Number(req.params.id));
+    const id = Number(req.params.id);
+    if (req.user?.id === id) {
+      res.status(403).json({ message: 'No puedes deshabilitarte a ti mismo.' });
+      return;
+    }
+    await usersService.disableUser(id);
     res.json({ message: 'Usuario deshabilitado' });
   } catch (err) {
     next(err);
