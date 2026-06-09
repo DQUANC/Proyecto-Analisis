@@ -66,10 +66,12 @@ export class UsersComponent implements OnInit {
   }
 
   create() {
+    this.error = '';
     this.createErrors = {};
-    if (!this.createForm.name?.trim())     this.createErrors['name']     = 'El nombre es requerido';
-    if (!this.createForm.email?.trim())    this.createErrors['email']    = 'El correo es requerido';
-    if (!this.createForm.password?.trim()) this.createErrors['password'] = 'La contraseña es requerida';
+    if (!this.createForm.name?.trim())         this.createErrors['name']         = 'El nombre es requerido';
+    if (!this.createForm.email?.trim())        this.createErrors['email']        = 'El correo es requerido';
+    if (!this.createForm.password?.trim())     this.createErrors['password']     = 'La contraseña es requerida';
+    if (!this.createForm.departmentId)         this.createErrors['departmentId'] = 'El departamento es requerido';
     if (Object.keys(this.createErrors).length) return;
 
     const payload = {
@@ -84,7 +86,10 @@ export class UsersComponent implements OnInit {
         this.createForm = { name: '', email: '', password: '', role: 'WORKER', departmentId: undefined };
         this.load();
       },
-      error: (err: any) => { this.error = err?.error?.message ?? 'Error al crear usuario'; }
+      error: (err: any) => {
+        this.error = err?.error?.message ?? 'Error al crear usuario';
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -114,7 +119,10 @@ export class UsersComponent implements OnInit {
     if (!payload.password) delete payload.password;
     this.usersService.update(this.editingUser.id, payload).subscribe({
       next: () => { this.editingUser = null; this.editErrors = {}; this.load(); },
-      error: (err: any) => { this.error = err?.error?.message ?? 'Error al actualizar usuario'; }
+      error: (err: any) => {
+        this.error = err?.error?.message ?? 'Error al actualizar usuario';
+        this.cdr.detectChanges();
+      }
     });
   }
 
