@@ -1,8 +1,8 @@
 import prisma from '../prisma';
 import { hashPassword } from '../utils/password.utils';
-import { Prisma } from '@prisma/client';
+import { User, Department } from '@prisma/client';
 
-type UserWithDept = Prisma.UserGetPayload<{ include: { department: true } }>;
+type UserWithDept = User & { department: Department | null };
 
 function safe<T extends { password: string }>(user: T) {
   const { password: _p, ...rest } = user;
