@@ -13,5 +13,7 @@ router.get('/:id', usersController.getById);
 router.post('/', usersController.create);
 router.put('/:id', usersController.update);
 router.delete('/:id', usersController.remove);
+router.patch('/:id/disable', usersController.disable);
+router.patch('/:id/enable', usersController.enable);
 
 export default router;

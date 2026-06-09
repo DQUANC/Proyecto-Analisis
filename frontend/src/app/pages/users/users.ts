@@ -128,7 +128,18 @@ export class UsersComponent implements OnInit {
 
   remove(id: number) {
     if (!confirm('¿Eliminar este usuario?')) return;
-    this.usersService.remove(id).subscribe({ next: () => this.load() });
+    this.usersService.remove(id).subscribe({
+      next: () => this.load(),
+      error: (err: any) => { this.error = err?.error?.message ?? 'Error al eliminar usuario'; this.cdr.detectChanges(); }
+    });
+  }
+
+  toggleActive(user: User) {
+    const action = user.isActive ? this.usersService.disable(user.id) : this.usersService.enable(user.id);
+    action.subscribe({
+      next: () => this.load(),
+      error: (err: any) => { this.error = err?.error?.message ?? 'Error al cambiar estado'; this.cdr.detectChanges(); }
+    });
   }
 
   roleLabel(role: string): string {

@@ -61,11 +61,12 @@
           <th>Correo Electrónico</th>
           <th>Rol</th>
           <th>Departamento</th>
+          <th>Estado</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let u of users">
+        <tr *ngFor="let u of users" [class.row-disabled]="u.isActive === false">
           <td>{{ u.name }}</td>
           <td>{{ u.email }}</td>
           <td>
@@ -74,8 +75,19 @@
             </span>
           </td>
           <td>{{ u.department?.name ?? '—' }}</td>
+          <td>
+            <span class="badge" [class.badge-active]="u.isActive !== false" [class.badge-inactive]="u.isActive === false">
+              {{ u.isActive !== false ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
           <td class="actions">
             <button class="btn-edit" (click)="openEdit(u)">Editar</button>
+            <button class="btn-toggle"
+              [class.btn-disable]="u.isActive !== false"
+              [class.btn-enable]="u.isActive === false"
+              (click)="toggleActive(u)">
+              {{ u.isActive !== false ? 'Deshabilitar' : 'Habilitar' }}
+            </button>
             <button class="btn-del" (click)="remove(u.id)">Eliminar</button>
           </td>
         </tr>

@@ -51,3 +51,21 @@ export async function remove(req: Request, res: Response, next: NextFunction) {
     next(err);
   }
 }
+
+export async function disable(req: Request, res: Response, next: NextFunction) {
+  try {
+    await usersService.disableUser(Number(req.params.id));
+    res.json({ message: 'Usuario deshabilitado' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function enable(req: Request, res: Response, next: NextFunction) {
+  try {
+    await usersService.enableUser(Number(req.params.id));
+    res.json({ message: 'Usuario habilitado' });
+  } catch (err) {
+    next(err);
+  }
+}

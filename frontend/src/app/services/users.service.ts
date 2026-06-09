@@ -19,6 +19,7 @@ export interface User {
   departmentId: number | null;
   department?: { id: number; name: string } | null;
   createdAt?: string;
+  isActive?: boolean;
 }
 
 export interface CreateUserPayload {
@@ -108,5 +109,13 @@ export class UsersService {
       return of(undefined);
     }
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  disable(id: number): Observable<{ message: string }> {
+    return this.http.patch<{ message: string }>(`${this.apiUrl}/${id}/disable`, {});
+  }
+
+  enable(id: number): Observable<{ message: string }> {
+    return this.http.patch<{ message: string }>(`${this.apiUrl}/${id}/enable`, {});
   }
 }

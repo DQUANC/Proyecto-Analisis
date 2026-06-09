@@ -12,6 +12,7 @@ import departmentsRoutes from './routes/departments.routes';
 import dashboardRoutes from './routes/dashboard.routes';
 import usersRoutes from './routes/users.routes';
 import { errorMiddleware } from './middleware/error.middleware';
+import { initDisabledUsersTable } from './services/users.service';
 
 const app = express();
 
@@ -44,8 +45,8 @@ app.use('/api/users', usersRoutes);
 app.use(errorMiddleware);
 
 const PORT = Number(process.env.PORT ?? 3000);
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+initDisabledUsersTable()
+  .then(() => app.listen(PORT, () => console.log(`Server running on port ${PORT}`)))
+  .catch(err => { console.error('DB init error:', err); process.exit(1); });
 
 export default app;

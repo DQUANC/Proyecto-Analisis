@@ -1,6 +1,7 @@
 import prisma from '../prisma';
 import { hashPassword, comparePassword } from '../utils/password.utils';
 import { signToken } from '../utils/jwt.utils';
+import { isUserDisabled } from './users.service';
 
 export async function register(data: {
   name: string;
@@ -47,6 +48,12 @@ export async function login(email: string, password: string) {
   if (!valid) {
     const err = new Error('Credenciales inválidas') as Error & { statusCode: number };
     err.statusCode = 401;
+    throw err;
+  }
+
+  if (await isUserDisabled(user.id)) {
+    const err = new Error('Tu cuenta está deshabilitada. Contacta al administrador.') as Error & { statusCode: number };
+    err.statusCode = 403;
     throw err;
   }
 
