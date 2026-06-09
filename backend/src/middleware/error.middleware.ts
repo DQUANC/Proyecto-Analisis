@@ -7,6 +7,7 @@ export function errorMiddleware(
   _next: NextFunction
 ): void {
   const statusCode = err.statusCode ?? err.status ?? 500;
+  console.error('[ERROR]', statusCode, err.message, err.stack);
   const message = statusCode === 500 && process.env.NODE_ENV === 'production'
     ? 'Error interno del servidor'
     : err.message;
