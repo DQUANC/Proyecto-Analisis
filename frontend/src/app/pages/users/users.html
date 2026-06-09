@@ -16,19 +16,22 @@
     <form (ngSubmit)="create()">
       <div class="form-grid">
         <label>Nombre *
-          <input type="text" [(ngModel)]="createForm.name" name="name" required />
+          <input type="text" [(ngModel)]="createForm.name" name="name" />
+          <span class="field-error" *ngIf="createErrors['name']">{{ createErrors['name'] }}</span>
         </label>
 
         <label>Correo Electrónico *
-          <input type="email" [(ngModel)]="createForm.email" name="email" required />
+          <input type="email" [(ngModel)]="createForm.email" name="email" />
+          <span class="field-error" *ngIf="createErrors['email']">{{ createErrors['email'] }}</span>
         </label>
 
         <label>Contraseña *
-          <input type="password" [(ngModel)]="createForm.password" name="password" required />
+          <input type="password" [(ngModel)]="createForm.password" name="password" />
+          <span class="field-error" *ngIf="createErrors['password']">{{ createErrors['password'] }}</span>
         </label>
 
         <label>Rol *
-          <select [(ngModel)]="createForm.role" name="role" required>
+          <select [(ngModel)]="createForm.role" name="role">
             <option value="WORKER">Trabajador</option>
             <option value="ADMIN">Administrador</option>
           </select>
@@ -87,11 +90,13 @@
       <h3>Editar Usuario: {{ editingUser.name }}</h3>
       <form (ngSubmit)="saveEdit()">
         <label>Nombre
-          <input type="text" [(ngModel)]="editForm.name" name="name" required />
+          <input type="text" [(ngModel)]="editForm.name" name="name" />
+          <span class="field-error" *ngIf="editErrors['name']">{{ editErrors['name'] }}</span>
         </label>
 
         <label>Correo Electrónico
-          <input type="email" [(ngModel)]="editForm.email" name="email" required />
+          <input type="email" [(ngModel)]="editForm.email" name="email" />
+          <span class="field-error" *ngIf="editErrors['email']">{{ editErrors['email'] }}</span>
         </label>
 
         <label>Rol

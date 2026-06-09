@@ -33,9 +33,11 @@ export class UsersComponent implements OnInit {
     role: 'WORKER',
     departmentId: undefined,
   };
+  createErrors: Record<string, string> = {};
 
   editingUser: User | null    = null;
   editForm: UpdateUserPayload = {};
+  editErrors: Record<string, string> = {};
 
   ngOnInit() {
     setTimeout(() => {
@@ -64,9 +66,21 @@ export class UsersComponent implements OnInit {
   }
 
   create() {
-    this.usersService.create(this.createForm).subscribe({
+    this.createErrors = {};
+    if (!this.createForm.name?.trim())     this.createErrors['name']     = 'El nombre es requerido';
+    if (!this.createForm.email?.trim())    this.createErrors['email']    = 'El correo es requerido';
+    if (!this.createForm.password?.trim()) this.createErrors['password'] = 'La contraseña es requerida';
+    if (Object.keys(this.createErrors).length) return;
+
+    const payload = {
+      ...this.createForm,
+      name:  this.createForm.name.trim(),
+      email: this.createForm.email.trim(),
+    };
+    this.usersService.create(payload).subscribe({
       next: () => {
         this.showCreateForm = false;
+        this.createErrors = {};
         this.createForm = { name: '', email: '', password: '', role: 'WORKER', departmentId: undefined };
         this.load();
       },
@@ -87,10 +101,19 @@ export class UsersComponent implements OnInit {
 
   saveEdit() {
     if (!this.editingUser) return;
-    const payload = { ...this.editForm };
+    this.editErrors = {};
+    if (!this.editForm.name?.trim())  this.editErrors['name']  = 'El nombre es requerido';
+    if (!this.editForm.email?.trim()) this.editErrors['email'] = 'El correo es requerido';
+    if (Object.keys(this.editErrors).length) return;
+
+    const payload = {
+      ...this.editForm,
+      name:  this.editForm.name!.trim(),
+      email: this.editForm.email!.trim(),
+    };
     if (!payload.password) delete payload.password;
     this.usersService.update(this.editingUser.id, payload).subscribe({
-      next: () => { this.editingUser = null; this.load(); },
+      next: () => { this.editingUser = null; this.editErrors = {}; this.load(); },
       error: (err: any) => { this.error = err?.error?.message ?? 'Error al actualizar usuario'; }
     });
   }

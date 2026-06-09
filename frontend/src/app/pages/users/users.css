@@ -196,3 +196,10 @@ tr:hover td { background: #dbeafe; }
     font-size: 0.875rem;
     margin-bottom: 1rem;
 }
+
+.field-error {
+    color: #b91c1c;
+    font-size: 0.78rem;
+    font-weight: 400;
+    margin-top: 2px;
+}
