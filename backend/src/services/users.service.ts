@@ -47,7 +47,7 @@ export async function disableUser(id: number) {
     throw err;
   }
   await prisma.$executeRaw`INSERT INTO disabled_users (user_id) VALUES (${id}) ON CONFLICT DO NOTHING`;
-  invalidateCache();
+  if (disabledCache !== null) disabledCache.add(id);
 }
 
 export async function enableUser(id: number) {
@@ -58,7 +58,7 @@ export async function enableUser(id: number) {
     throw err;
   }
   await prisma.$executeRaw`DELETE FROM disabled_users WHERE user_id = ${id}`;
-  invalidateCache();
+  if (disabledCache !== null) disabledCache.delete(id);
 }
 
 export async function isUserDisabled(id: number): Promise<boolean> {
