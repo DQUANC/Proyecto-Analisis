@@ -141,4 +141,16 @@
       </form>
     </div>
   </div>
+
+  <!-- ── Modal de confirmación de eliminación ── -->
+  <div class="modal-backdrop" *ngIf="confirmDeleteId !== null">
+    <div class="modal modal-confirm">
+      <h3>Eliminar usuario</h3>
+      <p>¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="cancelDelete()">Cancelar</button>
+        <button type="button" class="btn-del" (click)="confirmDelete()">Eliminar</button>
+      </div>
+    </div>
+  </div>
 </div>

@@ -40,6 +40,8 @@ export class UsersComponent implements OnInit {
   editForm: UpdateUserPayload = {};
   editErrors: Record<string, string> = {};
 
+  confirmDeleteId: number | null = null;
+
   ngOnInit() {
     this.currentUserId = this.auth.getUser()?.id ?? null;
     setTimeout(() => {
@@ -129,11 +131,23 @@ export class UsersComponent implements OnInit {
   }
 
   remove(id: number) {
-    if (!confirm('¿Eliminar este usuario?')) return;
-    this.usersService.remove(id).subscribe({
-      next: () => this.load(),
-      error: (err: any) => { this.error = err?.error?.message ?? 'Error al eliminar usuario'; this.cdr.detectChanges(); }
+    this.confirmDeleteId = id;
+  }
+
+  confirmDelete() {
+    if (this.confirmDeleteId === null) return;
+    this.usersService.remove(this.confirmDeleteId).subscribe({
+      next: () => { this.confirmDeleteId = null; this.load(); },
+      error: (err: any) => {
+        this.confirmDeleteId = null;
+        this.error = err?.error?.message ?? 'Error al eliminar usuario';
+        this.cdr.detectChanges();
+      }
     });
+  }
+
+  cancelDelete() {
+    this.confirmDeleteId = null;
   }
 
   toggleActive(user: User) {
