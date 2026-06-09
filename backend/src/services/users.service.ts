@@ -15,9 +15,17 @@ export async function initDisabledUsersTable() {
 
 type DisabledRow = { user_id: number };
 
-async function getDisabledIds(): Promise<Set<number>> {
+let disabledCache: Set<number> | null = null;
+
+async function loadDisabledCache(): Promise<Set<number>> {
+  if (disabledCache !== null) return disabledCache;
   const rows: DisabledRow[] = await prisma.$queryRaw`SELECT user_id FROM disabled_users`;
-  return new Set(rows.map((r: DisabledRow) => Number(r.user_id)));
+  disabledCache = new Set(rows.map((r: DisabledRow) => Number(r.user_id)));
+  return disabledCache;
+}
+
+function invalidateCache() {
+  disabledCache = null;
 }
 
 export async function getAll(filters: { role?: string }) {
@@ -26,7 +34,7 @@ export async function getAll(filters: { role?: string }) {
     include: { department: true },
     orderBy: { name: 'asc' },
   });
-  const disabledIds = await getDisabledIds();
+  const disabledIds = await loadDisabledCache();
   return users.map((u: UserWithDept) => ({ ...safe(u), isActive: !disabledIds.has(u.id) }));
 }
 
@@ -38,6 +46,7 @@ export async function disableUser(id: number) {
     throw err;
   }
   await prisma.$executeRaw`INSERT INTO disabled_users (user_id) VALUES (${id}) ON CONFLICT DO NOTHING`;
+  invalidateCache();
 }
 
 export async function enableUser(id: number) {
@@ -48,11 +57,12 @@ export async function enableUser(id: number) {
     throw err;
   }
   await prisma.$executeRaw`DELETE FROM disabled_users WHERE user_id = ${id}`;
+  invalidateCache();
 }
 
 export async function isUserDisabled(id: number): Promise<boolean> {
-  const rows = await prisma.$queryRaw<{ user_id: number }[]>`SELECT user_id FROM disabled_users WHERE user_id = ${id}`;
-  return rows.length > 0;
+  const cache = await loadDisabledCache();
+  return cache.has(id);
 }
 
 export async function getById(id: number) {
