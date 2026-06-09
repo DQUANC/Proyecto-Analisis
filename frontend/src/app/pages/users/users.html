@@ -39,8 +39,8 @@
 
         <label>Departamento *
           <select [(ngModel)]="createForm.departmentId" name="departmentId">
-            <option [value]="undefined">-- Sin asignar --</option>
-            <option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</option>
+            <option [ngValue]="undefined">-- Sin asignar --</option>
+            <option *ngFor="let d of departments" [ngValue]="d.id">{{ d.name }}</option>
           </select>
           <span class="field-error" *ngIf="createErrors['departmentId']">{{ createErrors['departmentId'] }}</span>
         </label>
@@ -109,8 +109,8 @@
 
         <label>Departamento
           <select [(ngModel)]="editForm.departmentId" name="departmentId">
-            <option [value]="undefined">-- Sin asignar --</option>
-            <option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</option>
+            <option [ngValue]="undefined">-- Sin asignar --</option>
+            <option *ngFor="let d of departments" [ngValue]="d.id">{{ d.name }}</option>
           </select>
         </label>
 
