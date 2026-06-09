@@ -45,7 +45,12 @@ export async function update(req: Request, res: Response, next: NextFunction) {
 
 export async function remove(req: Request, res: Response, next: NextFunction) {
   try {
-    await usersService.remove(Number(req.params.id));
+    const id = Number(req.params.id);
+    if (req.user?.id === id) {
+      res.status(403).json({ message: 'No puedes eliminar tu propia cuenta.' });
+      return;
+    }
+    await usersService.remove(id);
     res.status(204).send();
   } catch (err) {
     next(err);

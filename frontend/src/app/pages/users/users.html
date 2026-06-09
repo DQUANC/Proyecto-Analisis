@@ -89,7 +89,7 @@
               (click)="toggleActive(u)">
               {{ u.isActive !== false ? 'Deshabilitar' : 'Habilitar' }}
             </button>
-            <button class="btn-del" (click)="remove(u.id)">Eliminar</button>
+            <button class="btn-del" *ngIf="u.id !== currentUserId" (click)="remove(u.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>
