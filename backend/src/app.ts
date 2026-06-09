@@ -10,19 +10,19 @@ import authRoutes from './routes/auth.routes';
 import tasksRoutes from './routes/tasks.routes';
 import departmentsRoutes from './routes/departments.routes';
 import dashboardRoutes from './routes/dashboard.routes';
+import usersRoutes from './routes/users.routes';
 import { errorMiddleware } from './middleware/error.middleware';
 
 const app = express();
 
 const allowedOrigins = [
   'http://localhost:4200',
-  ...(process.env['RAILWAY_PUBLIC_DOMAIN'] ? [`https://${process.env['RAILWAY_PUBLIC_DOMAIN'].replace('-back-', '-front-')}`] : []),
-  ...(process.env['FRONTEND_URL'] ?? '').split(',').map(s => s.trim()).filter(Boolean),
-];
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
 
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.railway.app')) {
       cb(null, true);
     } else {
       cb(new Error('Not allowed by CORS'));
@@ -39,6 +39,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', tasksRoutes);
 app.use('/api/departments', departmentsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/users', usersRoutes);
 
 app.use(errorMiddleware);
 
