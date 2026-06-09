@@ -42,8 +42,10 @@ export async function create(data: {
     throw err;
   }
 
-  if (data.departmentId) {
-    const dept = await prisma.department.findUnique({ where: { id: data.departmentId } });
+  const deptId = data.departmentId != null ? Number(data.departmentId) : undefined;
+
+  if (deptId) {
+    const dept = await prisma.department.findUnique({ where: { id: deptId } });
     if (!dept) {
       const err = new Error('Departamento no encontrado') as Error & { statusCode: number };
       err.statusCode = 404;
@@ -58,7 +60,7 @@ export async function create(data: {
       email: data.email,
       password: hashed,
       role: data.role ?? 'WORKER',
-      departmentId: data.departmentId ?? null,
+      departmentId: deptId ?? null,
     },
     include: { department: true },
   });
@@ -85,8 +87,10 @@ export async function update(
     }
   }
 
-  if (data.departmentId) {
-    const dept = await prisma.department.findUnique({ where: { id: data.departmentId } });
+  const deptId = data.departmentId != null ? Number(data.departmentId) : data.departmentId;
+
+  if (deptId) {
+    const dept = await prisma.department.findUnique({ where: { id: deptId } });
     if (!dept) {
       const err = new Error('Departamento no encontrado') as Error & { statusCode: number };
       err.statusCode = 404;
@@ -102,7 +106,7 @@ export async function update(
       ...(data.name !== undefined && { name: data.name }),
       ...(data.email !== undefined && { email: data.email }),
       ...(data.role !== undefined && { role: data.role }),
-      ...(data.departmentId !== undefined && { departmentId: data.departmentId }),
+      ...(deptId !== undefined && { departmentId: deptId }),
       ...(hashedPassword && { password: hashedPassword }),
     },
     include: { department: true },
