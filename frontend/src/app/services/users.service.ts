@@ -20,20 +20,21 @@ export interface User {
   department?: { id: number; name: string } | null;
   createdAt?: string;
   isActive?: boolean;
+  isSuperUser?: boolean;
 }
 
 export interface CreateUserPayload {
   name: string;
   email: string;
   password: string;
-  role: 'ADMIN' | 'WORKER';
+  role: 'ADMIN' | 'WORKER' | 'SUPER_USER';
   departmentId?: number;
 }
 
 export interface UpdateUserPayload {
   name?: string;
   email?: string;
-  role?: 'ADMIN' | 'WORKER';
+  role?: 'ADMIN' | 'WORKER' | 'SUPER_USER';
   departmentId?: number | null;
   password?: string;
 }

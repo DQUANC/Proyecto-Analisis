@@ -102,7 +102,7 @@ export class UsersComponent implements OnInit {
     this.editForm = {
       name:         user.name,
       email:        user.email,
-      role:         user.role,
+      role:         user.isSuperUser ? 'SUPER_USER' : user.role,
       departmentId: user.departmentId ?? undefined,
       password:     '',
     };
@@ -158,7 +158,8 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  roleLabel(role: string): string {
+  roleLabel(role: string, isSuperUser?: boolean): string {
+    if (isSuperUser) return 'Super Usuario';
     return role === 'ADMIN' ? 'Administrador' : 'Trabajador';
   }
 
