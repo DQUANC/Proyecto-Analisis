@@ -60,7 +60,7 @@ export async function login(email: string, password: string) {
   const superUser = await isUserSuperUser(user.id);
   const { password: _p, ...safeUser } = user;
   const token = signToken({ id: user.id, email: user.email, role: user.role, departmentId: user.departmentId, isSuperUser: superUser });
-  return { token, user: safeUser };
+  return { token, user: { ...safeUser, isSuperUser: superUser } };
 }
 
 export async function getMe(userId: number) {
