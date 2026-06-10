@@ -125,8 +125,8 @@
 
           <!-- CAMBIO: botones de acción traducidos. Antes 'Edit'/'Delete' -->
           <td *ngIf="isAdmin" class="actions">
-            <button class="btn-edit" (click)="openEdit(t)">Editar</button>
-            <button class="btn-del" (click)="remove(t.id)">Eliminar</button>
+            <button class="btn-edit" *ngIf="isSuperUser" (click)="openEdit(t)">Editar</button>
+            <button class="btn-del" *ngIf="isSuperUser" (click)="remove(t.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>

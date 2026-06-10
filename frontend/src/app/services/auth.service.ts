@@ -12,6 +12,7 @@ export interface AppUser {
   email: string;
   role: 'ADMIN' | 'WORKER';
   departmentId: number | null;
+  isSuperUser?: boolean;
 }
 
 export interface LoginResponse {
@@ -88,6 +89,10 @@ export class AuthService {
   isAdmin(): boolean {
     const role = this.getRole();
     return role === 'ADMIN' || role === 'SUPER_USER';
+  }
+
+  isSuperUser(): boolean {
+    return this.getUser()?.isSuperUser === true;
   }
 
   isLoggedIn(): boolean {

@@ -33,6 +33,10 @@ export async function create(req: Request, res: Response, next: NextFunction) {
 
 export async function update(req: Request, res: Response, next: NextFunction) {
   try {
+    if (!req.user?.isSuperUser) {
+      res.status(403).json({ message: 'Solo el Super Usuario puede editar usuarios.' });
+      return;
+    }
     const user = await usersService.update(
       Number(req.params.id),
       req.body as Partial<{ name: string; email: string; role: 'ADMIN' | 'WORKER'; departmentId: number | null; password: string }>
@@ -45,6 +49,10 @@ export async function update(req: Request, res: Response, next: NextFunction) {
 
 export async function remove(req: Request, res: Response, next: NextFunction) {
   try {
+    if (!req.user?.isSuperUser) {
+      res.status(403).json({ message: 'Solo el Super Usuario puede eliminar usuarios.' });
+      return;
+    }
     const id = Number(req.params.id);
     if (req.user?.id === id) {
       res.status(403).json({ message: 'No puedes eliminar tu propia cuenta.' });
@@ -64,6 +72,11 @@ export async function disable(req: Request, res: Response, next: NextFunction) {
       res.status(403).json({ message: 'No puedes deshabilitarte a ti mismo.' });
       return;
     }
+    const target = await usersService.getById(id);
+    if ((target.role === 'ADMIN' || target.isSuperUser) && !req.user?.isSuperUser) {
+      res.status(403).json({ message: 'Solo el Super Usuario puede deshabilitar administradores.' });
+      return;
+    }
     await usersService.disableUser(id);
     res.json({ message: 'Usuario deshabilitado' });
   } catch (err) {
@@ -73,7 +86,13 @@ export async function disable(req: Request, res: Response, next: NextFunction) {
 
 export async function enable(req: Request, res: Response, next: NextFunction) {
   try {
-    await usersService.enableUser(Number(req.params.id));
+    const id = Number(req.params.id);
+    const target = await usersService.getById(id);
+    if ((target.role === 'ADMIN' || target.isSuperUser) && !req.user?.isSuperUser) {
+      res.status(403).json({ message: 'Solo el Super Usuario puede habilitar administradores.' });
+      return;
+    }
+    await usersService.enableUser(id);
     res.json({ message: 'Usuario habilitado' });
   } catch (err) {
     next(err);

@@ -25,6 +25,7 @@ export class UsersComponent implements OnInit {
   loading = true;
   error   = '';
   currentUserId: number | null = null;
+  currentUserIsSuperUser = false;
 
   showCreateForm = false;
   createForm: CreateUserPayload = {
@@ -44,6 +45,7 @@ export class UsersComponent implements OnInit {
 
   ngOnInit() {
     this.currentUserId = this.auth.getUser()?.id ?? null;
+    this.currentUserIsSuperUser = this.auth.isSuperUser();
     setTimeout(() => {
       this.load();
       this.deptService.getAll().subscribe({

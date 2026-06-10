@@ -68,6 +68,11 @@ async function loadSuperUsersCache(): Promise<Set<number>> {
   return superUsersCache;
 }
 
+export async function isUserSuperUser(id: number): Promise<boolean> {
+  const cache = await loadSuperUsersCache();
+  return cache.has(id);
+}
+
 async function addSuperUser(id: number) {
   await prisma.$executeRaw`INSERT INTO super_users (user_id) VALUES (${id}) ON CONFLICT DO NOTHING`;
   if (superUsersCache !== null) superUsersCache.add(id);
