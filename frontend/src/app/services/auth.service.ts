@@ -81,12 +81,13 @@ export class AuthService {
     return null;
   }
 
-  getRole(): 'ADMIN' | 'WORKER' | null {
+  getRole(): 'ADMIN' | 'WORKER' | 'SUPER_USER' | null {
     return this.getUser()?.role ?? null;
   }
 
   isAdmin(): boolean {
-    return this.getRole() === 'ADMIN';
+    const role = this.getRole();
+    return role === 'ADMIN' || role === 'SUPER_USER';
   }
 
   isLoggedIn(): boolean {
