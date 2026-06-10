@@ -1,3 +1,10 @@
+.field-error {
+    color: #b91c1c;
+    font-size: 0.78rem;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
 .page {
     max-width: 1200px;
     margin: 0 auto;
