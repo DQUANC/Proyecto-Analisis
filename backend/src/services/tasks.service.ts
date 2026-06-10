@@ -98,8 +98,8 @@ export async function createTask(
       description: data.description,
       priority: (data.priority as 'LOW' | 'MEDIUM' | 'HIGH') ?? 'MEDIUM',
       dueDate: data.dueDate ? new Date(data.dueDate) : null,
-      departmentId: data.departmentId,
-      assignedToId: data.assignedToId ?? null,
+      departmentId: Number(data.departmentId),
+      assignedToId: data.assignedToId != null ? Number(data.assignedToId) : null,
       createdById,
     },
     include: taskInclude,
@@ -140,7 +140,7 @@ export async function updateTask(
     if (data.description !== undefined) updateData.description = data.description;
     if (data.priority !== undefined) updateData.priority = data.priority as 'LOW' | 'MEDIUM' | 'HIGH';
     if (data.dueDate !== undefined) updateData.dueDate = new Date(data.dueDate);
-    if (data.assignedToId !== undefined) updateData.assignedTo = { connect: { id: data.assignedToId } };
+    if (data.assignedToId !== undefined) updateData.assignedTo = { connect: { id: Number(data.assignedToId) } };
   }
 
   if (data.status !== undefined && data.status !== existing.status) {
