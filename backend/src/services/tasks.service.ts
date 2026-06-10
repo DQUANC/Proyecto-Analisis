@@ -92,13 +92,20 @@ export async function createTask(
   },
   createdById: number
 ) {
+  const deptId = Number(data.departmentId);
+  if (!deptId) {
+    const err = new Error('Debes seleccionar un área de trabajo.') as Error & { statusCode: number };
+    err.statusCode = 400;
+    throw err;
+  }
+
   const task = await prisma.task.create({
     data: {
       title: data.title,
       description: data.description,
       priority: (data.priority as 'LOW' | 'MEDIUM' | 'HIGH') ?? 'MEDIUM',
       dueDate: data.dueDate ? new Date(data.dueDate) : null,
-      departmentId: Number(data.departmentId),
+      departmentId: deptId,
       assignedToId: data.assignedToId != null ? Number(data.assignedToId) : null,
       createdById,
     },

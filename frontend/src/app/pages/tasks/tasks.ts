@@ -108,13 +108,17 @@ export class TasksComponent implements OnInit {
     const description = this.createForm.description?.trim() ?? '';
     const dueDate = this.createForm.dueDate?.trim() ?? '';
 
-    if (!title)                                      this.createErrors['title']        = 'El título es requerido.';
-    if (!description)                                this.createErrors['description']  = 'La descripción es requerida.';
-    if (!dueDate)                                    this.createErrors['dueDate']      = 'La fecha límite es requerida.';
-    if (!this.createForm.departmentId)               this.createErrors['departmentId'] = 'Selecciona un área de trabajo.';
-    if (this.createForm.assignedToId == null)        this.createErrors['assignedToId'] = 'Selecciona un usuario asignado.';
+    if (!title)                                                    this.createErrors['title']        = 'El título es requerido.';
+    if (!description)                                            this.createErrors['description']  = 'La descripción es requerida.';
+    if (!dueDate)                                                this.createErrors['dueDate']      = 'La fecha límite es requerida.';
+    if (!this.createForm.departmentId || Number(this.createForm.departmentId) === 0)
+                                                                 this.createErrors['departmentId'] = 'Selecciona un área de trabajo.';
+    if (this.createForm.assignedToId == null)                    this.createErrors['assignedToId'] = 'Selecciona un usuario asignado.';
 
-    if (Object.keys(this.createErrors).length > 0) return;
+    if (Object.keys(this.createErrors).length > 0) {
+      this.cdr.detectChanges();
+      return;
+    }
 
     this.tasksService.create({ ...this.createForm, title, description }).subscribe({
       next: () => {

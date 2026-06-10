@@ -45,8 +45,8 @@
 
         <label>Area De Trabajo *
           <select [(ngModel)]="createForm.departmentId" name="departmentId">
-            <option [value]="0">-- Seleccionar --</option>
-            <option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</option>
+            <option [ngValue]="0">-- Seleccionar --</option>
+            <option *ngFor="let d of departments" [ngValue]="d.id">{{ d.name }}</option>
           </select>
           <span class="field-error" *ngIf="createErrors['departmentId']">{{ createErrors['departmentId'] }}</span>
         </label>
