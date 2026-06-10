@@ -74,12 +74,13 @@ export class UsersService {
 
   create(payload: CreateUserPayload): Observable<{ user: User }> {
     if (environment.useMocks) {
-      const newUser = {
+      const dbRole: 'ADMIN' | 'WORKER' = payload.role === 'SUPER_USER' ? 'ADMIN' : (payload.role as 'ADMIN' | 'WORKER');
+      const newUser: typeof MOCK_USERS[0] = {
         id: Math.max(...MOCK_USERS.map(u => u.id)) + 1,
         name: payload.name,
         email: payload.email,
         password: payload.password,
-        role: payload.role,
+        role: dbRole,
         departmentId: payload.departmentId != null ? Number(payload.departmentId) : null,
       };
       MOCK_USERS.push(newUser);
@@ -93,6 +94,9 @@ export class UsersService {
       const idx = MOCK_USERS.findIndex(u => u.id === id);
       const safePayload = {
         ...payload,
+        ...(payload.role !== undefined && {
+          role: (payload.role === 'SUPER_USER' ? 'ADMIN' : payload.role) as 'ADMIN' | 'WORKER',
+        }),
         ...(payload.departmentId !== undefined && {
           departmentId: payload.departmentId != null ? Number(payload.departmentId) : null,
         }),
