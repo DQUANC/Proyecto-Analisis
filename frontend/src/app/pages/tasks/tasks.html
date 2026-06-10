@@ -21,12 +21,11 @@
     <form (ngSubmit)="create()">
       <div class="form-grid">
         <label>Titulo *
-          <input type="text" [(ngModel)]="createForm.title" name="title" required />
+          <input type="text" [(ngModel)]="createForm.title" name="title" />
+          <span class="field-error" *ngIf="createErrors['title']">{{ createErrors['title'] }}</span>
         </label>
 
-        <!-- CAMBIO: las opciones del select guardan el valor en inglés (LOW/MEDIUM/HIGH)
-             porque así lo espera el backend, pero el texto visible está en español -->
-        <label>Prioridad
+        <label>Prioridad *
           <select [(ngModel)]="createForm.priority" name="priority">
             <option value="LOW">Baja</option>
             <option value="MEDIUM">Media</option>
@@ -34,29 +33,30 @@
           </select>
         </label>
 
-        <label>Descripcion
+        <label>Descripcion *
           <input type="text" [(ngModel)]="createForm.description" name="description" />
+          <span class="field-error" *ngIf="createErrors['description']">{{ createErrors['description'] }}</span>
         </label>
 
-        <!-- CAMBIO: antes decía 'Due Date', ahora 'Fecha Límite' -->
-        <label>Fecha Límite
+        <label>Fecha Límite *
           <input type="date" [(ngModel)]="createForm.dueDate" name="dueDate" />
+          <span class="field-error" *ngIf="createErrors['dueDate']">{{ createErrors['dueDate'] }}</span>
         </label>
 
-        <!-- CAMBIO: el placeholder del select pasó de '-- Select --' a '-- Seleccionar --' -->
         <label>Area De Trabajo *
-          <select [(ngModel)]="createForm.departmentId" name="departmentId" required>
+          <select [(ngModel)]="createForm.departmentId" name="departmentId">
             <option [value]="0">-- Seleccionar --</option>
             <option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</option>
           </select>
+          <span class="field-error" *ngIf="createErrors['departmentId']">{{ createErrors['departmentId'] }}</span>
         </label>
 
-        <!-- CAMBIO: el placeholder pasó de '-- Unassigned --' a '-- Sin asignar --' -->
-        <label>Asignado A
+        <label>Asignado A *
           <select [(ngModel)]="createForm.assignedToId" name="assignedToId">
-            <option [value]="undefined">-- Sin asignar --</option>
-            <option *ngFor="let w of workers" [value]="w.id">{{ w.name }}</option>
+            <option [ngValue]="undefined">-- Sin asignar --</option>
+            <option *ngFor="let w of workers" [ngValue]="w.id">{{ w.name }}</option>
           </select>
+          <span class="field-error" *ngIf="createErrors['assignedToId']">{{ createErrors['assignedToId'] }}</span>
         </label>
       </div>
       <button type="submit" class="btn-primary">Crear Tarea</button>
