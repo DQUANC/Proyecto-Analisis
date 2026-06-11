@@ -1,19 +1,30 @@
 <div class="page">
   <header>
-    <h1>Departments</h1>
-    <a routerLink="/dashboard">← Dashboard</a>
+    <!-- ORTOGRAFÍA: 'Departments' → 'Departamentos' -->
+    <h1>Departamentos</h1>
+    <!-- ORTOGRAFÍA: '← Dashboard' → '← Panel de Control' -->
+    <a routerLink="/dashboard">← Panel de Control</a>
   </header>
 
   <div class="form-row">
-    <input type="text" [(ngModel)]="newName" placeholder="New department name" />
-    <button (click)="create()">Add</button>
+    <!-- ORTOGRAFÍA: 'New department name' → 'Nombre del departamento' -->
+    <input type="text" [(ngModel)]="newName" placeholder="Nombre del departamento" />
+    <!-- ORTOGRAFÍA: 'Add' → 'Agregar' -->
+    <button (click)="create()">Agregar</button>
   </div>
 
-  <p *ngIf="loading">Loading...</p>
+  <!-- ORTOGRAFÍA: 'Loading...' → 'Cargando...' -->
+  <p *ngIf="loading">Cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
   <table *ngIf="!loading && departments.length">
-    <thead><tr><th>Name</th><th>Actions</th></tr></thead>
+    <thead>
+      <tr>
+        <!-- ORTOGRAFÍA: 'Name' → 'Nombre' / 'Actions' → 'Acciones' -->
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
     <tbody>
       <tr *ngFor="let d of departments">
         <td>
@@ -21,13 +32,15 @@
           <input *ngIf="editId === d.id" type="text" [(ngModel)]="editName" />
         </td>
         <td>
-          <button *ngIf="editId !== d.id" (click)="startEdit(d)">Edit</button>
-          <button *ngIf="editId === d.id" (click)="saveEdit()">Save</button>
-          <button class="del" (click)="remove(d.id)">Delete</button>
+          <!-- ORTOGRAFÍA: 'Edit' → 'Editar' / 'Save' → 'Guardar' / 'Delete' → 'Eliminar' -->
+          <button *ngIf="editId !== d.id" (click)="startEdit(d)">Editar</button>
+          <button *ngIf="editId === d.id" (click)="saveEdit()">Guardar</button>
+          <button class="del" (click)="remove(d.id)">Eliminar</button>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <p *ngIf="!loading && !departments.length && !error">No departments yet.</p>
+  <!-- ORTOGRAFÍA: 'No departments yet.' → 'No hay departamentos aún.' -->
+  <p *ngIf="!loading && !departments.length && !error">No hay departamentos aún.</p>
 </div>

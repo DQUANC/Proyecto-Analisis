@@ -1,27 +1,42 @@
 <div class="container">
-  <h2>Register</h2>
+  <!-- ORTOGRAFÍA: 'Register' → 'Registro' -->
+  <h2>Registro</h2>
   <form (ngSubmit)="submit()">
-    <label>Name
+
+    <!-- ORTOGRAFÍA: 'Name' → 'Nombre' -->
+    <label>Nombre
       <input type="text" [(ngModel)]="name" name="name" required />
     </label>
-    <label>Email
+
+    <!-- ORTOGRAFÍA: 'Email' → 'Correo Electrónico' -->
+    <label>Correo Electrónico
       <input type="email" [(ngModel)]="email" name="email" required />
     </label>
-    <label>Password
+
+    <!-- ORTOGRAFÍA: 'Password' → 'Contraseña' -->
+    <label>Contraseña
       <input type="password" [(ngModel)]="password" name="password" required />
     </label>
-    <label>Department
+
+    <!-- ORTOGRAFÍA: 'Department' → 'Departamento' -->
+    <label>Departamento
       <select [(ngModel)]="departmentId" name="departmentId">
-        <option [value]="null">-- Select department --</option>
+        <!-- ORTOGRAFÍA: '-- Select department --' → '-- Seleccionar departamento --' -->
+        <option [value]="null">-- Seleccionar departamento --</option>
         @for (d of departments; track d.id) {
           <option [value]="d.id">{{ d.name }}</option>
         }
       </select>
     </label>
+
     @if (error) {
       <p class="error">{{ error }}</p>
     }
-    <button type="submit" [disabled]="loading">{{ loading ? 'Registering...' : 'Register' }}</button>
+
+    <!-- ORTOGRAFÍA: 'Registering...' / 'Register' → español -->
+    <button type="submit" [disabled]="loading">{{ loading ? 'Registrando...' : 'Registrarse' }}</button>
   </form>
-  <p>Already have an account? <a routerLink="/login">Login</a></p>
+
+  <!-- ORTOGRAFÍA: 'Already have an account? Login' → español -->
+  <p>¿Ya tienes una cuenta? <a routerLink="/login">Iniciar Sesión</a></p>
 </div>

@@ -2,14 +2,11 @@
 
   <div class="info-panel">
     <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Usuario">
-
     <h1>Soluciones Administrativas Integrales, S. A.</h1>
-
     <p>Sistema de Gestión de Tareas</p>
   </div>
 
   <div class="login-panel">
-
     <div class="container">
       <h2>Inicio de Sesión</h2>
       <form (ngSubmit)="submit()">
@@ -20,8 +17,10 @@
           <input type="password" [(ngModel)]="password" name="password" required />
         </label>
         <p class="error" *ngIf="error">{{ error }}</p>
-        <button type="submit" [disabled]="loading">{{ loading ? 'Logging in...' : 'Iniciar Sesión' }}</button>
+        <!-- ORTOGRAFÍA: 'Logging in...' → 'Iniciando sesión...' -->
+        <button type="submit" [disabled]="loading">{{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}</button>
       </form>
     </div>
   </div>
+
 </div>
