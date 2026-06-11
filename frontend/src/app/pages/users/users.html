@@ -3,7 +3,7 @@
     <h1>Usuarios</h1>
     <div>
       <a routerLink="/tasks">← Tareas</a>
-      <button *ngIf="currentUserIsSuperUser" (click)="showCreateForm = !showCreateForm">
+      <button (click)="showCreateForm = !showCreateForm">
         {{ showCreateForm ? 'Cancelar' : '+ Nuevo Usuario' }}
       </button>
       <button class="logout" (click)="logout()">Cerrar Sesión</button>
@@ -85,7 +85,7 @@
             </span>
           </td>
           <td class="actions">
-            <button class="btn-edit" *ngIf="currentUserIsSuperUser" (click)="openEdit(u)">Editar</button>
+            <button class="btn-edit" (click)="openEdit(u)">Editar</button>
             <button class="btn-toggle"
               *ngIf="u.id !== currentUserId && (u.role === 'WORKER' || currentUserIsSuperUser)"
               [class.btn-disable]="u.isActive !== false"
