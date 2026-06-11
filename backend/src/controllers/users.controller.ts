@@ -33,10 +33,6 @@ export async function create(req: Request, res: Response, next: NextFunction) {
 
 export async function update(req: Request, res: Response, next: NextFunction) {
   try {
-    if (!req.user?.isSuperUser) {
-      res.status(403).json({ message: 'Solo el Super Usuario puede editar usuarios.' });
-      return;
-    }
     const user = await usersService.update(
       Number(req.params.id),
       req.body as Partial<{ name: string; email: string; role: 'ADMIN' | 'WORKER'; departmentId: number | null; password: string }>
