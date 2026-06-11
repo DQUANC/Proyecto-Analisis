@@ -1,0 +1,161 @@
+<div class="page">
+  <header>
+    <h1>Usuarios</h1>
+    <div>
+      <a routerLink="/tasks">← Tareas</a>
+      <button *ngIf="currentUserIsSuperUser" (click)="showCreateForm = !showCreateForm">
+        {{ showCreateForm ? 'Cancelar' : '+ Nuevo Usuario' }}
+      </button>
+      <button class="logout" (click)="logout()">Cerrar Sesión</button>
+    </div>
+  </header>
+
+  <!-- ── Formulario de creación ── -->
+  <div class="form-box" *ngIf="showCreateForm">
+    <h3>Nuevo Usuario</h3>
+    <form (ngSubmit)="create()">
+      <div class="form-grid">
+        <label>Nombre *
+          <input type="text" [(ngModel)]="createForm.name" name="name" />
+          <span class="field-error" *ngIf="createErrors['name']">{{ createErrors['name'] }}</span>
+        </label>
+
+        <label>Correo Electrónico *
+          <input type="email" [(ngModel)]="createForm.email" name="email" />
+          <span class="field-error" *ngIf="createErrors['email']">{{ createErrors['email'] }}</span>
+        </label>
+
+        <label>Contraseña *
+          <input type="password" [(ngModel)]="createForm.password" name="password" />
+          <span class="field-error" *ngIf="createErrors['password']">{{ createErrors['password'] }}</span>
+        </label>
+
+        <label>Rol *
+          <select [(ngModel)]="createForm.role" name="role">
+            <option value="WORKER">Trabajador</option>
+            <option value="ADMIN">Administrador</option>
+            <option value="SUPER_USER">Super Usuario</option>
+          </select>
+        </label>
+
+        <label>Departamento *
+          <select [(ngModel)]="createForm.departmentId" name="departmentId">
+            <option [ngValue]="undefined">-- Sin asignar --</option>
+            <option *ngFor="let d of departments" [ngValue]="d.id">{{ d.name }}</option>
+          </select>
+          <span class="field-error" *ngIf="createErrors['departmentId']">{{ createErrors['departmentId'] }}</span>
+        </label>
+      </div>
+      <button type="submit" class="btn-primary">Crear Usuario</button>
+    </form>
+  </div>
+
+  <p *ngIf="loading">Cargando...</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <!-- ── Tabla de usuarios ── -->
+  <div class="table-wrap" *ngIf="!loading && users.length">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo Electrónico</th>
+          <th>Rol</th>
+          <th>Departamento</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of users" [class.row-disabled]="u.isActive === false">
+          <td>{{ u.name }}</td>
+          <td>{{ u.email }}</td>
+          <td>
+            <span class="badge"
+              [class.badge-admin]="u.role === 'ADMIN' && !u.isSuperUser"
+              [class.badge-super]="u.isSuperUser"
+              [class.badge-worker]="u.role === 'WORKER'">
+              {{ roleLabel(u.role, u.isSuperUser) }}
+            </span>
+          </td>
+          <td>{{ u.department?.name ?? '—' }}</td>
+          <td>
+            <span class="badge" [class.badge-active]="u.isActive !== false" [class.badge-inactive]="u.isActive === false">
+              {{ u.isActive !== false ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-edit" *ngIf="currentUserIsSuperUser" (click)="openEdit(u)">Editar</button>
+            <button class="btn-toggle"
+              *ngIf="u.id !== currentUserId && (u.role === 'WORKER' || currentUserIsSuperUser)"
+              [class.btn-disable]="u.isActive !== false"
+              [class.btn-enable]="u.isActive === false"
+              (click)="toggleActive(u)">
+              {{ u.isActive !== false ? 'Deshabilitar' : 'Habilitar' }}
+            </button>
+            <button class="btn-del" *ngIf="u.id !== currentUserId && currentUserIsSuperUser" (click)="remove(u.id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p *ngIf="!loading && !users.length && !error">No hay usuarios registrados.</p>
+
+  <!-- ── Modal de edición ── -->
+  <div class="modal-backdrop" *ngIf="editingUser" (click)="editingUser = null">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Editar Usuario: {{ editingUser.name }}</h3>
+      <form (ngSubmit)="saveEdit()">
+        <label>Nombre
+          <input type="text" [(ngModel)]="editForm.name" name="name" />
+          <span class="field-error" *ngIf="editErrors['name']">{{ editErrors['name'] }}</span>
+        </label>
+
+        <label>Correo Electrónico
+          <input type="email" [(ngModel)]="editForm.email" name="email" />
+          <span class="field-error" *ngIf="editErrors['email']">{{ editErrors['email'] }}</span>
+        </label>
+
+        <label>Rol
+          <select [(ngModel)]="editForm.role" name="role">
+            <option value="WORKER">Trabajador</option>
+            <option value="ADMIN">Administrador</option>
+            <option value="SUPER_USER">Super Usuario</option>
+          </select>
+        </label>
+
+        <label>Departamento
+          <select [(ngModel)]="editForm.departmentId" name="departmentId">
+            <option [ngValue]="undefined">-- Sin asignar --</option>
+            <option *ngFor="let d of departments" [ngValue]="d.id">{{ d.name }}</option>
+          </select>
+        </label>
+
+        <label class="password-reset">
+          Resetear Contraseña
+          <small>Dejar vacío para no modificarla</small>
+          <input type="password" [(ngModel)]="editForm.password" name="password"
+                 placeholder="Nueva contraseña..." autocomplete="new-password" />
+        </label>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="editingUser = null">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Modal de confirmación de eliminación ── -->
+  <div class="modal-backdrop" *ngIf="confirmDeleteId !== null">
+    <div class="modal modal-confirm">
+      <h3>Eliminar usuario</h3>
+      <p>¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="cancelDelete()">Cancelar</button>
+        <button type="button" class="btn-del" (click)="confirmDelete()">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

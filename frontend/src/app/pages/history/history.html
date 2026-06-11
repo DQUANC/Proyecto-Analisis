@@ -1,37 +1,31 @@
 <div class="page">
   <header>
-    <!-- ORTOGRAFÍA: 'Historial De Tareas' → 'Historial de Tareas' (preposición en minúscula) -->
-    <h1>Historial de Tareas</h1>
+    <h1>Historial De Tareas</h1>
     <div>
-      <a *ngIf="isAdmin" routerLink="/dashboard">← Panel de Control</a>
+      <a *ngIf="isAdmin" routerLink="/dashboard">← Panel De Control</a>
       <a routerLink="/tasks">Tareas</a>
-      <!-- ORTOGRAFÍA: 'cerrar sesion' → 'Cerrar Sesión' -->
-      <button class="logout" (click)="logout()">Cerrar Sesión</button>
+      <button class="logout" (click)="logout()">cerrar sesion</button>
     </div>
   </header>
 
-  <p *ngIf="loading">Cargando...</p>
+  <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
   <div class="table-wrap" *ngIf="!loading && tasks.length">
     <table>
       <thead>
         <tr>
-          <!-- ORTOGRAFÍA: corrección de tildes en todos los encabezados -->
-          <th>Título</th>
+          <th>Titulo</th>
           <th>Prioridad</th>
-          <th *ngIf="isAdmin">Asignado a</th>
-          <!-- ORTOGRAFÍA: 'Puesto De Trabajo' → 'Área de Trabajo' -->
-          <th *ngIf="isAdmin">Área de Trabajo</th>
-          <th>Fecha de Creación</th>
-          <th>Fecha de Inicio</th>
-          <th>Fecha de Finalización</th>
-          <th>Fecha Límite</th>
+          <th *ngIf="isAdmin">Asignado a </th>
+          <th *ngIf="isAdmin">Puesto De Trabajo</th>
+          <th>Fecha De Creacion</th>
+          <th>Fecha De Inicio</th>
+          <th>Fecha De Finalizacion</th>
+          <th>Fecha Limite</th>
           <th>Tiempo Activo</th>
-          <!-- ORTOGRAFÍA: 'Puntuacion' → 'Puntuación' -->
-          <th *ngIf="isAdmin">Puntuación</th>
-          <!-- ORTOGRAFÍA: 'RetroAlimentacion' → 'Retroalimentación' -->
-          <th *ngIf="isAdmin">Retroalimentación</th>
+          <th *ngIf="isAdmin">Puntuacion</th>
+          <th *ngIf="isAdmin">RetroAlimentacion</th>
         </tr>
       </thead>
       <tbody>
@@ -61,6 +55,5 @@
     </table>
   </div>
 
-  <!-- ORTOGRAFÍA: 'No Hay Tareas Completadas.' → 'No hay tareas completadas.' -->
-  <p *ngIf="!loading && !tasks.length && !error">No hay tareas completadas.</p>
+  <p *ngIf="!loading && !tasks.length && !error">No Hay Tareas Completadas.</p>
 </div>

@@ -61,11 +61,11 @@ export class Dashboard implements OnInit {
       }
     });
     this.dashService.getByDepartment().subscribe({
-      next: (data: DepartmentStat[]) => this.departments = data,
+      next: (data: DepartmentStat[]) => { this.departments = data; this.cdr.detectChanges(); },
       error: () => {}
     });
     this.dashService.getByUser().subscribe({
-      next: (data: UserStat[]) => this.users = data,
+      next: (data: UserStat[]) => { this.users = data; this.cdr.detectChanges(); },
       error: () => {}
     });
   }
