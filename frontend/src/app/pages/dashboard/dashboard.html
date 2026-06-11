@@ -4,6 +4,7 @@
     <nav>
       <a routerLink="/tasks">Tareas</a>
       <a routerLink="/history">Historial</a>
+     <a routerLink="/users">Usuarios</a>
       <button (click)="logout()">Cerrar sesión</button>
     </nav>
   </header>
@@ -52,11 +53,6 @@
           <td>{{ d.departmentName }}</td>
           <td>{{ d.totalTasks }}</td>
           <td>
-            <!-- SOLUCIÓN ERROR 2: [ngClass] ahora compara con las claves reales del backend
-                 (DONE, IN_PROGRESS, TO_DO en MAYÚSCULAS).
-                 Antes comparaba con 'completed', 'in_progress', 'pending' (minúsculas)
-                 que nunca coincidían, por eso los badges no tenían color.
-                 Las clases CSS badge-done/badge-progress/badge-todo están en dashboard.css -->
             <span *ngFor="let s of d.tasksByStatus | keyvalue" class="badge"
               [ngClass]="{
                 'badge-done':     s.key === 'DONE',
@@ -89,7 +85,6 @@
           <td>{{ u.department?.name ?? '—' }}</td>
           <td>{{ u.totalAssigned }}</td>
           <td>
-            <!-- Mismo fix que la tabla de departamentos: claves en MAYÚSCULAS -->
             <span *ngFor="let s of u.tasksByStatus | keyvalue" class="badge"
               [ngClass]="{
                 'badge-done':     s.key === 'DONE',

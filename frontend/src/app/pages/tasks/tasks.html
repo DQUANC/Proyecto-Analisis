@@ -2,7 +2,7 @@
   <header>
     <h1>Tareas</h1>
     <div>
-      <a *ngIf="isAdmin" routerLink="/dashboard">← Panel de Control</a>
+      <a *ngIf="isAdmin" routerLink="/dashboard">← Panel De Control</a>
       <a routerLink="/history">Historial</a>
 
       <!-- CAMBIO: el botón alterna entre mostrar/ocultar el formulario de creación.
@@ -20,15 +20,12 @@
     <h3>Nueva Tarea</h3>
     <form (ngSubmit)="create()">
       <div class="form-grid">
-
-        <!-- ORTOGRAFÍA: 'Titulo' → 'Título' -->
-        <label>Título *
-          <input type="text" [(ngModel)]="createForm.title" name="title" required />
+        <label>Titulo *
+          <input type="text" [(ngModel)]="createForm.title" name="title" />
+          <span class="field-error" *ngIf="createErrors['title']">{{ createErrors['title'] }}</span>
         </label>
 
-        <!-- CAMBIO: las opciones del select guardan el valor en inglés (LOW/MEDIUM/HIGH)
-             porque así lo espera el backend, pero el texto visible está en español -->
-        <label>Prioridad
+        <label>Prioridad *
           <select [(ngModel)]="createForm.priority" name="priority">
             <option value="LOW">Baja</option>
             <option value="MEDIUM">Media</option>
@@ -36,39 +33,37 @@
           </select>
         </label>
 
-        <!-- ORTOGRAFÍA: 'Descripcion' → 'Descripción' -->
-        <label>Descripción
+        <label>Descripcion *
           <input type="text" [(ngModel)]="createForm.description" name="description" />
+          <span class="field-error" *ngIf="createErrors['description']">{{ createErrors['description'] }}</span>
         </label>
 
-        <!-- CAMBIO: antes decía 'Due Date', ahora 'Fecha Límite' -->
-        <label>Fecha Límite
+        <label>Fecha Límite *
           <input type="date" [(ngModel)]="createForm.dueDate" name="dueDate" />
+          <span class="field-error" *ngIf="createErrors['dueDate']">{{ createErrors['dueDate'] }}</span>
         </label>
 
-        <!-- CAMBIO: el placeholder del select pasó de '-- Select --' a '-- Seleccionar --' -->
-        <!-- ORTOGRAFÍA: 'Area De Trabajo' → 'Área de Trabajo' -->
-        <label>Área de Trabajo *
-          <select [(ngModel)]="createForm.departmentId" name="departmentId" required>
-            <option [value]="0">-- Seleccionar --</option>
-            <option *ngFor="let d of departments" [value]="d.id">{{ d.name }}</option>
+        <label>Area De Trabajo *
+          <select [(ngModel)]="createForm.departmentId" name="departmentId">
+            <option [ngValue]="0">-- Seleccionar --</option>
+            <option *ngFor="let d of departments" [ngValue]="d.id">{{ d.name }}</option>
           </select>
+          <span class="field-error" *ngIf="createErrors['departmentId']">{{ createErrors['departmentId'] }}</span>
         </label>
 
-        <!-- CAMBIO: el placeholder pasó de '-- Unassigned --' a '-- Sin asignar --' -->
-        <!-- ORTOGRAFÍA: 'Asignado A' → 'Asignado a' (la preposición va en minúscula) -->
-        <label>Asignado a
+        <label>Asignado A *
           <select [(ngModel)]="createForm.assignedToId" name="assignedToId">
-            <option [value]="undefined">-- Sin asignar --</option>
-            <option *ngFor="let w of workers" [value]="w.id">{{ w.name }}</option>
+            <option [ngValue]="undefined">-- Sin asignar --</option>
+            <option *ngFor="let w of workers" [ngValue]="w.id">{{ w.name }}</option>
           </select>
+          <span class="field-error" *ngIf="createErrors['assignedToId']">{{ createErrors['assignedToId'] }}</span>
         </label>
       </div>
       <button type="submit" class="btn-primary">Crear Tarea</button>
     </form>
   </div>
 
-  <p *ngIf="loading">Cargando...</p>
+  <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
   <!-- ── Tabla de tareas ── -->
@@ -76,16 +71,15 @@
     <table>
       <thead>
         <tr>
-          <!-- ORTOGRAFÍA: corrección de tildes en encabezados de tabla -->
-          <th>Título</th>
+          <th>Titulo</th>
           <th>Prioridad</th>
-          <th>Estado de Tarea</th>
-          <th *ngIf="isAdmin">Asignado a</th>
-          <th>Fecha de Creación</th>
-          <th>Fecha de Inicio</th>
-          <th>Fecha de Finalización</th>
-          <th>Fecha Límite</th>
-          <th *ngIf="isAdmin">Calificación</th>
+          <th>Estado De Tarea</th>
+          <th *ngIf="isAdmin">Asignado A</th>
+          <th>Fecha De Creacion</th>
+          <th>Fecha De Inicio</th>
+          <th>Fecha De Finalizacion</th>
+          <th>Fecha Limite</th>
+          <th *ngIf="isAdmin">Calificacion</th>
           <th *ngIf="isAdmin">Acciones</th>
         </tr>
       </thead>
@@ -131,8 +125,8 @@
 
           <!-- CAMBIO: botones de acción traducidos. Antes 'Edit'/'Delete' -->
           <td *ngIf="isAdmin" class="actions">
-            <button class="btn-edit" (click)="openEdit(t)">Editar</button>
-            <button class="btn-del" (click)="remove(t.id)">Eliminar</button>
+            <button class="btn-edit" *ngIf="isSuperUser" (click)="openEdit(t)">Editar</button>
+            <button class="btn-del" *ngIf="isSuperUser" (click)="remove(t.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>
@@ -146,15 +140,12 @@
   <!-- Se abre al hacer click en "Editar". Clic fuera del modal lo cierra -->
   <div class="modal-backdrop" *ngIf="editingTask" (click)="editingTask = null">
     <div class="modal" (click)="$event.stopPropagation()">
-      <!-- ORTOGRAFÍA: 'Editar Tareas' → 'Editar Tarea' (singular, es una sola tarea) -->
-      <h3>Editar Tarea</h3>
+      <h3>Editar Tareas</h3>
       <form (ngSubmit)="saveEdit()">
-        <!-- ORTOGRAFÍA: 'Titulo' → 'Título' -->
-        <label>Título
+        <label>Titulo
           <input type="text" [(ngModel)]="editForm.title" name="title" required />
         </label>
-        <!-- ORTOGRAFÍA: 'Descripcion' → 'Descripción' -->
-        <label>Descripción
+        <label>Descripcion
           <input type="text" [(ngModel)]="editForm.description" name="description" />
         </label>
 
@@ -168,13 +159,12 @@
           </select>
         </label>
 
-        <!-- ORTOGRAFÍA: 'Fecha Limite' → 'Fecha Límite' -->
-        <label>Fecha Límite
+        <label>Fecha Limite
           <input type="date" [(ngModel)]="editForm.dueDate" name="dueDate" />
         </label>
 
         <!-- CAMBIO: '-- Unassigned --' → '-- Sin asignar --' -->
-        <label>Asignado a
+        <label>Asignado A
           <select [(ngModel)]="editForm.assignedToId" name="assignedToId">
             <option [value]="undefined">-- Sin asignar --</option>
             <option *ngFor="let w of workers" [value]="w.id">{{ w.name }}</option>
@@ -183,7 +173,7 @@
 
         <div class="modal-actions">
           <button type="button" class="btn-cancel" (click)="editingTask = null">Cancelar</button>
-          <button type="submit" class="btn-primary">Guardar Cambios</button>
+          <button type="submit" class="btn-primary">Guardar cambios</button>
         </div>
       </form>
     </div>
@@ -208,8 +198,7 @@
 
         <div class="modal-actions">
           <button type="button" class="btn-cancel" (click)="evaluatingTask = null">Cancelar</button>
-          <!-- ORTOGRAFÍA: 'Guardar Evaluacion' → 'Guardar Evaluación' -->
-          <button type="submit" class="btn-primary">Guardar Evaluación</button>
+          <button type="submit" class="btn-primary">Guardar Evaluacion</button>
         </div>
       </form>
     </div>

@@ -34,15 +34,17 @@ export class TasksComponent implements OnInit {
   // Determina si el usuario logueado es administrador.
   // Se usa en el HTML con *ngIf="isAdmin" para mostrar/ocultar botones y columnas.
   readonly isAdmin = this.auth.isAdmin();
+  readonly isSuperUser = this.auth.isSuperUser();
 
   // ── Estado del formulario de creación ───────────────
   // showCreateForm controla si el formulario es visible o no.
   // createForm contiene los valores que el usuario escribe antes de enviar.
   showCreateForm = false;
+  createErrors: Record<string, string> = {};
   createForm: CreateTaskPayload = {
     title: '',
     description: '',
-    priority: 'MEDIUM',   // valor por defecto: Media
+    priority: 'MEDIUM',
     departmentId: 0,
     assignedToId: undefined,
   };
@@ -102,14 +104,34 @@ export class TasksComponent implements OnInit {
   // Se llama al enviar el formulario de nueva tarea.
   // Al terminar limpia el formulario y recarga la tabla.
   create() {
-    this.tasksService.create(this.createForm).subscribe({
+    this.createErrors = {};
+    const title = this.createForm.title?.trim() ?? '';
+    const description = this.createForm.description?.trim() ?? '';
+    const dueDate = this.createForm.dueDate?.trim() ?? '';
+
+    if (!title)                                                    this.createErrors['title']        = 'El título es requerido.';
+    if (!description)                                            this.createErrors['description']  = 'La descripción es requerida.';
+    if (!dueDate)                                                this.createErrors['dueDate']      = 'La fecha límite es requerida.';
+    if (!this.createForm.departmentId || Number(this.createForm.departmentId) === 0)
+                                                                 this.createErrors['departmentId'] = 'Selecciona un área de trabajo.';
+    if (this.createForm.assignedToId == null)                    this.createErrors['assignedToId'] = 'Selecciona un usuario asignado.';
+
+    if (Object.keys(this.createErrors).length > 0) {
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.tasksService.create({ ...this.createForm, title, description }).subscribe({
       next: () => {
         this.showCreateForm = false;
+        this.createErrors = {};
         this.createForm = { title: '', description: '', priority: 'MEDIUM', departmentId: 0, assignedToId: undefined };
         this.load();
       },
-      // CAMBIO: mensaje de error traducido
-      error: (err: any) => { this.error = err?.error?.message ?? 'Error al crear'; }
+      error: (err: any) => {
+        this.error = err?.error?.message ?? 'Error al crear';
+        this.cdr.detectChanges();
+      }
     });
   }
 
