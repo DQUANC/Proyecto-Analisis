@@ -12,6 +12,7 @@ export interface JwtPayload {
   email: string;
   role: string;
   departmentId: number | null;
+  isSuperUser: boolean;
 }
 
 export function signToken(payload: JwtPayload): string {
