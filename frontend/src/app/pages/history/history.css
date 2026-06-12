@@ -2,8 +2,11 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
+    /* CAMBIO: agregado font-family y min-height para que coincida con tasks y dashboard */
+    font-family: Arial, Helvetica, sans-serif;
     background: #f0f7ff;
     color: #0f172a;
+    min-height: 100vh;
 }
 
 header {
@@ -11,6 +14,19 @@ header {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    /* CAMBIO: se agregó el gradiente azul, border-radius y sombra igual que tasks y dashboard */
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+}
+
+/* CAMBIO: título del header en blanco para que se vea sobre el fondo azul */
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: white;
+    font-weight: 700;
 }
 
 header div {
@@ -19,28 +35,46 @@ header div {
     align-items: center;
 }
 
+/* CAMBIO: links del header en blanco con hover semitransparente, igual que tasks */
 header a {
-    color: #2563eb;
+    color: white;
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 600;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    transition: 0.2s ease;
 }
 
 header a:hover {
-    color: #1d4ed8;
+    background: rgba(255, 255, 255, 0.15);
 }
 
+/* CAMBIO: botón del header con fondo blanco y texto azul, igual que tasks */
 header button {
-    padding: 0.4rem 0.9rem;
+    padding: 0.45rem 1rem;
+    background: white;
+    color: #2563eb;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 0.9rem;
+    font-weight: 600;
+    transition: 0.2s ease;
 }
 
+header button:hover {
+    background: #dbeafe;
+}
+
+/* El botón de cerrar sesión mantiene su rojo */
 .logout {
-    background: #ef4444;
-    color: white;
+    background: #ef4444 !important;
+    color: white !important;
+}
+
+.logout:hover {
+    background: #dc2626 !important;
 }
 
 .table-wrap {
@@ -69,6 +103,10 @@ th {
     background: #2563eb;
     font-weight: 600;
     color: white;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fbff;
 }
 
 tr:hover td {
@@ -137,5 +175,10 @@ tr:hover td {
 
 .error {
     color: #b91c1c;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
     font-size: 0.875rem;
+    margin-bottom: 1rem;
 }

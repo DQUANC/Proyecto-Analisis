@@ -73,14 +73,3 @@ Proyecto-Analisis/
 └── frontend/         # Aplicación Angular
     └── src/          # Código fuente del frontend
 ```
-
----
-
-## Variables de Entorno
-
-El proyecto requiere las siguientes variables de entorno configuradas en Railway:
-
-```env
-DATABASE_URL=       # URL de conexión a PostgreSQL
-JWT_SECRET=         # Clave secreta para firma de tokens JWT
-```

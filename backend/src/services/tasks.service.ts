@@ -30,6 +30,7 @@ export async function getTasks(
     ];
   }
 
+  if (!filters.status) where.status = { notIn: ['DONE'] };
   if (filters.status) where.status = filters.status;
   if (filters.assignedToId) where.assignedToId = filters.assignedToId;
   if (filters.departmentId && user.role === 'ADMIN') where.departmentId = filters.departmentId;
