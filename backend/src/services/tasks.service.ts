@@ -48,7 +48,16 @@ export async function getTasks(
     prisma.task.count({ where }),
   ]);
 
-  return { tasks: tasks.map(withActiveTime), total, page, limit };
+  return {
+    tasks: tasks.map(t => {
+      const r = withActiveTime(t);
+      if (user.role === 'WORKER') r.completedAt = null;
+      return r;
+    }),
+    total,
+    page,
+    limit,
+  };
 }
 
 export async function getTaskById(
@@ -213,7 +222,11 @@ export async function getHistory(
     orderBy: { completedAt: 'desc' },
   });
 
-  return tasks.map(withActiveTime);
+  return tasks.map(t => {
+    const r = withActiveTime(t);
+    if (user.role === 'WORKER') r.completedAt = null;
+    return r;
+  });
 }
 
 export async function getTaskStatusHistory(
