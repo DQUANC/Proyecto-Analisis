@@ -1,13 +1,5 @@
 <div class="page">
-  <header>
-    <h1>Panel de control</h1>
-    <nav>
-      <a routerLink="/tasks">Tareas</a>
-      <a routerLink="/history">Historial</a>
-     <a routerLink="/users">Usuarios</a>
-      <button (click)="logout()">Cerrar sesión</button>
-    </nav>
-  </header>
+  <app-navbar></app-navbar>
 
   <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>

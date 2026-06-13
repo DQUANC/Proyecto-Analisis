@@ -1,12 +1,5 @@
 <div class="page">
-  <header>
-    <h1>Historial De Tareas</h1>
-    <div>
-      <a *ngIf="isAdmin" routerLink="/dashboard">← Panel De Control</a>
-      <a routerLink="/tasks">Tareas</a>
-      <button class="logout" (click)="logout()">cerrar sesion</button>
-    </div>
-  </header>
+  <app-navbar></app-navbar>
 
   <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
