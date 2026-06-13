@@ -1,6 +1,6 @@
 ﻿import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ThemeService } from '../../services/theme';
+
 // SOLUCIÓN ERROR 1: se agregó NgClass a la importación de '@angular/common'.
 // El error era: "Can't bind to 'ngClass' since it isn't a known property of 'span'"
 // Causa: el dashboard.html usaba [ngClass] pero NgClass no estaba declarado aquí.
@@ -25,7 +25,6 @@ import { Router } from '@angular/router';
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit {
-  public themeService = inject(ThemeService);
   private dashService = inject(DashboardService);
   private auth        = inject(AuthService);
   private router      = inject(Router);
