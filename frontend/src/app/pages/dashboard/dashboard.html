@@ -5,6 +5,7 @@
       <a routerLink="/tasks">Tareas</a>
       <a routerLink="/history">Historial</a>
      <a routerLink="/users">Usuarios</a>
+     <button (click)="themeService.toggleTheme()" style="background: transparent; border: none; cursor: pointer; font-size: 1.2rem; margin-right: 15px;"> {{ themeService.isDark ? '☀️' : '🌙' }} </button>
       <button (click)="logout()">Cerrar sesión</button>
     </nav>
   </header>
