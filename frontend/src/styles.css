@@ -3,49 +3,10 @@
   margin: 0;
   padding: 0;
 }
-:root {
-  --bg-color: #f0f7ff;
-  --bg-card: #ffffff;
-  --text-main: #0f172a;
-  --text-card-label: #6b7280;
-  --text-card-value: #1e40af;
-  --transition: background-color 0.3s ease, color 0.3s ease;
-}
 
-body.dark-theme {
-  --bg-color: #121212;
-  --bg-card: #1e1e1e; 
-  --text-main: #f1f5f9;
-  --text-card-label: #9ca3af; 
-  --text-card-value: #93c5fd; 
-}
 html, body {
   min-height: 100%;
-  background-color: var(--bg-color);
-  color: var(--text-main);
+  background-color: #f0f7ff;
+  color: #0f172a;
   font-family: Arial, Helvetica, sans-serif;
-  transition: var(--transition);
-}
-
-/* --- INTEGRACIÓN DE MODO OSCURO --- */
-
-.card {
-  background-color: var(--bg-card) !important;
-  color: var(--text-main);
-  border-color: var(--text-main) !important;
-  transition: var(--transition) !important;
-}
-.card .label {
-  color: var(--text-card-label) !important;
-}
-.card .value {
-  color: var(--text-card-value) !important;
-}
-.chart-box {
-  background-color: var(--bg-card) !important;
-  transition: var(--transition) !important;
-  color: var(--text-main);
-}
-.page {
-  background-color: transparent !important;
 }
