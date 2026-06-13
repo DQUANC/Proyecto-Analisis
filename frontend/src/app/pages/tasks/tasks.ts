@@ -10,10 +10,11 @@ import { DepartmentsService, Department } from '../../services/departments.servi
 import { UsersService, WorkerUser } from '../../services/users.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { NavbarComponent } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-tasks',
-  imports: [FormsModule, RouterLink, NgIf, NgFor, SlicePipe],
+  imports: [NavbarComponent, FormsModule, RouterLink, NgIf, NgFor, SlicePipe],
   templateUrl: './tasks.html',
   styleUrl: './tasks.css',
 })

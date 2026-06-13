@@ -342,3 +342,26 @@ header h1 {
     color: #ffffff;
     font-weight: 700;
 }
+.action-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.2rem;
+}
+
+.action-bar .btn-primary {
+    padding: 0.55rem 1.2rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+    transition: 0.2s ease;
+}
+
+.action-bar .btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}

@@ -1,26 +1,17 @@
 ﻿import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
-
-// SOLUCIÓN ERROR 1: se agregó NgClass a la importación de '@angular/common'.
-// El error era: "Can't bind to 'ngClass' since it isn't a known property of 'span'"
-// Causa: el dashboard.html usaba [ngClass] pero NgClass no estaba declarado aquí.
-// En Angular standalone cada directiva debe importarse explícitamente en el componente
-// que la usa. Sin este import, Angular no reconoce [ngClass] y falla la compilación.
+import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor, KeyValuePipe, NgClass } from '@angular/common';
-
 import { ChartModule } from 'primeng/chart';
 import { DashboardService, DashboardSummary, DepartmentStat, UserStat } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { NavbarComponent } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-dashboard',
-
-  // SOLUCIÓN ERROR 1 (continuación): NgClass agregado al array imports del componente.
-  // Antes estaba así:  imports: [RouterLink, NgIf, NgFor, KeyValuePipe, ChartModule]
-  // Ahora está así:    imports: [RouterLink, NgIf, NgFor, KeyValuePipe, NgClass, ChartModule]
-  imports: [RouterLink, NgIf, NgFor, KeyValuePipe, NgClass, ChartModule],
-
+  imports: [ NavbarComponent, RouterLink, NgIf, NgFor, KeyValuePipe, NgClass, ChartModule
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

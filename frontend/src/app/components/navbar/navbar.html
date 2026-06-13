@@ -1,0 +1,10 @@
+<header>
+  <h1 routerLink="/tasks" style="cursor: pointer;">Soluciones Administrativas</h1>
+  <nav>
+    <a *ngIf="isAdmin" routerLink="/dashboard" routerLinkActive="active">Panel de Control</a>
+    <a routerLink="/tasks" routerLinkActive="active">Tareas</a>
+    <a routerLink="/history" routerLinkActive="active">Historial</a>
+    <a *ngIf="isAdmin" routerLink="/users" routerLinkActive="active">Usuarios</a>
+    <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
+  </nav>
+</header>

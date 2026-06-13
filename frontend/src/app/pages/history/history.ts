@@ -1,13 +1,15 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
 import { TasksService, Task } from '../../services/tasks.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { NavbarComponent } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-history',
-  imports: [RouterLink, NgIf, NgFor, SlicePipe],
+  imports: [NavbarComponent, FormsModule, RouterLink, NgIf, NgFor, SlicePipe],
   templateUrl: './history.html',
   styleUrl: './history.css',
 })
