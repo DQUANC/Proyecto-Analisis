@@ -10,11 +10,13 @@ const taskInclude = {
 
 function withActiveTime(task: Prisma.TaskGetPayload<{ include: typeof taskInclude }>) {
   let activeTimeSeconds: number | null = null;
+  let activeTimeDays: number | null = null;
   if (task.startedAt) {
     const end = task.completedAt ?? new Date();
     activeTimeSeconds = Math.floor((end.getTime() - task.startedAt.getTime()) / 1000);
+    activeTimeDays = Math.round(activeTimeSeconds / 86400);
   }
-  return { ...task, activeTimeSeconds };
+  return { ...task, activeTimeSeconds, activeTimeDays };
 }
 
 export async function getTasks(
