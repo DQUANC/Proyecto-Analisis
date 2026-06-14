@@ -98,14 +98,18 @@
           </td>
 
           <!-- El select de estado guarda TO_DO/IN_PROGRESS/DONE en el backend,
-               pero muestra el texto en español al usuario -->
+               pero muestra el texto en español al usuario.
+               VALIDACIÓN: la opción 'Completado' se deshabilita cuando la tarea
+               está en Pendiente para evitar el salto directo TO_DO → DONE -->
           <td>
             <select [value]="t.status" (change)="updateStatus(t, $any($event.target).value)" class="task-status"
               [class.status-todo]="t.status === 'TO_DO'" [class.status-progress]="t.status === 'IN_PROGRESS'"
               [class.status-done]="t.status === 'DONE'">
               <option value="TO_DO">Pendiente</option>
               <option value="IN_PROGRESS">En progreso</option>
-              <option value="DONE">Completado</option>
+              <!-- VALIDACIÓN: se deshabilita 'Completado' si la tarea está en TO_DO,
+                   así el usuario no puede seleccionarlo directamente desde el selector -->
+              <option value="DONE" [disabled]="t.status === 'TO_DO'">Completado</option>
             </select>
           </td>
 

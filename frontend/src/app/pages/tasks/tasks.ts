@@ -160,12 +160,29 @@ export class TasksComponent implements OnInit {
 
   // ── Cambiar estado inline ────────────────────────────
   // Se dispara cuando el usuario cambia el <select> de estado en la tabla.
-  // Envía solo el nuevo estado al backend sin abrir ningún modal.
+  // VALIDACIÓN: bloquea el salto directo de TO_DO a DONE según criterios de aceptación.
+  // Flujo permitido: TO_DO → IN_PROGRESS → DONE
+  // Flujo bloqueado: TO_DO → DONE (se muestra mensaje de error y no se llama al backend)
   updateStatus(task: Task, status: string) {
+
+    // Validación en el frontend: evitar pasar de TO_DO directo a DONE
+    if (task.status === 'TO_DO' && status === 'DONE') {
+      this.error = 'La tarea debe estar en proceso antes de marcarla como completada.';
+      this.cdr.detectChanges();
+      return; // se bloquea la acción, no se llama al backend
+    }
+
+    // Si pasa la validación, se envía el cambio al backend
     this.tasksService.update(task.id, { status: status as any }).subscribe({
-      next: () => this.load(),
-      // CAMBIO: mensaje de error traducido
-      error: (err: any) => { this.error = err?.error?.message ?? 'Error al actualizar estado'; }
+      next: () => {
+        this.error = ''; // limpia cualquier error previo al tener éxito
+        this.load();
+      },
+      // Captura error 400 del backend (por si la validación también está en el servidor)
+      error: (err: any) => {
+        this.error = err?.error?.message ?? 'Error al actualizar estado';
+        this.cdr.detectChanges();
+      }
     });
   }
 
