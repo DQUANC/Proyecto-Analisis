@@ -77,7 +77,9 @@
           <th *ngIf="isAdmin">Asignado A</th>
           <th>Fecha De Creacion</th>
           <th>Fecha De Inicio</th>
-          <th>Fecha De Finalizacion</th>
+          <!-- CAMBIO: columna "Fecha de Finalización" oculta para WORKER.
+               Solo visible para ADMIN y SUPER_USER con *ngIf="isAdmin" -->
+          <th *ngIf="isAdmin">Fecha De Finalizacion</th>
           <th>Fecha Limite</th>
           <th *ngIf="isAdmin">Calificacion</th>
           <th *ngIf="isAdmin">Acciones</th>
@@ -116,7 +118,9 @@
           <td *ngIf="isAdmin">{{ t.assignedTo?.name ?? '—' }}</td>
           <td class="date">{{ t.createdAt | slice:0:10 }}</td>
           <td class="date">{{ t.startedAt ? (t.startedAt | slice:0:10) : '—' }}</td>
-          <td class="date">{{ t.completedAt ? (t.completedAt | slice:0:10) : '—' }}</td>
+          <!-- CAMBIO: celda "Fecha de Finalización" oculta para WORKER.
+               Debe coincidir con el *ngIf del <th> para no desalinear la tabla -->
+          <td *ngIf="isAdmin" class="date">{{ t.completedAt ? (t.completedAt | slice:0:10) : '—' }}</td>
           <td class="date">{{ t.dueDate ? (t.dueDate | slice:0:10) : '—' }}</td>
 
           <!-- CAMBIO: si la tarea ya tiene evaluación muestra la estrella con el puntaje,
