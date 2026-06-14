@@ -259,6 +259,14 @@ export async function evaluateTask(
   data: { feedback?: string; score?: number },
   evaluatedById: number
 ) {
+  if (data.score !== undefined && data.score !== null) {
+    if (!Number.isInteger(data.score) || data.score < 1 || data.score > 10) {
+      const err = new Error('El puntaje debe ser un numero entero entre 1 y 10') as Error & { statusCode: number };
+      err.statusCode = 400;
+      throw err;
+    }
+  }
+
   const task = await prisma.task.findUnique({ where: { id: taskId } });
   if (!task) {
     const err = new Error('Tarea no encontrada') as Error & { statusCode: number };
