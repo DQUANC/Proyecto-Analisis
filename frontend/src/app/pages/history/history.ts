@@ -32,6 +32,17 @@ export class HistoryComponent implements OnInit {
     });
   }
 
+  // CAMBIO: reemplaza formatSeconds() que ya no se usa en la columna Tiempo Activo.
+  // Lee directamente el campo activeTimeDays que provee el backend.
+  // No calcula nada a partir de activeTimeSeconds — si activeTimeDays no viene,
+  // muestra '0 días' según los criterios de aceptación.
+  formatDays(days: number | null | undefined): string {
+    if (days == null) return '0 días';
+    if (days === 1) return '1 día';
+    return `${days} días`;
+  }
+
+  // formatSeconds se mantiene por compatibilidad pero ya no se usa en el template
   formatSeconds(seconds: number | null): string {
     if (seconds === null) return '—';
     const h = Math.floor(seconds / 3600);

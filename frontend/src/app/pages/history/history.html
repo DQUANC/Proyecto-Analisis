@@ -43,7 +43,10 @@
           <td class="date">{{ t.startedAt   ? (t.startedAt   | slice:0:10) : '—' }}</td>
           <td class="date">{{ t.completedAt ? (t.completedAt | slice:0:10) : '—' }}</td>
           <td class="date">{{ t.dueDate     ? (t.dueDate     | slice:0:10) : '—' }}</td>
-          <td class="date">{{ formatSeconds(t.activeTimeSeconds ?? null) }}</td>
+          <!-- CAMBIO: antes usaba formatSeconds(t.activeTimeSeconds) que mostraba horas y minutos.
+               Ahora usa formatDays(t.activeTimeDays) que lee el campo en días del backend.
+               Si activeTimeDays no viene en la respuesta, muestra '0 días' sin calcular nada. -->
+          <td class="date">{{ formatDays(t.activeTimeDays) }}</td>
           <td *ngIf="isAdmin">
             <span *ngIf="t.evaluation?.score !== null && t.evaluation?.score !== undefined"
                   class="score">★ {{ t.evaluation!.score }}/10</span>

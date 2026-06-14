@@ -41,6 +41,9 @@ export interface Task {
   startedAt: string | null;
   completedAt: string | null;
   activeTimeSeconds?: number | null;
+  // CAMBIO: campo nuevo proporcionado por el backend con el tiempo activo en días.
+  // Se usa en la columna "Tiempo Activo" del historial en vez de activeTimeSeconds.
+  activeTimeDays?: number | null;
   createdAt: string;
   updatedAt: string;
   evaluation?: TaskEvaluation | null;
