@@ -25,14 +25,6 @@
           <span class="field-error" *ngIf="createErrors['title']">{{ createErrors['title'] }}</span>
         </label>
 
-        <label>Prioridad *
-          <select [(ngModel)]="createForm.priority" name="priority">
-            <option value="LOW">Baja</option>
-            <option value="MEDIUM">Media</option>
-            <option value="HIGH">Alta</option>
-          </select>
-        </label>
-
         <label>Descripcion *
           <input type="text" [(ngModel)]="createForm.description" name="description" />
           <span class="field-error" *ngIf="createErrors['description']">{{ createErrors['description'] }}</span>
@@ -72,7 +64,7 @@
       <thead>
         <tr>
           <th>Titulo</th>
-          <th>Prioridad</th>
+          <!-- ELIMINADO: columna "Prioridad" removida de la tabla según requerimiento -->
           <th>Estado De Tarea</th>
           <th *ngIf="isAdmin">Asignado A</th>
           <th>Fecha De Creacion</th>
@@ -92,12 +84,8 @@
             <span class="task-desc" *ngIf="t.description">{{ t.description }}</span>
           </td>
 
-          <!-- CAMBIO: antes mostraba t.priority en crudo (HIGH/MEDIUM/LOW).
-               Ahora llama a priorityLabel() definido en el .ts que lo traduce.
-               La clase CSS usa el valor original en minúsculas para los colores del badge -->
-          <td>
-            <span class="badge priority-{{t.priority.toLowerCase()}}">{{ priorityLabel(t.priority) }}</span>
-          </td>
+          <!-- ELIMINADO: celda de prioridad removida de la tabla según requerimiento.
+               El campo priority sigue existiendo en el backend pero ya no se muestra. -->
 
           <!-- El select de estado guarda TO_DO/IN_PROGRESS/DONE en el backend,
                pero muestra el texto en español al usuario.
@@ -157,15 +145,7 @@
           <input type="text" [(ngModel)]="editForm.description" name="description" />
         </label>
 
-        <!-- Mismo patrón que el formulario de creación:
-             value en inglés para el backend, texto visible en español -->
-        <label>Prioridad
-          <select [(ngModel)]="editForm.priority" name="priority">
-            <option value="LOW">Baja</option>
-            <option value="MEDIUM">Media</option>
-            <option value="HIGH">Alta</option>
-          </select>
-        </label>
+        <!-- ELIMINADO: campo "Prioridad" removido del formulario de edición según requerimiento -->
 
         <label>Fecha Limite
           <input type="date" [(ngModel)]="editForm.dueDate" name="dueDate" />
