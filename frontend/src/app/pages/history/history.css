@@ -1,11 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700;800&display=swap');
+
 .page {
-    max-width: 1200px;
+    width: 90%;
     margin: 0 auto;
     padding: 2rem;
-    /* CAMBIO: agregado font-family y min-height para que coincida con tasks y dashboard */
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f0f7ff;
-    color: #0f172a;
+    font-family: 'Inter', sans-serif;
+    background: #F1F3F6;
+    color: #0B1D3D;
     min-height: 100vh;
 }
 
@@ -14,19 +15,19 @@ header {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-    /* CAMBIO: se agregó el gradiente azul, border-radius y sombra igual que tasks y dashboard */
     padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+    background: linear-gradient(135deg, #0B1D3D 0%, #123A73 60%, #00D1B8 100%);
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(11, 29, 61, 0.18);
 }
 
-/* CAMBIO: título del header en blanco para que se vea sobre el fondo azul */
 header h1 {
     margin: 0;
     font-size: 1.8rem;
     color: white;
+    font-family: 'Orbitron', sans-serif;
     font-weight: 700;
+    letter-spacing: 1px;
 }
 
 header div {
@@ -35,101 +36,103 @@ header div {
     align-items: center;
 }
 
-/* CAMBIO: links del header en blanco con hover semitransparente, igual que tasks */
 header a {
     color: white;
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 600;
-    padding: 0.4rem 0.75rem;
-    border-radius: 6px;
-    transition: 0.2s ease;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    transition: 0.3s;
 }
 
 header a:hover {
     background: rgba(255, 255, 255, 0.15);
 }
 
-/* CAMBIO: botón del header con fondo blanco y texto azul, igual que tasks */
 header button {
-    padding: 0.45rem 1rem;
-    background: white;
-    color: #2563eb;
+    padding: 0.6rem 1.1rem;
+    background: linear-gradient(90deg, #00D1B8, #66F2F4);
+    color: #0B1D3D;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
     font-size: 0.9rem;
     font-weight: 600;
-    transition: 0.2s ease;
+    transition: 0.3s;
 }
 
 header button:hover {
-    background: #dbeafe;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 209, 184, 0.25);
 }
 
-/* El botón de cerrar sesión mantiene su rojo */
 .logout {
-    background: #ef4444 !important;
+    background: #EF4444 !important;
     color: white !important;
 }
 
 .logout:hover {
-    background: #dc2626 !important;
+    background: #DC2626 !important;
+    transform: none;
+    box-shadow: none;
 }
 
 .table-wrap {
     overflow-x: auto;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(11, 29, 61, 0.08);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     white-space: nowrap;
 }
 
 th,
 td {
-    padding: 0.6rem 0.8rem;
-    border: 1px solid #dbeafe;
+    padding: 0.85rem 1rem;
+    border: 1px solid #E5E7EB;
     text-align: left;
     vertical-align: top;
 }
 
 th {
-    background: #2563eb;
-    font-weight: 600;
+    background: #0B1D3D;
     color: white;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
 }
 
 tbody tr:nth-child(even) {
-    background: #f8fbff;
+    background: #F8FAFC;
 }
 
 tr:hover td {
-    background: #eff6ff;
+    background: #E8FCFB;
 }
 
 .task-title {
     display: block;
-    font-weight: 500;
-    color: #0f172a;
+    font-weight: 600;
+    color: #0B1D3D;
 }
 
 .task-desc {
     display: block;
-    font-size: 0.78rem;
-    color: #64748b;
-    margin-top: 2px;
+    font-size: 0.8rem;
+    color: #6B7280;
+    margin-top: 4px;
     white-space: normal;
-    max-width: 200px;
+    max-width: 220px;
 }
 
 .date {
-    color: #64748b;
+    color: #6B7280;
     font-size: 0.82rem;
 }
 
@@ -137,12 +140,12 @@ tr:hover td {
     white-space: normal;
     max-width: 220px;
     font-size: 0.82rem;
-    color: #334155;
+    color: #4B5563;
 }
 
 .badge {
     display: inline-block;
-    padding: 0.2rem 0.55rem;
+    padding: 0.3rem 0.7rem;
     border-radius: 999px;
     font-size: 0.72rem;
     font-weight: 700;
@@ -150,35 +153,35 @@ tr:hover td {
 }
 
 .priority-high {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: #FEE2E2;
+    color: #B91C1C;
 }
 
 .priority-medium {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: #DBEAFE;
+    color: #1D4ED8;
 }
 
 .priority-low {
-    background: #dcfce7;
+    background: #DCFCE7;
     color: #166534;
 }
 
 .score {
-    font-weight: 600;
-    color: #2563eb;
+    font-weight: 700;
+    color: #00D1B8;
 }
 
 .no-eval {
-    color: #94a3b8;
+    color: #9CA3AF;
 }
 
 .error {
-    color: #b91c1c;
-    background: #fee2e2;
-    border: 1px solid #fecaca;
+    color: #B91C1C;
+    background: #FEE2E2;
+    border: 1px solid #FECACA;
     padding: 0.75rem 1rem;
-    border-radius: 8px;
-    font-size: 0.875rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
     margin-bottom: 1rem;
 }
