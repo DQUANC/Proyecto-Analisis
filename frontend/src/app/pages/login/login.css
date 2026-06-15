@@ -151,3 +151,17 @@ button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+.info-panel .logo-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 22px;
+    border: 3px solid #00D1B8;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    margin-bottom: 35px;
+    height: 190px;
+}
+
+.info-panel .logo-box img {
+    width: 400px;
+}
