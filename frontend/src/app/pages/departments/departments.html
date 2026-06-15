@@ -44,12 +44,22 @@
         <tr *ngFor="let d of departments">
           <td>
             <span *ngIf="editId !== d.id">{{ d.name }}</span>
-            <input *ngIf="editId === d.id" type="text" [(ngModel)]="editName" />
+
+            <div *ngIf="editId === d.id">
+              <input type="text" [(ngModel)]="editName" name="editName" required />
+
+              <span class="field-error" *ngIf="!editName || editName.trim() === ''">
+                Escribe el nombre del departamento, no puede estar vacío.
+              </span>
+            </div>
           </td>
           <td class="date">{{ d.createdAt | slice:0:10 }}</td>
           <td *ngIf="isAdmin" class="actions">
             <button class="btn-edit" *ngIf="editId !== d.id" (click)="startEdit(d)">Editar</button>
-            <button class="btn-primary" *ngIf="editId === d.id" (click)="saveEdit()">Guardar</button>
+            <button class="btn-primary" *ngIf="editId === d.id" (click)="saveEdit()"
+              [disabled]="!editName || editName.trim() === ''">
+              Guardar
+            </button>
             <button class="btn-del" (click)="remove(d.id)">Eliminar</button>
           </td>
         </tr>
