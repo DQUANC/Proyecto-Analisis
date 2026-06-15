@@ -1,13 +1,216 @@
-.page { max-width: 700px; margin: 0 auto; padding: 2rem; }
-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-header a { color: #3b82f6; text-decoration: none; }
-.form-row { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; }
-.form-row input { flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
-.form-row button { padding: 0.5rem 1rem; background: #22c55e; color: white; border: none; border-radius: 4px; cursor: pointer; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 0.6rem 1rem; border: 1px solid #ddd; text-align: left; }
-th { background: #f5f5f5; }
-td input { padding: 0.3rem; border: 1px solid #ccc; border-radius: 4px; }
-td button { margin-right: 0.4rem; padding: 0.3rem 0.6rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; }
-.del { background: #ef4444 !important; }
-.error { color: red; }
+.page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f0f7ff;
+    min-height: 100vh;
+    color: #0f172a;
+}
+
+/* CAMBIO: header con gradiente azul consistente con tasks, dashboard e historial */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: white;
+    font-weight: 700;
+}
+
+header div {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    transition: 0.2s ease;
+}
+
+header a:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+header button {
+    padding: 0.45rem 1rem;
+    background: white;
+    color: #2563eb;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+header button:hover {
+    background: #dbeafe;
+}
+
+.logout {
+    background: #ef4444 !important;
+    color: white !important;
+}
+
+.logout:hover {
+    background: #dc2626 !important;
+}
+
+/* Formulario de creación */
+.form-box {
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    background: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+}
+
+.form-box h3 {
+    margin: 0 0 1rem;
+    color: #1e40af;
+}
+
+.form-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+input {
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: white;
+    transition: 0.2s ease;
+}
+
+input:focus {
+    outline: 2px solid #3b82f6;
+    border-color: transparent;
+}
+
+.btn-primary {
+    padding: 0.55rem 1.2rem;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: 0.2s ease;
+    align-self: flex-start;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+/* Tabla */
+.table-wrap {
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+th, td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #dbeafe;
+    text-align: left;
+    vertical-align: middle;
+}
+
+th {
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fbff;
+}
+
+tr:hover td {
+    background: #dbeafe;
+}
+
+.date {
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+.actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.btn-edit {
+    padding: 0.3rem 0.7rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.btn-del {
+    padding: 0.3rem 0.7rem;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+/* Mensajes de error */
+.error {
+    color: #b91c1c;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.field-error {
+    color: #b91c1c;
+    font-size: 0.78rem;
+    font-weight: 400;
+    margin-top: 2px;
+}

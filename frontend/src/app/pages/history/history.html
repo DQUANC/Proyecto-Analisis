@@ -16,7 +16,7 @@
       <thead>
         <tr>
           <th>Titulo</th>
-          <th>Prioridad</th>
+          <!-- ELIMINADO: columna "Prioridad" removida del historial según requerimiento -->
           <th *ngIf="isAdmin">Asignado a </th>
           <th *ngIf="isAdmin">Puesto De Trabajo</th>
           <th>Fecha De Creacion</th>
@@ -36,9 +36,7 @@
             <span class="task-title">{{ t.title }}</span>
             <span class="task-desc" *ngIf="t.description">{{ t.description }}</span>
           </td>
-          <td>
-            <span class="badge priority-{{ t.priority.toLowerCase() }}">{{ priorityLabel(t.priority) }}</span>
-          </td>
+          <!-- ELIMINADO: celda de prioridad removida del historial según requerimiento -->
           <td *ngIf="isAdmin">{{ t.assignedTo?.name ?? '—' }}</td>
           <td *ngIf="isAdmin">{{ t.department?.name ?? '—' }}</td>
           <td class="date">{{ t.createdAt | slice:0:10 }}</td>
