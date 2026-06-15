@@ -31,5 +31,16 @@ export async function remove(id: number) {
     err.statusCode = 404;
     throw err;
   }
+
+  const usersCount = await prisma.user.count({
+    where: { departmentId: id }
+  });
+
+  if (usersCount > 0) {
+    const err = new Error('No se puede eliminar el departamento porque tiene usuarios asignados.') as Error & { statusCode: number };
+    err.statusCode = 409;
+    throw err;
+  }
+
   return prisma.department.delete({ where: { id } });
 }
