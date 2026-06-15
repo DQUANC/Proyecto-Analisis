@@ -1,30 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700;800&display=swap');
+
 .page {
-    max-width: 900px;
+    width: 80%;
     margin: 0 auto;
     padding: 2rem;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f0f7ff;
+    font-family: 'Inter', sans-serif;
+    background: #F1F3F6;
     min-height: 100vh;
-    color: #0f172a;
+    color: #0B1D3D;
 }
 
-/* CAMBIO: header con gradiente azul consistente con tasks, dashboard e historial */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
     padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+    background: linear-gradient(135deg, #0B1D3D 0%, #123A73 60%, #00D1B8 100%);
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(11, 29, 61, 0.18);
 }
 
 header h1 {
     margin: 0;
     font-size: 1.8rem;
     color: white;
+    font-family: 'Orbitron', sans-serif;
     font-weight: 700;
+    letter-spacing: 1px;
 }
 
 header div {
@@ -38,9 +41,9 @@ header a {
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 600;
-    padding: 0.4rem 0.75rem;
-    border-radius: 6px;
-    transition: 0.2s ease;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    transition: 0.3s;
 }
 
 header a:hover {
@@ -48,127 +51,137 @@ header a:hover {
 }
 
 header button {
-    padding: 0.45rem 1rem;
-    background: white;
-    color: #2563eb;
+    padding: 0.6rem 1.1rem;
+    background: linear-gradient(90deg, #00D1B8, #66F2F4);
+    color: #0B1D3D;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
     font-size: 0.9rem;
     font-weight: 600;
-    transition: 0.2s ease;
+    transition: 0.3s;
 }
 
 header button:hover {
-    background: #dbeafe;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 209, 184, 0.25);
 }
 
 .logout {
-    background: #ef4444 !important;
+    background: #EF4444 !important;
     color: white !important;
 }
 
 .logout:hover {
-    background: #dc2626 !important;
+    background: #DC2626 !important;
+    transform: none;
+    box-shadow: none;
 }
 
-/* Formulario de creación */
 .form-box {
     padding: 1.5rem;
-    border-radius: 12px;
+    border-radius: 16px;
     margin-bottom: 2rem;
     background: white;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 8px 20px rgba(11, 29, 61, 0.08);
 }
 
 .form-box h3 {
     margin: 0 0 1rem;
-    color: #1e40af;
+    color: #0B1D3D;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
 }
 
 .form-box form {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 1rem;
 }
 
 label {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    font-size: 0.875rem;
+    gap: 6px;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: #334155;
+    color: #6B7280;
 }
 
 input {
-    padding: 0.55rem 0.7rem;
-    border: 1px solid #bfdbfe;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    background: white;
-    transition: 0.2s ease;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    transition: 0.3s;
 }
 
 input:focus {
-    outline: 2px solid #3b82f6;
-    border-color: transparent;
+    outline: none;
+    border-color: #00D1B8;
+    box-shadow: 0 0 0 3px rgba(0, 209, 184, 0.18);
 }
 
 .btn-primary {
-    padding: 0.55rem 1.2rem;
-    background: #2563eb;
-    color: white;
+    padding: 0.7rem 1.3rem;
+    background: linear-gradient(90deg, #00D1B8, #66F2F4);
+    color: #0B1D3D;
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
+    font-family: 'Orbitron', sans-serif;
     font-weight: 600;
-    transition: 0.2s ease;
+    transition: 0.3s;
     align-self: flex-start;
 }
 
 .btn-primary:hover {
-    background: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 209, 184, 0.25);
 }
 
-/* Tabla */
 .table-wrap {
     overflow-x: auto;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(11, 29, 61, 0.08);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
 }
 
-th, td {
-    padding: 0.75rem 1rem;
-    border: 1px solid #dbeafe;
+th,
+td {
+    padding: 0.85rem 1rem;
+    border: 1px solid #E5E7EB;
     text-align: left;
     vertical-align: middle;
 }
 
 th {
-    background: #2563eb;
+    background: #0B1D3D;
     color: white;
+    font-family: 'Orbitron', sans-serif;
     font-weight: 600;
 }
 
 tbody tr:nth-child(even) {
-    background: #f8fbff;
+    background: #F8FAFC;
 }
 
-tr:hover td {
-    background: #dbeafe;
+tbody tr:hover td {
+    background: #E8FCFB;
 }
 
 .date {
-    color: #64748b;
+    color: #6B7280;
     font-size: 0.82rem;
 }
 
@@ -178,39 +191,48 @@ tr:hover td {
 }
 
 .btn-edit {
-    padding: 0.3rem 0.7rem;
-    background: #3b82f6;
-    color: white;
+    padding: 0.4rem 0.8rem;
+    background: #00D1B8;
+    color: #0B1D3D;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-edit:hover {
+    background: #66F2F4;
 }
 
 .btn-del {
-    padding: 0.3rem 0.7rem;
-    background: #ef4444;
+    padding: 0.4rem 0.8rem;
+    background: #EF4444;
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-weight: 600;
+    transition: 0.3s;
 }
 
-/* Mensajes de error */
+.btn-del:hover {
+    background: #DC2626;
+}
+
 .error {
-    color: #b91c1c;
-    background: #fee2e2;
-    border: 1px solid #fecaca;
+    color: #B91C1C;
+    background: #FEE2E2;
+    border: 1px solid #FECACA;
     padding: 0.75rem 1rem;
-    border-radius: 8px;
-    font-size: 0.875rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
     margin-bottom: 1rem;
+    font-weight: 600;
 }
 
 .field-error {
-    color: #b91c1c;
-    font-size: 0.78rem;
-    font-weight: 400;
-    margin-top: 2px;
+    color: #B91C1C;
+    font-size: 0.8rem;
+    margin-top: 4px;
 }
