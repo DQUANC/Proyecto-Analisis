@@ -9,3 +9,11 @@ export function requireRole(...roles: string[]) {
     next();
   };
 }
+
+export function requireSuperUser(req: Request, res: Response, next: NextFunction): void {
+  if (!req.user?.isSuperUser) {
+    res.status(403).json({ message: 'Acceso denegado: se requiere Super Usuario' });
+    return;
+  }
+  next();
+}

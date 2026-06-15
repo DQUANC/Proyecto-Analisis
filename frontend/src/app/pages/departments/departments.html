@@ -1,33 +1,97 @@
 <div class="page">
-  <header>
-    <h1>Departments</h1>
-    <a routerLink="/dashboard">← Dashboard</a>
-  </header>
+  <app-navbar></app-navbar>
 
-  <div class="form-row">
-    <input type="text" [(ngModel)]="newName" placeholder="New department name" />
-    <button (click)="create()">Add</button>
+  <div class="action-bar" *ngIf="isSuperUser">
+    <button class="btn-primary" (click)="showCreateForm = !showCreateForm">
+      {{ showCreateForm ? 'Cancelar' : '+ Nuevo Departamento' }}
+    </button>
   </div>
 
-  <p *ngIf="loading">Loading...</p>
+  <!-- Formulario de creación -->
+  <div class="form-box" *ngIf="isSuperUser && showCreateForm">
+    <h3>Nuevo Departamento</h3>
+    <form (ngSubmit)="create()">
+      <div class="form-grid">
+        <label>Nombre *
+          <input type="text" [(ngModel)]="newName" name="newName" placeholder="Nombre del departamento" />
+          <span class="field-error" *ngIf="createError">{{ createError }}</span>
+        </label>
+      </div>
+      <button type="submit" class="btn-primary">Crear Departamento</button>
+    </form>
+  </div>
+
+  <p *ngIf="loading">Cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
-  <table *ngIf="!loading && departments.length">
-    <thead><tr><th>Name</th><th>Actions</th></tr></thead>
-    <tbody>
-      <tr *ngFor="let d of departments">
-        <td>
-          <span *ngIf="editId !== d.id">{{ d.name }}</span>
-          <input *ngIf="editId === d.id" type="text" [(ngModel)]="editName" />
-        </td>
-        <td>
-          <button *ngIf="editId !== d.id" (click)="startEdit(d)">Edit</button>
-          <button *ngIf="editId === d.id" (click)="saveEdit()">Save</button>
-          <button class="del" (click)="remove(d.id)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Tabla de departamentos -->
+  <div class="table-wrap" *ngIf="!loading && departments.length">
+    <table>
+      <thead>
+        <tr>
+          <th>Departamento</th>
+          <th *ngIf="isSuperUser">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let d of departments">
+          <!-- Fila principal del departamento -->
+          <tr class="dept-row">
+            <td>
+              <button class="toggle-btn" (click)="toggleExpand(d.id)">
+                <span class="arrow" [class.expanded]="expandedDepts.has(d.id)">▶</span>
+                {{ d.name }}
+              </button>
+            </td>
+            <td *ngIf="isSuperUser" class="actions">
+              <button class="btn-edit" (click)="openEdit(d)">Editar</button>
+              <button class="btn-del" (click)="remove(d.id)">Eliminar</button>
+            </td>
+          </tr>
+          <!-- Fila de usuarios expandible -->
+          <tr *ngIf="expandedDepts.has(d.id)" class="users-row">
+            <td [attr.colspan]="isSuperUser ? 2 : 1">
+              <div class="users-section">
+                <span class="users-label">Usuarios asignados</span>
+                <div class="user-list" *ngIf="getUsersOf(d.id).length > 0">
+                  <span class="user-chip" *ngFor="let u of getUsersOf(d.id)">{{ u.name }}</span>
+                </div>
+                <span class="no-users" *ngIf="getUsersOf(d.id).length === 0">Sin usuarios asignados</span>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
 
-  <p *ngIf="!loading && !departments.length && !error">No departments yet.</p>
+  <p *ngIf="!loading && !departments.length && !error">No hay departamentos registrados.</p>
+
+  <!-- Modal de edición -->
+  <div class="modal-backdrop" *ngIf="editingDept" (click)="editingDept = null">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Editar Departamento: {{ editingDept.name }}</h3>
+      <form (ngSubmit)="saveEdit()">
+        <label>Nombre
+          <input type="text" [(ngModel)]="editName" name="editName" />
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="editingDept = null">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación de eliminación -->
+  <div class="modal-backdrop" *ngIf="confirmDeleteId !== null">
+    <div class="modal modal-confirm">
+      <h3>Eliminar Departamento</h3>
+      <p>¿Estás seguro de que deseas eliminar este departamento? Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="cancelDelete()">Cancelar</button>
+        <button type="button" class="btn-del" (click)="confirmDelete()">Eliminar</button>
+      </div>
+    </div>
+  </div>
 </div>

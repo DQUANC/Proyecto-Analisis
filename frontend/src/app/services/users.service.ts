@@ -74,7 +74,8 @@ export class UsersService {
 
   create(payload: CreateUserPayload): Observable<{ user: User }> {
     if (environment.useMocks) {
-      const dbRole: 'ADMIN' | 'WORKER' = payload.role === 'SUPER_USER' ? 'ADMIN' : (payload.role as 'ADMIN' | 'WORKER');
+      const isSuperUser = payload.role === 'SUPER_USER';
+      const dbRole: 'ADMIN' | 'WORKER' = isSuperUser ? 'ADMIN' : (payload.role as 'ADMIN' | 'WORKER');
       const newUser: typeof MOCK_USERS[0] = {
         id: Math.max(...MOCK_USERS.map(u => u.id)) + 1,
         name: payload.name,
@@ -82,6 +83,7 @@ export class UsersService {
         password: payload.password,
         role: dbRole,
         departmentId: payload.departmentId != null ? Number(payload.departmentId) : null,
+        ...(isSuperUser && { isSuperUser: true }),
       };
       MOCK_USERS.push(newUser);
       return of({ user: this.enrich(newUser) });
@@ -92,11 +94,15 @@ export class UsersService {
   update(id: number, payload: UpdateUserPayload): Observable<{ user: User }> {
     if (environment.useMocks) {
       const idx = MOCK_USERS.findIndex(u => u.id === id);
+      const isSuperUser = payload.role === 'SUPER_USER' ? true
+                        : payload.role !== undefined     ? false
+                        : undefined;
       const safePayload = {
         ...payload,
         ...(payload.role !== undefined && {
           role: (payload.role === 'SUPER_USER' ? 'ADMIN' : payload.role) as 'ADMIN' | 'WORKER',
         }),
+        ...(isSuperUser !== undefined && { isSuperUser }),
         ...(payload.departmentId !== undefined && {
           departmentId: payload.departmentId != null ? Number(payload.departmentId) : null,
         }),

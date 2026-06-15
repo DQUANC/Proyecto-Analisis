@@ -6,10 +6,11 @@ import { DashboardSummary, DepartmentStat, UserStat } from '../services/dashboar
 // ── Usuarios de prueba ───────────────────────────────────────────────────────
 // CAMBIO: nombres traducidos al español (Admin → Administrador, Worker → Trabajador)
 export const MOCK_USERS: (AppUser & { password: string })[] = [
-  { id: 1, name: 'Administrador',       email: 'admin@test.com',   password: 'admin123',  role: 'ADMIN',  departmentId: 1 },
-  { id: 2, name: 'Trabajadora Ana',     email: 'ana@test.com',     password: 'worker123', role: 'WORKER', departmentId: 1 },
-  { id: 3, name: 'Trabajador Carlos',   email: 'carlos@test.com',  password: 'worker123', role: 'WORKER', departmentId: 2 },
-  { id: 4, name: 'Trabajador Luis',     email: 'luis@test.com',    password: 'worker123', role: 'WORKER', departmentId: 3 },
+  { id: 1, name: 'Super Administrador', email: 'super@test.com',   password: 'super123',  role: 'ADMIN',  departmentId: 1, isSuperUser: true },
+  { id: 2, name: 'Administrador',       email: 'admin@test.com',   password: 'admin123',  role: 'ADMIN',  departmentId: 1 },
+  { id: 3, name: 'Trabajadora Ana',     email: 'ana@test.com',     password: 'worker123', role: 'WORKER', departmentId: 1 },
+  { id: 4, name: 'Trabajador Carlos',   email: 'carlos@test.com',  password: 'worker123', role: 'WORKER', departmentId: 2 },
+  { id: 5, name: 'Trabajador Luis',     email: 'luis@test.com',    password: 'worker123', role: 'WORKER', departmentId: 3 },
 ];
 
 // ── Departamentos de prueba ──────────────────────────────────────────────────

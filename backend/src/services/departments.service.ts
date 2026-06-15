@@ -25,10 +25,26 @@ export async function update(id: number, name: string) {
 }
 
 export async function remove(id: number) {
-  const existing = await prisma.department.findUnique({ where: { id } });
+  const existing = await prisma.department.findUnique({
+    where: { id },
+    include: {
+      users: { take: 1 },
+      tasks: { take: 1 },
+    },
+  });
   if (!existing) {
     const err = new Error('Departamento no encontrado') as Error & { statusCode: number };
     err.statusCode = 404;
+    throw err;
+  }
+  if (existing.users.length > 0) {
+    const err = new Error('No se puede eliminar un departamento que tiene usuarios asignados') as Error & { statusCode: number };
+    err.statusCode = 409;
+    throw err;
+  }
+  if (existing.tasks.length > 0) {
+    const err = new Error('No se puede eliminar un departamento que tiene tareas asociadas') as Error & { statusCode: number };
+    err.statusCode = 409;
     throw err;
   }
   return prisma.department.delete({ where: { id } });

@@ -4,6 +4,7 @@
     <a *ngIf="isAdmin" routerLink="/dashboard" routerLinkActive="active">Panel de Control</a>
     <a routerLink="/tasks" routerLinkActive="active">Tareas</a>
     <a routerLink="/history" routerLinkActive="active">Historial</a>
+    <a *ngIf="isAdmin" routerLink="/departments" routerLinkActive="active">Departamentos</a>
     <a *ngIf="isAdmin" routerLink="/users" routerLinkActive="active">Usuarios</a>
     <button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
   </nav>

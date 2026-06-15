@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { MOCK_DEPARTMENTS } from '../mocks/mock-data';
+import { MOCK_DEPARTMENTS, MOCK_USERS, MOCK_TASKS } from '../mocks/mock-data';
 
 export interface Department {
   id: number;
@@ -24,6 +24,10 @@ export class DepartmentsService {
 
   create(name: string): Observable<{ department: Department }> {
     if (environment.useMocks) {
+      const exists = MOCK_DEPARTMENTS.some(d => d.name.toLowerCase() === name.toLowerCase());
+      if (exists) {
+        return throwError(() => ({ error: { message: 'El nombre de departamento ya existe' } }));
+      }
       const dept: Department = {
         id: Math.max(...MOCK_DEPARTMENTS.map(d => d.id)) + 1,
         name,
@@ -46,6 +50,14 @@ export class DepartmentsService {
 
   remove(id: number): Observable<void> {
     if (environment.useMocks) {
+      const hasUsers = MOCK_USERS.some(u => u.departmentId === id);
+      if (hasUsers) {
+        return throwError(() => ({ error: { message: 'No se puede eliminar un departamento que tiene usuarios asignados' } }));
+      }
+      const hasTasks = MOCK_TASKS.some(t => t.departmentId === id);
+      if (hasTasks) {
+        return throwError(() => ({ error: { message: 'No se puede eliminar un departamento que tiene tareas asociadas' } }));
+      }
       const idx = MOCK_DEPARTMENTS.findIndex(d => d.id === id);
       if (idx !== -1) MOCK_DEPARTMENTS.splice(idx, 1);
       return of(undefined);
