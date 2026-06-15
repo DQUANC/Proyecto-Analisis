@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700;800&display=swap');
+
 .page {
-    max-width: 1000px;
+    max-width: 75%;
     margin: 0 auto;
     padding: 2rem;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #0f172a;
-    background: #f0f7ff;
+    font-family: 'Inter', sans-serif;
+    color: #0B1D3D;
+    background: #F1F3F6;
     min-height: 100vh;
 }
 
@@ -14,14 +16,17 @@ header {
     align-items: center;
     margin-bottom: 2rem;
     padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+    background: linear-gradient(135deg, #0B1D3D 0%, #123A73 60%, #00D1B8 100%);
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(11, 29, 61, 0.18);
 }
 
 header h1 {
     margin: 0;
     font-size: 1.8rem;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
     color: white;
 }
 
@@ -35,9 +40,9 @@ nav a {
     color: white;
     text-decoration: none;
     font-weight: 600;
-    padding: 0.45rem 0.8rem;
-    border-radius: 6px;
-    transition: 0.2s ease;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    transition: 0.3s ease;
 }
 
 nav a:hover {
@@ -45,18 +50,20 @@ nav a:hover {
 }
 
 nav button {
-    padding: 0.5rem 1rem;
-    background: #ef4444;
-    color: white;
+    padding: 0.6rem 1.1rem;
+    background: linear-gradient(90deg, #00D1B8, #66F2F4);
+    color: #0B1D3D;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
     font-weight: 600;
-    transition: 0.2s ease;
+    transition: 0.3s ease;
 }
 
 nav button:hover {
-    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 209, 184, 0.25);
 }
 
 .top-row {
@@ -76,40 +83,41 @@ nav button:hover {
 
 .card {
     padding: 1.2rem 1.5rem;
-    border-radius: 12px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.4rem;
     min-width: 130px;
     background: white;
-    border-top: 4px solid #3b82f6;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
-    transition: 0.25s ease;
+    border-top: 4px solid #00D1B8;
+    box-shadow: 0 8px 20px rgba(11, 29, 61, 0.08);
+    transition: 0.3s ease;
 }
 
 .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(11, 29, 61, 0.15);
 }
 
 .label {
     font-size: 0.78rem;
-    color: #64748b;
+    color: #6B7280;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
     font-weight: 600;
     text-align: center;
 }
 
 .value {
-    font-size: 1.8rem;
+    font-size: 1.9rem;
+    font-family: 'Orbitron', sans-serif;
     font-weight: 700;
-    color: #1d4ed8;
+    color: #0B1D3D;
 }
 
 .chart-box {
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 1.5rem;
     background: white;
     display: flex;
@@ -117,96 +125,97 @@ nav button:hover {
     align-items: center;
     gap: 0.8rem;
     min-width: 300px;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 8px 20px rgba(11, 29, 61, 0.08);
 }
 
 .chart-box h2 {
     margin: 0;
     font-size: 1rem;
-    color: #1e40af;
+    font-family: 'Orbitron', sans-serif;
+    color: #0B1D3D;
     font-weight: 700;
 }
 
 section {
     margin-bottom: 2rem;
     background: white;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px rgba(11, 29, 61, 0.08);
 }
 
 h2 {
     margin-bottom: 1rem;
-    font-size: 1.1rem;
-    color: #1e40af;
+    font-size: 1.15rem;
+    font-family: 'Orbitron', sans-serif;
+    color: #0B1D3D;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
 }
 
 th,
 td {
-    padding: 0.75rem 1rem;
-    border: 1px solid #dbeafe;
+    padding: 0.85rem 1rem;
+    border: 1px solid #E5E7EB;
     text-align: left;
 }
 
 th {
-    background: #2563eb;
+    background: #0B1D3D;
     color: white;
+    font-family: 'Orbitron', sans-serif;
     font-weight: 600;
 }
 
 tbody tr:nth-child(even) {
-    background: #f8fbff;
+    background: #F8FAFC;
 }
 
 tbody tr:hover {
-    background: #dbeafe;
+    background: #E8FCFB;
 }
 
 .badge {
     display: inline-block;
     margin-right: 0.4rem;
     margin-bottom: 0.2rem;
-    padding: 0.3rem 0.7rem;
-    background: #dbeafe;
-    color: #1e40af;
+    padding: 0.35rem 0.8rem;
+    background: rgba(0, 209, 184, 0.12);
+    color: #0B1D3D;
     border-radius: 999px;
     font-size: 0.78rem;
     font-weight: 600;
 }
 
 .error {
-    color: #b91c1c;
-    background: #fee2e2;
-    border: 1px solid #fecaca;
+    color: #B91C1C;
+    background: #FEE2E2;
+    border: 1px solid #FECACA;
     padding: 0.75rem 1rem;
-    border-radius: 8px;
+    border-radius: 10px;
     margin-bottom: 1rem;
     font-weight: 600;
 }
 
-/* ── Badges de estado en tablas de departamentos y usuarios ────────────────
-   SOLUCIÓN ERROR 2: estas clases se renombraron porque en el HTML las condiciones
-   del [ngClass] usaban nombres incorrectos ('clase_completado', 'clase_en_progreso',
-   'clase_pendiente') que no coincidían con nada, así que los colores nunca se aplicaban.
-   Ahora los nombres son badge-done, badge-progress, badge-todo y las condiciones
-   en el HTML comparan con las claves reales del backend: DONE, IN_PROGRESS, TO_DO. */
+/* Estados */
+
 .badge-done {
-    background-color: #22c55e; /* verde — tarea completada */
+    background-color: #22C55E;
     color: white;
 }
 
 .badge-progress {
-    background-color: #3b82f6; /* azul — tarea en progreso */
+    background-color: #3B82F6;
     color: white;
 }
 
 .badge-todo {
-    background-color: #ef4444; /* rojo — tarea pendiente */
+    background-color: #EF4444;
     color: white;
 }
