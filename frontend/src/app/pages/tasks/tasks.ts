@@ -87,7 +87,9 @@ export class TasksComponent implements OnInit {
     this.loading = true;
     this.tasksService.getAll().subscribe({
       next: (res: TasksResponse) => {
-        this.tasks = res.tasks;
+        this.tasks = res.tasks.filter(task =>
+          task.status === 'TO_DO' || task.status === 'IN_PROGRESS'
+        );
         this.loading = false;
         this.cdr.detectChanges(); // fuerza la actualización de la vista
       },
@@ -114,7 +116,7 @@ export class TasksComponent implements OnInit {
     if (!dueDate)                                                this.createErrors['dueDate']      = 'La fecha límite es requerida.';
     if (!this.createForm.departmentId || Number(this.createForm.departmentId) === 0)
                                                                  this.createErrors['departmentId'] = 'Selecciona un área de trabajo.';
-    if (this.createForm.assignedToId == null)                    this.createErrors['assignedToId'] = 'Selecciona un usuario asignado.';
+    if (this.createForm.assignedToId == null)                    this.createErrors['assignedToId'] = 'Selecciona un usuario asignado';
 
     if (Object.keys(this.createErrors).length > 0) {
       this.cdr.detectChanges();
