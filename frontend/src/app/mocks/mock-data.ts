@@ -53,6 +53,16 @@ export let MOCK_TASKS: Task[] = [
     createdAt: '2025-05-27T00:00:00Z', updatedAt: '2025-05-27T00:00:00Z',
   },
   {
+    // Tarea extra para probar el flujo TO_DO → IN_PROGRESS → DONE con worker Ana
+    id: 6,
+    title: 'Revisar documentación técnica',
+    description: 'Actualizar la documentación del módulo de autenticación',
+    status: 'TO_DO', priority: 'MEDIUM',
+    dueDate: '2025-07-01T00:00:00Z', createdById: 1, assignedToId: 2,
+    departmentId: 1, startedAt: null, completedAt: null,
+    createdAt: '2025-06-01T00:00:00Z', updatedAt: '2025-06-01T00:00:00Z',
+  },
+  {
     id: 4,
     title: 'Desplegar en staging',                // CAMBIO: antes 'Deploy to staging'
     description: 'Desplegar versión v1.2',        // CAMBIO: antes 'Deploy v1.2 release'
