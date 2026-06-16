@@ -18,7 +18,8 @@ export class DepartmentsComponent implements OnInit {
   private auth         = inject(AuthService);
   private cdr          = inject(ChangeDetectorRef);
 
-  readonly isSuperUser = this.auth.isSuperUser();
+  get isAdmin()    { return this.auth.isAdmin(); }
+  get isSuperUser(){ return this.auth.isSuperUser(); }
 
   departments: Department[] = [];
   usersByDept: Record<number, User[]> = {};

@@ -29,10 +29,8 @@ export class TasksComponent implements OnInit {
   loading = true;
   error   = '';
 
-  // Determina si el usuario logueado es administrador.
-  // Se usa en el HTML con *ngIf="isAdmin" para mostrar/ocultar botones y columnas.
-  readonly isAdmin = this.auth.isAdmin();
-  readonly isSuperUser = this.auth.isSuperUser();
+  get isAdmin()    { return this.auth.isAdmin(); }
+  get isSuperUser(){ return this.auth.isSuperUser(); }
 
   // ── Estado del formulario de creación ───────────────
   // showCreateForm controla si el formulario es visible o no.
