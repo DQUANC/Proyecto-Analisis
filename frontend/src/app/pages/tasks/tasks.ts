@@ -1,20 +1,17 @@
 import { Component, inject, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
 import { DragDropModule, CdkDragDrop, CdkDrag } from '@angular/cdk/drag-drop';
-import {
-  TasksService, Task, TasksResponse, TaskStatus,
-  CreateTaskPayload, UpdateTaskPayload, EvaluateTaskPayload
-} from '../../services/tasks.service';
+import { TasksService, Task, TasksResponse, TaskStatus, CreateTaskPayload, UpdateTaskPayload, EvaluateTaskPayload } from '../../services/tasks.service';
 import { DepartmentsService, Department } from '../../services/departments.service';
 import { UsersService, WorkerUser } from '../../services/users.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { NavbarComponent } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-tasks',
-  imports: [FormsModule, RouterLink, NgIf, NgFor, SlicePipe, DragDropModule],
+  imports: [FormsModule, NgIf, NgFor, SlicePipe, DragDropModule, NavbarComponent],
   templateUrl: './tasks.html',
   styleUrl: './tasks.css',
 })
