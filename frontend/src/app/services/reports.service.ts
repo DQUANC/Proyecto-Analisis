@@ -38,7 +38,6 @@ const STATUS_COLORS: Record<string, [number, number, number]> = {
 const BRAND_NAVY: [number, number, number] = [11, 29, 61];
 const BRAND_TEAL: [number, number, number] = [0, 209, 216];
 const LOGO_PATH = 'assets/logos/icono-app.png';
-const PATTERN_PATH = 'assets/logos/patron-grafico.png';
 const HEADER_HEIGHT = 32;
 
 interface SummaryCard {
@@ -55,7 +54,6 @@ export class ReportsService {
   private readonly http = inject(HttpClient);
 
   private logo$?: Observable<string | null>;
-  private pattern$?: Observable<string | null>;
 
   reportTitle(type: ReportType): string {
     return REPORT_TITLES[type];
@@ -160,6 +158,7 @@ export class ReportsService {
     if (!this.logo$) {
       this.logo$ = this.http.get(LOGO_PATH, { responseType: 'blob' }).pipe(
         switchMap((blob) => this.blobToDataUrl(blob)),
+        switchMap((dataUrl) => (dataUrl ? this.trimImage(dataUrl) : of(null))),
         catchError(() => of(null)),
         shareReplay(1)
       );
@@ -167,43 +166,91 @@ export class ReportsService {
     return this.logo$;
   }
 
-  private getPatternBase64(): Observable<string | null> {
-    if (!this.pattern$) {
-      this.pattern$ = this.http.get(PATTERN_PATH, { responseType: 'blob' }).pipe(
-        switchMap((blob) => this.blobToDataUrl(blob)),
-        switchMap((dataUrl) => (dataUrl ? this.cropPattern(dataUrl) : of(null))),
-        catchError(() => of(null)),
-        shareReplay(1)
-      );
-    }
-    return this.pattern$;
-  }
-
-  private cropPattern(dataUrl: string): Observable<string | null> {
+  private trimImage(dataUrl: string): Observable<string | null> {
     return new Observable((subscriber) => {
       const img = new Image();
       img.onload = () => {
         try {
-          const sy = Math.round(img.height * 0.15);
-          const sh = Math.round(img.height * 0.7);
           const canvas = document.createElement('canvas');
           canvas.width = img.width;
-          canvas.height = sh;
+          canvas.height = img.height;
           const ctx = canvas.getContext('2d');
           if (!ctx) {
-            subscriber.next(null);
+            subscriber.next(dataUrl);
             subscriber.complete();
             return;
           }
-          ctx.drawImage(img, 0, sy, img.width, sh, 0, 0, img.width, sh);
-          subscriber.next(canvas.toDataURL('image/png'));
+          ctx.drawImage(img, 0, 0);
+
+          const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const isBackground = (i: number) => {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const a = data[i + 3];
+            return a < 10 || (r > 245 && g > 245 && b > 245);
+          };
+
+          let top = 0;
+          let bottom = height - 1;
+          let left = 0;
+          let right = width - 1;
+
+          outerTop: for (; top < height; top++) {
+            for (let x = 0; x < width; x++) {
+              if (!isBackground((top * width + x) * 4)) break outerTop;
+            }
+          }
+          outerBottom: for (; bottom >= top; bottom--) {
+            for (let x = 0; x < width; x++) {
+              if (!isBackground((bottom * width + x) * 4)) break outerBottom;
+            }
+          }
+          outerLeft: for (; left < width; left++) {
+            for (let y = top; y <= bottom; y++) {
+              if (!isBackground((y * width + left) * 4)) break outerLeft;
+            }
+          }
+          outerRight: for (; right >= left; right--) {
+            for (let y = top; y <= bottom; y++) {
+              if (!isBackground((y * width + right) * 4)) break outerRight;
+            }
+          }
+
+          if (right <= left || bottom <= top) {
+            subscriber.next(dataUrl);
+            subscriber.complete();
+            return;
+          }
+
+          const contentWidth = right - left + 1;
+          const contentHeight = bottom - top + 1;
+          const paddingX = Math.round(contentWidth * 0.025);
+          const paddingY = Math.round(contentHeight * 0.025);
+
+          const cropX = Math.max(0, left - paddingX);
+          const cropY = Math.max(0, top - paddingY);
+          const cropWidth = Math.min(width - cropX, contentWidth + paddingX * 2);
+          const cropHeight = Math.min(height - cropY, contentHeight + paddingY * 2);
+
+          const trimmedCanvas = document.createElement('canvas');
+          trimmedCanvas.width = cropWidth;
+          trimmedCanvas.height = cropHeight;
+          const trimmedCtx = trimmedCanvas.getContext('2d');
+          if (!trimmedCtx) {
+            subscriber.next(dataUrl);
+            subscriber.complete();
+            return;
+          }
+          trimmedCtx.drawImage(img, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+          subscriber.next(trimmedCanvas.toDataURL('image/png'));
         } catch {
-          subscriber.next(null);
+          subscriber.next(dataUrl);
         }
         subscriber.complete();
       };
       img.onerror = () => {
-        subscriber.next(null);
+        subscriber.next(dataUrl);
         subscriber.complete();
       };
       img.src = dataUrl;
@@ -290,15 +337,14 @@ export class ReportsService {
 
     return forkJoin({
       logo: this.getLogoBase64(),
-      pattern: this.getPatternBase64(),
       pieChart: pieChart$,
     }).pipe(
-      map(({ logo, pattern, pieChart }) => {
+      map(({ logo, pieChart }) => {
         const doc = new jsPDF();
         const title = this.reportTitle(type);
         const generatedAt = new Date();
 
-        this.drawHeader(doc, title, generatedAt, logo, pattern);
+        this.drawHeader(doc, title, generatedAt, logo);
 
         let cursorY = HEADER_HEIGHT + 10;
         if (cards.length) {
@@ -319,7 +365,8 @@ export class ReportsService {
             startY: cursorY + 4,
             head: [head],
             body: rows,
-            styles: { fontSize: 9 },
+            theme: 'grid',
+            styles: { fontSize: 9, lineColor: [220, 224, 230], lineWidth: 0.1 },
             headStyles: { fillColor: BRAND_NAVY },
             didDrawPage: () => this.drawFooter(doc),
           });
@@ -330,31 +377,13 @@ export class ReportsService {
     );
   }
 
-  private drawHeader(doc: jsPDF, title: string, generatedAt: Date, logo: string | null, pattern: string | null): void {
+  private drawHeader(doc: jsPDF, title: string, generatedAt: Date, logo: string | null): void {
     const pageWidth = doc.internal.pageSize.getWidth();
 
     doc.setFillColor(...BRAND_NAVY);
     doc.rect(0, 0, pageWidth, HEADER_HEIGHT, 'F');
 
-    if (pattern) {
-      try {
-        const props = doc.getImageProperties(pattern);
-        const patternWidth = 70;
-        const patternHeight = (props.height / props.width) * patternWidth;
-        doc.setGState(new GState({ opacity: 0.12 }));
-        doc.addImage(
-          pattern,
-          'PNG',
-          pageWidth - patternWidth,
-          (HEADER_HEIGHT - patternHeight) / 2,
-          patternWidth,
-          patternHeight
-        );
-        doc.setGState(new GState({ opacity: 1 }));
-      } catch {
-        // si falla el patrón decorativo, se omite sin afectar el resto del header
-      }
-    }
+    this.drawChevronAccent(doc, pageWidth);
 
     const logoMaxSize = 16;
     const logoX = 12;
@@ -396,12 +425,38 @@ export class ReportsService {
     doc.setTextColor(...BRAND_NAVY);
   }
 
+  private drawChevronAccent(doc: jsPDF, pageWidth: number): void {
+    doc.setGState(new GState({ opacity: 0.16 }));
+    doc.setFillColor(...BRAND_TEAL);
+
+    const chevronWidth = 14;
+    const gap = 6;
+    const baseX = pageWidth - chevronWidth * 2 - gap;
+
+    for (let i = 0; i < 2; i++) {
+      const x = baseX + i * (chevronWidth + gap);
+      doc.triangle(x, 0, x + chevronWidth, HEADER_HEIGHT / 2, x, HEADER_HEIGHT, 'F');
+      doc.triangle(
+        x + chevronWidth * 0.55,
+        0,
+        x + chevronWidth * 1.55,
+        HEADER_HEIGHT / 2,
+        x + chevronWidth * 0.55,
+        HEADER_HEIGHT,
+        'F'
+      );
+    }
+
+    doc.setGState(new GState({ opacity: 1 }));
+  }
+
   private drawSummaryCards(doc: jsPDF, cards: SummaryCard[], startY: number): number {
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 14;
     const gap = 4;
     const cardWidth = (pageWidth - margin * 2 - gap * (cards.length - 1)) / cards.length;
-    const cardHeight = 20;
+    const cardHeight = 24;
+    const accentHeight = 1.5;
 
     cards.forEach((card, index) => {
       const x = margin + index * (cardWidth + gap);
@@ -409,13 +464,18 @@ export class ReportsService {
       doc.setFillColor(248, 249, 251);
       doc.roundedRect(x, startY, cardWidth, cardHeight, 2, 2, 'FD');
 
-      doc.setFontSize(15);
+      doc.setFillColor(...card.color);
+      doc.rect(x + 1, startY, cardWidth - 2, accentHeight, 'F');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(20);
       doc.setTextColor(...card.color);
-      doc.text(card.value, x + cardWidth / 2, startY + 11, { align: 'center' });
+      doc.text(card.value, x + cardWidth / 2, startY + 14, { align: 'center' });
+      doc.setFont('helvetica', 'normal');
 
       doc.setFontSize(7.5);
       doc.setTextColor(...BRAND_NAVY);
-      doc.text(card.label, x + cardWidth / 2, startY + 17, { align: 'center' });
+      doc.text(card.label, x + cardWidth / 2, startY + 20, { align: 'center' });
     });
 
     return startY + cardHeight + 10;
