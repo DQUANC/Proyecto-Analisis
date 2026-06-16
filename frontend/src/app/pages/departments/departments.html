@@ -4,66 +4,35 @@
       <img class="header-logo" src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
       <h1>Areas de Trabajo</h1>
     </div>
-    <div>
-      <a routerLink="/dashboard">← Panel de Control</a>
-
-      <!-- CAMBIO: botón "Nuevo Departamento" solo visible para ADMIN/SUPER_ADMIN.
-           Alterna la visibilidad del formulario de creación -->
-      <button *ngIf="isAdmin" (click)="showCreateForm = !showCreateForm">
-        {{ showCreateForm ? 'Cancelar' : '+ Nueva Area de Trabajo' }}
-      </button>
-      <button class="logout" (click)="logout()">Cerrar Sesión</button>
-    </div>
+    <a routerLink="/dashboard">← Panel de Control</a>
   </header>
 
-  <!-- ── Formulario de creación (solo admin) ── -->
-  <!-- Se muestra solo si el usuario es admin Y presionó el botón -->
-  <div class="form-box" *ngIf="isAdmin && showCreateForm">
-    <h3>Nueva Area de Trabajo</h3>
-    <form (ngSubmit)="create()">
-      <label>Nombre del area de trabajo *
-        <input type="text" [(ngModel)]="newName" name="name" placeholder="Ej: Recursos Humanos" />
-        <!-- Validación: si el campo está vacío se muestra este mensaje -->
-        <span class="field-error" *ngIf="nameError">{{ nameError }}</span>
-      </label>
-      <button type="submit" class="btn-primary">Crear Area de Trabajo</button>
-    </form>
+  <div class="form-row">
+    <input type="text" [(ngModel)]="newName" placeholder="Nombre del area de trabajo..." />
+    <button (click)="create()">Agregar</button>
   </div>
 
   <p *ngIf="loading">Cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
-  <!-- ── Tabla de departamentos ── -->
   <div class="table-wrap" *ngIf="!loading && departments.length">
     <table>
       <thead>
         <tr>
           <th>Nombre</th>
-          <th>Fecha de Creación</th>
-          <th *ngIf="isAdmin">Acciones</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let d of departments">
           <td>
             <span *ngIf="editId !== d.id">{{ d.name }}</span>
-
-            <div *ngIf="editId === d.id">
-              <input type="text" [(ngModel)]="editName" name="editName" required />
-
-              <span class="field-error" *ngIf="!editName || editName.trim() === ''">
-                Escribe el nombre del area de trabajo, no puede estar vacío.
-              </span>
-            </div>
+            <input *ngIf="editId === d.id" type="text" [(ngModel)]="editName" />
           </td>
-          <td class="date">{{ d.createdAt | slice:0:10 }}</td>
-          <td *ngIf="isAdmin" class="actions">
-            <button class="btn-edit" *ngIf="editId !== d.id" (click)="startEdit(d)">Editar</button>
-            <button class="btn-primary" *ngIf="editId === d.id" (click)="saveEdit()"
-              [disabled]="!editName || editName.trim() === ''">
-              Guardar
-            </button>
-            <button class="btn-del" (click)="remove(d.id)">Eliminar</button>
+          <td>
+            <button *ngIf="editId !== d.id" (click)="startEdit(d)">Editar</button>
+            <button *ngIf="editId === d.id" class="save" (click)="saveEdit()">Guardar</button>
+            <button class="del" (click)="remove(d.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>

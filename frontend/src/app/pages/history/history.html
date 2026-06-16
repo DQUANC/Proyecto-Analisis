@@ -36,8 +36,7 @@
         <span class="meta-item" *ngIf="isAdmin">
           <span class="meta-label">Área:</span> {{ t.department?.name ?? '—' }}
         </span>
-        <!-- CAMBIO: "Finalizada" oculta para WORKER (solo ADMIN/SUPER_USER) -->
-        <span class="meta-item" *ngIf="isAdmin">
+        <span class="meta-item">
           <span class="meta-label">Finalizada:</span> {{ t.completedAt ? (t.completedAt | slice:0:10) : '—' }}
         </span>
         <span class="meta-item">
@@ -47,9 +46,6 @@
           <span class="meta-label">Puntuación:</span>
           <span *ngIf="t.evaluation?.score !== null && t.evaluation?.score !== undefined" class="score">★ {{ t.evaluation!.score }}/10</span>
           <span *ngIf="!t.evaluation?.score" class="no-eval">—</span>
-        </span>
-        <span class="meta-item" *ngIf="isAdmin && t.evaluation?.feedback">
-          <span class="meta-label">Retroalimentación:</span> {{ t.evaluation?.feedback }}
         </span>
       </div>
     </div>

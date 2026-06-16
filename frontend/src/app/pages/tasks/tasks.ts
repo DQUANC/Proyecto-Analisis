@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
+import { DragDropModule, CdkDragDrop, CdkDrag } from '@angular/cdk/drag-drop';
 import {
-  TasksService, Task, TasksResponse,
+  TasksService, Task, TasksResponse, TaskStatus,
   CreateTaskPayload, UpdateTaskPayload, EvaluateTaskPayload
 } from '../../services/tasks.service';
 import { DepartmentsService, Department } from '../../services/departments.service';
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tasks',
-  imports: [FormsModule, RouterLink, NgIf, NgFor, SlicePipe],
+  imports: [FormsModule, RouterLink, NgIf, NgFor, SlicePipe, DragDropModule],
   templateUrl: './tasks.html',
   styleUrl: './tasks.css',
 })
@@ -61,6 +62,21 @@ export class TasksComponent implements OnInit {
   evaluatingTask: Task | null         = null;
   evalForm: EvaluateTaskPayload       = { feedback: '', score: undefined };
 
+  // ── Estado del modal de detalle (tarjeta → click → modal) ──
+  // viewingTask guarda la tarea cuya tarjeta fue clickeada (null = modal cerrado).
+  // Muestra toda la información de la tarea y da acceso a las acciones existentes.
+  viewingTask: Task | null = null;
+
+  // ── Cierre con tecla Escape ──────────────────────────
+  // Cierra el modal que esté abierto en este momento (detalle, edición o evaluación),
+  // priorizando el que esté "más arriba" en caso de que varios estén abiertos.
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.evaluatingTask) { this.evaluatingTask = null; return; }
+    if (this.editingTask)    { this.editingTask = null;    return; }
+    if (this.viewingTask)    { this.viewingTask = null;    return; }
+  }
+
   ngOnInit() {
     // setTimeout evita el error "ExpressionChangedAfterItHasBeenChecked"
     // que ocurre cuando se modifica el estado durante la inicialización del componente.
@@ -87,10 +103,13 @@ export class TasksComponent implements OnInit {
     this.loading = true;
     this.tasksService.getAll().subscribe({
       next: (res: TasksResponse) => {
-        this.tasks = res.tasks.filter(task =>
-          task.status === 'TO_DO' || task.status === 'IN_PROGRESS'
-        );
+        this.tasks = res.tasks;
         this.loading = false;
+        // Si el modal de detalle está abierto, refresca su referencia con los
+        // datos nuevos para que no muestre información desactualizada.
+        if (this.viewingTask) {
+          this.viewingTask = this.tasks.find(t => t.id === this.viewingTask!.id) ?? null;
+        }
         this.cdr.detectChanges(); // fuerza la actualización de la vista
       },
       // CAMBIO: mensaje de error traducido al español
@@ -116,7 +135,7 @@ export class TasksComponent implements OnInit {
     if (!dueDate)                                                this.createErrors['dueDate']      = 'La fecha límite es requerida.';
     if (!this.createForm.departmentId || Number(this.createForm.departmentId) === 0)
                                                                  this.createErrors['departmentId'] = 'Selecciona un área de trabajo.';
-    if (this.createForm.assignedToId == null)                    this.createErrors['assignedToId'] = 'Selecciona un usuario asignado';
+    if (this.createForm.assignedToId == null)                    this.createErrors['assignedToId'] = 'Selecciona un usuario asignado.';
 
     if (Object.keys(this.createErrors).length > 0) {
       this.cdr.detectChanges();
@@ -137,9 +156,21 @@ export class TasksComponent implements OnInit {
     });
   }
 
+  // ── Abrir / cerrar modal de detalle ──────────────────
+  // Se dispara al hacer click en una tarjeta. Muestra toda la información de la tarea.
+  openView(task: Task) {
+    this.viewingTask = task;
+  }
+
+  closeView() {
+    this.viewingTask = null;
+  }
+
   // ── Abrir modal de edición ───────────────────────────
   // Carga los datos actuales de la tarea en editForm para que el usuario los modifique.
+  // Si se abre desde el modal de detalle, lo cierra para no apilar dos modales.
   openEdit(task: Task) {
+    this.viewingTask = null;
     this.editingTask = task;
     this.editForm = {
       title:        task.title,
@@ -188,17 +219,86 @@ export class TasksComponent implements OnInit {
     });
   }
 
+  // ── Tablero Kanban ────────────────────────────────────
+  // Getters que dividen las tareas en las tres columnas del tablero
+  // según su estado actual. Se recalculan en cada change detection,
+  // por lo que siempre reflejan el contenido más reciente de `tasks`.
+  get todoTasks(): Task[] {
+    return this.tasks.filter(t => t.status === 'TO_DO');
+  }
+
+  get inProgressTasks(): Task[] {
+    return this.tasks.filter(t => t.status === 'IN_PROGRESS');
+  }
+
+  // CAMBIO: la columna "Terminadas" del Kanban solo debe mostrar las tareas
+  // completadas el día de hoy. Las completadas en días anteriores siguen
+  // existiendo (se ven en History) pero se ocultan de este tablero para no
+  // acumular tarjetas viejas. Se compara año/mes/día, no el timestamp exacto.
+  get doneTasks(): Task[] {
+    return this.tasks.filter(t => t.status === 'DONE' && this.isCompletedToday(t));
+  }
+
+  // Compara la fecha de completado de la tarea contra la fecha actual,
+  // ignorando la hora exacta (solo año, mes y día).
+  private isCompletedToday(task: Task): boolean {
+    if (!task.completedAt) return false;
+    const completed = new Date(task.completedAt);
+    const today = new Date();
+    return completed.getFullYear() === today.getFullYear()
+      && completed.getMonth() === today.getMonth()
+      && completed.getDate() === today.getDate();
+  }
+
+  // IDs de las listas conectadas entre sí para permitir arrastrar
+  // tarjetas de una columna a otra (cdkDropListConnectedTo).
+  readonly kanbanListIds = ['kanban-todo', 'kanban-in-progress', 'kanban-done'];
+
+  // ── Bloqueo visual de TO_DO → DONE en el drag & drop ──
+  // cdkDropListEnterPredicate se evalúa mientras el usuario arrastra una tarjeta
+  // sobre la columna "Terminadas": si la tarjeta viene de "Por Hacer", se rechaza
+  // el ingreso (la tarjeta no se "engancha" a la columna y vuelve a su lugar al soltar),
+  // respetando la misma regla de negocio que ya existe para el selector de estado.
+  // Se declara como arrow function de instancia porque el CDK la invoca sin
+  // contexto (`this` no apuntaría al componente si fuera un método normal).
+  canEnterDoneColumn = (drag: CdkDrag<Task>): boolean => {
+    const task = drag?.data;
+    if (task?.status === 'TO_DO') {
+      this.error = 'La tarea debe estar en proceso antes de marcarla como completada.';
+      this.cdr.detectChanges();
+      return false;
+    }
+    return true;
+  };
+
+  // Se dispara al soltar una tarjeta sobre una columna (misma columna o columna distinta).
+  // Reutiliza la misma validación y lógica de `updateStatus` para mantener
+  // consistencia con el cambio de estado por el <select>: bloquea TO_DO → DONE.
+  onCardDrop(event: CdkDragDrop<Task[]>, targetStatus: TaskStatus) {
+    const task: Task = event.item.data;
+
+    // Si se soltó en la misma columna de origen, no hay cambio de estado.
+    if (task.status === targetStatus) return;
+
+    // Reutiliza updateStatus, que ya contiene la validación TO_DO → DONE bloqueada
+    // y la llamada al backend + recarga de la lista.
+    this.updateStatus(task, targetStatus);
+  }
+
   // ── Eliminar tarea ───────────────────────────────────
   // Pide confirmación antes de borrar.
   // CAMBIO: el mensaje del confirm pasó de 'Delete this task?' a español.
   remove(id: number) {
     if (!confirm('¿Eliminar esta tarea?')) return;
+    this.viewingTask = null;
     this.tasksService.remove(id).subscribe({ next: () => this.load() });
   }
 
   // ── Abrir modal de evaluación ────────────────────────
   // Si la tarea ya tiene evaluación previa, la precarga en el formulario.
+  // Si se abre desde el modal de detalle, lo cierra para no apilar dos modales.
   openEval(task: Task) {
+    this.viewingTask = null;
     this.evaluatingTask = task;
     this.evalForm = {
       feedback: task.evaluation?.feedback ?? '',
@@ -236,5 +336,23 @@ export class TasksComponent implements OnInit {
     };
     // Si por alguna razón llega un valor desconocido, lo muestra tal cual
     return map[key] ?? key;
+  }
+
+  // ── Helper para traducir el estado de la tarea ───────
+  // Se usa tanto en la tarjeta como en el modal de detalle.
+  statusLabel(key: string): string {
+    const map: Record<string, string> = {
+      TO_DO:       'Pendiente',
+      IN_PROGRESS: 'En progreso',
+      DONE:        'Completado',
+    };
+    return map[key] ?? key;
+  }
+
+  // ── Helper para evitar que clicks en botones dentro de la tarjeta
+  // disparen también la apertura del modal de detalle (stopPropagation manual
+  // ya se usa en el HTML, este helper queda disponible si se requiere desde TS).
+  stop(event: Event) {
+    event.stopPropagation();
   }
 }
