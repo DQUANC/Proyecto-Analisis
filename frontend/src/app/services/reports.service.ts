@@ -1,7 +1,8 @@
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { map, switchMap, shareReplay, catchError } from 'rxjs/operators';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { TasksService } from './tasks.service';
@@ -21,11 +22,19 @@ const STATUS_LABELS: Record<string, string> = {
   DONE: 'Completado',
 };
 
+const BRAND_NAVY: [number, number, number] = [11, 29, 61];
+const BRAND_TEAL: [number, number, number] = [0, 209, 216];
+const LOGO_PATH = 'assets/logos/logotipo-monocromo-navy.png';
+const HEADER_HEIGHT = 32;
+
 @Injectable({ providedIn: 'root' })
 export class ReportsService {
   private readonly tasksService = inject(TasksService);
   private readonly dashboardService = inject(DashboardService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly http = inject(HttpClient);
+
+  private logo$?: Observable<string | null>;
 
   reportTitle(type: ReportType): string {
     return REPORT_TITLES[type];
@@ -33,34 +42,34 @@ export class ReportsService {
 
   generateTasksByDepartmentPdf(): Observable<void> {
     return this.dashboardService.getByDepartment().pipe(
-      map((departments) => {
+      switchMap((departments) => {
         const rows = departments.map((d) => [
           d.departmentName,
           String(d.totalTasks),
           this.statusBreakdown(d.tasksByStatus),
         ]);
-        this.buildPdf('TASKS_BY_DEPARTMENT', ['Departamento', 'Total', 'Distribución por estado'], rows);
+        return this.buildPdf('TASKS_BY_DEPARTMENT', ['Departamento', 'Total', 'Distribución por estado'], rows);
       })
     );
   }
 
   generateCompletedTasksPdf(): Observable<void> {
     return this.tasksService.getHistory().pipe(
-      map((res) => {
+      switchMap((res) => {
         const rows = res.tasks.map((t) => [
           t.title,
           t.department?.name ?? '—',
           t.assignedTo?.name ?? '—',
           t.completedAt ? t.completedAt.slice(0, 10) : '—',
         ]);
-        this.buildPdf('COMPLETED_TASKS', ['Tarea', 'Departamento', 'Asignado a', 'Fecha de finalización'], rows);
+        return this.buildPdf('COMPLETED_TASKS', ['Tarea', 'Departamento', 'Asignado a', 'Fecha de finalización'], rows);
       })
     );
   }
 
   generateEvaluationsPdf(): Observable<void> {
     return this.tasksService.getHistory().pipe(
-      map((res) => {
+      switchMap((res) => {
         const evaluated = res.tasks.filter((t) => t.evaluation != null);
         const rows = evaluated.map((t) => [
           t.title,
@@ -68,7 +77,7 @@ export class ReportsService {
           String(t.evaluation?.score ?? '—'),
           t.evaluation?.feedback ?? '—',
         ]);
-        this.buildPdf('EVALUATIONS', ['Tarea', 'Asignado a', 'Puntaje', 'Retroalimentación'], rows);
+        return this.buildPdf('EVALUATIONS', ['Tarea', 'Asignado a', 'Puntaje', 'Retroalimentación'], rows);
       })
     );
   }
@@ -79,40 +88,113 @@ export class ReportsService {
     return entries.map(([key, value]) => `${STATUS_LABELS[key] ?? key}: ${value}`).join(', ');
   }
 
-  private buildPdf(type: ReportType, head: string[], rows: string[][]): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+  private getLogoBase64(): Observable<string | null> {
+    if (!this.logo$) {
+      this.logo$ = this.http.get(LOGO_PATH, { responseType: 'blob' }).pipe(
+        switchMap((blob) => this.blobToDataUrl(blob)),
+        catchError(() => of(null)),
+        shareReplay(1)
+      );
+    }
+    return this.logo$;
+  }
 
-    const doc = new jsPDF();
-    const title = this.reportTitle(type);
-    const generatedAt = new Date();
+  private blobToDataUrl(blob: Blob): Observable<string | null> {
+    return new Observable((subscriber) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        subscriber.next(typeof reader.result === 'string' ? reader.result : null);
+        subscriber.complete();
+      };
+      reader.onerror = () => {
+        subscriber.next(null);
+        subscriber.complete();
+      };
+      reader.readAsDataURL(blob);
+    });
+  }
 
-    doc.setFontSize(16);
-    doc.text(title, 14, 18);
-    doc.setFontSize(10);
-    doc.text(`Fecha de generación: ${this.formatDate(generatedAt)}`, 14, 25);
+  private buildPdf(type: ReportType, head: string[], rows: string[][]): Observable<void> {
+    if (!isPlatformBrowser(this.platformId)) return of(void 0);
 
-    if (!rows.length) {
-      doc.setFontSize(12);
-      doc.text('Sin registros', 14, 38);
-    } else {
-      autoTable(doc, {
-        startY: 32,
-        head: [head],
-        body: rows,
-        styles: { fontSize: 9 },
-        headStyles: { fillColor: [11, 29, 61] },
-      });
+    return this.getLogoBase64().pipe(
+      map((logo) => {
+        const doc = new jsPDF();
+        const title = this.reportTitle(type);
+        const generatedAt = new Date();
+
+        this.drawHeader(doc, title, generatedAt, logo);
+
+        if (!rows.length) {
+          doc.setFontSize(12);
+          doc.setTextColor(...BRAND_NAVY);
+          doc.text('Sin registros', 14, HEADER_HEIGHT + 14);
+          this.drawFooter(doc);
+        } else {
+          autoTable(doc, {
+            startY: HEADER_HEIGHT + 8,
+            head: [head],
+            body: rows,
+            styles: { fontSize: 9 },
+            headStyles: { fillColor: BRAND_NAVY },
+            didDrawPage: () => this.drawFooter(doc),
+          });
+        }
+
+        doc.save(this.fileName(generatedAt));
+      })
+    );
+  }
+
+  private drawHeader(doc: jsPDF, title: string, generatedAt: Date, logo: string | null): void {
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFillColor(...BRAND_NAVY);
+    doc.rect(0, 0, pageWidth, HEADER_HEIGHT, 'F');
+
+    const logoSize = 16;
+    const logoX = 12;
+    const logoY = (HEADER_HEIGHT - logoSize) / 2;
+    let textX = logoX;
+
+    if (logo) {
+      try {
+        doc.addImage(logo, 'PNG', logoX, logoY, logoSize, logoSize);
+        textX = logoX + logoSize + 8;
+      } catch {
+        textX = logoX;
+      }
     }
 
-    doc.save(this.fileName(generatedAt));
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.text(title, textX, HEADER_HEIGHT / 2 + 2);
+
+    doc.setFontSize(9);
+    doc.setTextColor(...BRAND_TEAL);
+    doc.text(
+      `Generado el ${generatedAt.toLocaleDateString('es', { year: 'numeric', month: '2-digit', day: '2-digit' })} a las ${generatedAt.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}`,
+      textX,
+      HEADER_HEIGHT / 2 + 9
+    );
+
+    doc.setTextColor(...BRAND_NAVY);
+  }
+
+  private drawFooter(doc: jsPDF): void {
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const pageCount = doc.getNumberOfPages();
+    const currentPage = doc.getCurrentPageInfo().pageNumber;
+
+    doc.setFontSize(8);
+    doc.setTextColor(...BRAND_NAVY);
+    doc.text('Nexora', 14, pageHeight - 10);
+    doc.text(`Página ${currentPage} de ${pageCount}`, pageWidth - 14, pageHeight - 10, { align: 'right' });
   }
 
   private fileName(date: Date): string {
     const isoDate = date.toISOString().slice(0, 10);
     return `reporte-tareas-${isoDate}.pdf`;
-  }
-
-  private formatDate(date: Date): string {
-    return date.toLocaleDateString('es', { year: 'numeric', month: '2-digit', day: '2-digit' });
   }
 }

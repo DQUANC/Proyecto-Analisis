@@ -1,14 +1,14 @@
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { NgIf } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 import { ReportsService, ReportType } from '../../services/reports.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reports',
-  imports: [FormsModule, RouterLink, NgIf],
+  imports: [FormsModule, RouterLink, NgIf, NgFor],
   templateUrl: './reports.html',
   styleUrl: './reports.css',
 })
