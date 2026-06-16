@@ -96,4 +96,21 @@
       </tbody>
     </table>
   </section>
+
+  <!-- Generación de reportes en PDF -->
+  <section class="report-section">
+    <h2>Generar Reporte en PDF</h2>
+    <div class="form-row">
+      <label>Tipo de Reporte
+        <select [(ngModel)]="selectedReportType" name="reportType">
+          <option *ngFor="let opt of reportOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+      </label>
+      <button class="btn-primary" (click)="generatePdf()" [disabled]="reportLoading">
+        {{ reportLoading ? 'Generando...' : 'Generar PDF' }}
+      </button>
+    </div>
+    <p *ngIf="reportLoading" class="report-hint">Obteniendo datos, por favor espera...</p>
+    <p class="error" *ngIf="reportError">{{ reportError }}</p>
+  </section>
 </div>

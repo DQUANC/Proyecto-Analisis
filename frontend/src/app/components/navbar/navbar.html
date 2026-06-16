@@ -8,7 +8,6 @@
     <a routerLink="/history" routerLinkActive="active">Historial</a>
     <a *ngIf="isAdmin" routerLink="/users" routerLinkActive="active">Usuarios</a>
     <a *ngIf="isAdmin" routerLink="/departments" routerLinkActive="active">Áreas</a>
-    <a *ngIf="isAdmin" routerLink="/reports" routerLinkActive="active">Reportes</a>
     <span class="current-user" *ngIf="currentUser" [title]="currentUser.email">
       <span class="current-user-name">{{ currentUser.name }}</span>
       <span class="current-user-role" [class.role-super]="currentUser.isSuperUser">{{ roleLabel }}</span>
