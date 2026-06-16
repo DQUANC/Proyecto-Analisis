@@ -1,13 +1,14 @@
 import { Component, inject, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
-import { TasksService, Task } from '../../services/tasks.service';
+import { FormsModule } from '@angular/forms';
+import { TasksService, Task, EvaluateTaskPayload } from '../../services/tasks.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { NavbarComponent } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-history',
-  imports: [ NgIf, NgFor, SlicePipe, NavbarComponent],
+  imports: [ NgIf, NgFor, SlicePipe, NavbarComponent, FormsModule],
   templateUrl: './history.html',
   styleUrl: './history.css',
 })
@@ -21,24 +22,41 @@ export class HistoryComponent implements OnInit {
   loading = true;
   error = '';
 
-  readonly isAdmin = this.auth.isAdmin();
+  get isAdmin() { return this.auth.isAdmin(); }
 
-  // ── Estado del modal de detalle (tarjeta → click → modal) ──
-  // viewingTask guarda el registro de historial cuya tarjeta fue clickeada
-  // (null = modal cerrado). Muestra todos los campos disponibles.
   viewingTask: Task | null = null;
+  evaluatingTask: Task | null = null;
+  evalForm: EvaluateTaskPayload = { feedback: '', score: undefined };
 
-  openView(task: Task) {
-    this.viewingTask = task;
-  }
+  openView(task: Task) { this.viewingTask = task; }
+  closeView() { this.viewingTask = null; }
 
-  closeView() {
+  openEval(task: Task) {
     this.viewingTask = null;
+    this.evaluatingTask = task;
+    this.evalForm = {
+      feedback: task.evaluation?.feedback ?? '',
+      score:    task.evaluation?.score    ?? undefined,
+    };
   }
 
-  // ── Cierre con tecla Escape ──────────────────────────
+  submitEval() {
+    if (!this.evaluatingTask) return;
+    this.tasksService.evaluate(this.evaluatingTask.id, this.evalForm).subscribe({
+      next: () => {
+        this.evaluatingTask = null;
+        this.tasksService.getHistory().subscribe({
+          next: (res) => { this.tasks = res.tasks; this.cdr.detectChanges(); },
+          error: () => {}
+        });
+      },
+      error: (err: any) => { this.error = err?.error?.message ?? 'Error al evaluar'; this.cdr.detectChanges(); }
+    });
+  }
+
   @HostListener('document:keydown.escape')
   onEscape() {
+    if (this.evaluatingTask) { this.evaluatingTask = null; return; }
     this.viewingTask = null;
   }
 

@@ -415,6 +415,79 @@ header button:hover {
     font-size: 0.82rem;
 }
 
+/* ── Botones del modal ── */
+.btn-eval {
+    padding: 0.5rem 1.1rem;
+    background: var(--color-navy, #0B1D3D);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    transition: all 0.2s ease;
+}
+
+.btn-eval:hover {
+    background: #122648;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(11, 29, 61, 0.25);
+}
+
+.btn-primary {
+    padding: 0.5rem 1.1rem;
+    background: linear-gradient(135deg, var(--color-teal, #00D1D8) 0%, #00bcc4 100%);
+    color: var(--color-navy, #0B1D3D);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 800;
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    transition: all 0.22s ease;
+    box-shadow: 0 3px 10px rgba(0, 209, 216, 0.28);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 209, 216, 0.38);
+    filter: brightness(1.06);
+}
+
+.modal label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-navy, #0B1D3D);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.modal input[type="number"],
+.modal textarea {
+    padding: 0.6rem 0.8rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-family: var(--font-body, 'Inter', Arial, sans-serif);
+    color: var(--color-navy, #0B1D3D);
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 500;
+    transition: border-color 0.2s ease;
+    resize: vertical;
+}
+
+.modal input[type="number"]:focus,
+.modal textarea:focus {
+    outline: none;
+    border-color: var(--color-teal, #00D1D8);
+    box-shadow: 0 0 0 3px rgba(0, 209, 216, 0.13);
+}
+
 /* ── Error ── */
 .error {
     color: #b91c1c;

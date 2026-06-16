@@ -97,8 +97,30 @@
       </div>
 
       <div class="modal-actions">
+        <button class="btn-eval" *ngIf="isAdmin" (click)="openEval(viewingTask)">
+          {{ viewingTask.evaluation ? 'Editar Evaluación' : 'Evaluar' }}
+        </button>
         <button type="button" class="btn-cancel" (click)="closeView()">Cerrar</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal de evaluación (solo admin) -->
+  <div class="modal-backdrop" *ngIf="evaluatingTask" (click)="evaluatingTask = null">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3>Evaluar: {{ evaluatingTask.title }}</h3>
+      <form (ngSubmit)="submitEval()">
+        <label>Puntuación (1–10)
+          <input type="number" [(ngModel)]="evalForm.score" name="score" min="1" max="10" required />
+        </label>
+        <label>Retroalimentación
+          <textarea [(ngModel)]="evalForm.feedback" name="feedback" rows="4"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="evaluatingTask = null">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Evaluación</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
