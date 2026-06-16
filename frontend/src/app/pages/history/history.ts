@@ -1,5 +1,4 @@
 import { Component, inject, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
 import { TasksService, Task } from '../../services/tasks.service';
 import { AuthService } from '../../services/auth.service';
@@ -8,7 +7,7 @@ import { NavbarComponent } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-history',
-  imports: [RouterLink, NgIf, NgFor, SlicePipe, NavbarComponent],
+  imports: [ NgIf, NgFor, SlicePipe, NavbarComponent],
   templateUrl: './history.html',
   styleUrl: './history.css',
 })

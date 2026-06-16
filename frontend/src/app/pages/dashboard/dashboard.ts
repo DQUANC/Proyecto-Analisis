@@ -1,5 +1,4 @@
 ﻿import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { NgIf, NgFor, KeyValuePipe, NgClass } from '@angular/common';
 import { NavbarComponent } from '../../components/navbar/navbar';
 import { ChartModule } from 'primeng/chart';
@@ -11,7 +10,7 @@ import { Router } from '@angular/router';
   selector: 'app-dashboard',
 
 
-  imports: [RouterLink, NgIf, NgFor, KeyValuePipe, NgClass, ChartModule, NavbarComponent],
+  imports: [ NgIf, NgFor, KeyValuePipe, NgClass, ChartModule, NavbarComponent],
 
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
