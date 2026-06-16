@@ -1,6 +1,13 @@
 <div class="page">
 <app-navbar></app-navbar>
 
+  <!-- ── Acción de creación ── -->
+  <div class="action-bar">
+    <button class="btn-primary" (click)="showCreateForm = !showCreateForm">
+      {{ showCreateForm ? 'Cancelar' : '+ Nuevo Usuario' }}
+    </button>
+  </div>
+
   <!-- ── Formulario de creación ── -->
   <div class="form-box" *ngIf="showCreateForm">
     <h3>Nuevo Usuario</h3>
@@ -25,7 +32,7 @@
           <select [(ngModel)]="createForm.role" name="role">
             <option value="WORKER">Trabajador</option>
             <option value="ADMIN">Administrador</option>
-            <option value="SUPER_USER">Super Usuario</option>
+            <option value="SUPER_USER" *ngIf="currentUserIsSuperUser">Super Usuario</option>
           </select>
         </label>
 
@@ -76,7 +83,9 @@
             </span>
           </td>
           <td class="actions">
-            <button class="btn-edit" (click)="openEdit(u)">Editar</button>
+            <button class="btn-edit"
+              *ngIf="u.id === currentUserId || u.role === 'WORKER' || currentUserIsSuperUser"
+              (click)="openEdit(u)">Editar</button>
             <button class="btn-toggle"
               *ngIf="u.id !== currentUserId && (u.role === 'WORKER' || currentUserIsSuperUser)"
               [class.btn-disable]="u.isActive !== false"
@@ -112,7 +121,7 @@
           <select [(ngModel)]="editForm.role" name="role">
             <option value="WORKER">Trabajador</option>
             <option value="ADMIN">Administrador</option>
-            <option value="SUPER_USER">Super Usuario</option>
+            <option value="SUPER_USER" *ngIf="currentUserIsSuperUser">Super Usuario</option>
           </select>
         </label>
 

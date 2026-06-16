@@ -1,36 +1,7 @@
 import prisma from '../prisma';
-import { hashPassword, comparePassword } from '../utils/password.utils';
+import { comparePassword } from '../utils/password.utils';
 import { signToken } from '../utils/jwt.utils';
 import { isUserDisabled } from './users.service';
-
-export async function register(data: {
-  name: string;
-  email: string;
-  password: string;
-  departmentId?: number;
-}) {
-  const existing = await prisma.user.findUnique({ where: { email: data.email } });
-  if (existing) {
-    const err = new Error('El email ya está registrado') as Error & { statusCode: number };
-    err.statusCode = 409;
-    throw err;
-  }
-
-  const hashed = await hashPassword(data.password);
-  const user = await prisma.user.create({
-    data: {
-      name: data.name,
-      email: data.email,
-      password: hashed,
-      departmentId: data.departmentId ?? null,
-    },
-    include: { department: true },
-  });
-
-  const { password: _p, ...safeUser } = user;
-  const token = signToken({ id: user.id, email: user.email, role: user.role, departmentId: user.departmentId, isSuperUser: user.isSuperUser });
-  return { token, user: safeUser };
-}
 
 export async function login(email: string, password: string) {
   const user = await prisma.user.findUnique({

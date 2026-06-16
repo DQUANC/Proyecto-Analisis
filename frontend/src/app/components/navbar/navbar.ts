@@ -15,6 +15,12 @@ export class NavbarComponent {
   private router = inject(Router);
 
   readonly isAdmin = this.auth.isAdmin();
+  readonly currentUser = this.auth.getUser();
+
+  get roleLabel(): string {
+    if (this.currentUser?.isSuperUser) return 'Super Usuario';
+    return this.currentUser?.role === 'ADMIN' ? 'Administrador' : 'Trabajador';
+  }
 
   logout() {
     this.auth.logout();

@@ -20,13 +20,6 @@ export interface LoginResponse {
   user: AppUser;
 }
 
-export interface RegisterPayload {
-  name: string;
-  email: string;
-  password: string;
-  departmentId: number;
-}
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -45,13 +38,6 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
       tap(res => this.saveSession(res))
     );
-  }
-
-  register(payload: RegisterPayload): Observable<{ message: string }> {
-    if (environment.useMocks) {
-      return of({ message: 'Registered (mock)' });
-    }
-    return this.http.post<{ message: string }>(`${this.apiUrl}/register`, payload);
   }
 
   me(): Observable<AppUser> {

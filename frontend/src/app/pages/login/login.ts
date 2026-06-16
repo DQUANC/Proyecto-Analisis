@@ -1,13 +1,13 @@
 import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { timeout } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink, NgIf],
+  imports: [FormsModule, NgIf],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

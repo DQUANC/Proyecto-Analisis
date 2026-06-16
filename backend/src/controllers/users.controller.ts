@@ -22,9 +22,14 @@ export async function getById(req: Request, res: Response, next: NextFunction) {
 
 export async function create(req: Request, res: Response, next: NextFunction) {
   try {
-    const user = await usersService.create(
-      req.body as { name: string; email: string; password: string; role?: 'ADMIN' | 'WORKER'; departmentId?: number }
-    );
+    const body = req.body as { name: string; email: string; password: string; role?: 'ADMIN' | 'WORKER' | 'SUPER_USER'; departmentId?: number };
+
+    if (body.role === 'SUPER_USER' && !req.user?.isSuperUser) {
+      res.status(403).json({ message: 'Solo el Super Usuario puede asignar el rol de Super Usuario.' });
+      return;
+    }
+
+    const user = await usersService.create(body);
     res.status(201).json({ user });
   } catch (err) {
     next(err);
@@ -33,10 +38,23 @@ export async function create(req: Request, res: Response, next: NextFunction) {
 
 export async function update(req: Request, res: Response, next: NextFunction) {
   try {
-    const user = await usersService.update(
-      Number(req.params.id),
-      req.body as Partial<{ name: string; email: string; role: 'ADMIN' | 'WORKER'; departmentId: number | null; password: string }>
-    );
+    const id = Number(req.params.id);
+    const body = req.body as Partial<{ name: string; email: string; role: 'ADMIN' | 'WORKER' | 'SUPER_USER'; departmentId: number | null; password: string }>;
+
+    if (body.role === 'SUPER_USER' && !req.user?.isSuperUser) {
+      res.status(403).json({ message: 'Solo el Super Usuario puede asignar el rol de Super Usuario.' });
+      return;
+    }
+
+    if (req.user?.id !== id && !req.user?.isSuperUser) {
+      const target = await usersService.getById(id);
+      if (target.role === 'ADMIN' || target.isSuperUser) {
+        res.status(403).json({ message: 'Solo el Super Usuario puede editar a otros administradores.' });
+        return;
+      }
+    }
+
+    const user = await usersService.update(id, body);
     res.json({ user });
   } catch (err) {
     next(err);
