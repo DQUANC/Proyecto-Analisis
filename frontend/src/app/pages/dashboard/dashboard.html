@@ -1,17 +1,5 @@
 <div class="page">
-  <header>
-    <div class="header-brand">
-      <img class="header-logo" src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
-      <h1>Panel de Control</h1>
-    </div>
-    <nav>
-      <a routerLink="/tasks">Tareas</a>
-      <a routerLink="/history">Historial</a>
-     <a routerLink="/users">Usuarios</a>
-      <a routerLink="/reports">Reportes</a>
-      <button (click)="logout()">Cerrar sesión</button>
-    </nav>
-  </header>
+<app-navbar></app-navbar>
 
   <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>

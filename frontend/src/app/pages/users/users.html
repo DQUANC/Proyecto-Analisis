@@ -1,18 +1,5 @@
 <div class="page">
-  <header>
-    <div class="header-brand">
-      <img class="header-logo" src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
-      <h1>Usuarios</h1>
-    </div>
-    <div>
-      <a routerLink="/tasks">← Tareas</a>
-      <a *ngIf="isAdmin" routerLink="/reports">Reportes</a>
-      <button (click)="showCreateForm = !showCreateForm">
-        {{ showCreateForm ? 'Cancelar' : '+ Nuevo Usuario' }}
-      </button>
-      <button class="logout" (click)="logout()">Cerrar Sesión</button>
-    </div>
-  </header>
+<app-navbar></app-navbar>
 
   <!-- ── Formulario de creación ── -->
   <div class="form-box" *ngIf="showCreateForm">

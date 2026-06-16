@@ -1,60 +1,103 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { NgIf, NgFor } from '@angular/common';
 import { DepartmentsService, Department } from '../../services/departments.service';
+import { UsersService, User } from '../../services/users.service';
 import { AuthService } from '../../services/auth.service';
+import { NavbarComponent } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-departments',
-  imports: [FormsModule, RouterLink, NgIf, NgFor],
+  imports: [NavbarComponent, FormsModule, NgIf, NgFor],
   templateUrl: './departments.html',
   styleUrl: './departments.css',
 })
 export class DepartmentsComponent implements OnInit {
-  private service = inject(DepartmentsService);
-  private cdr = inject(ChangeDetectorRef);
-  private auth = inject(AuthService);
+  private service      = inject(DepartmentsService);
+  private usersService = inject(UsersService);
+  private auth         = inject(AuthService);
+  private cdr          = inject(ChangeDetectorRef);
 
-  readonly isAdmin = this.auth.isAdmin();
+  readonly isSuperUser = this.auth.isSuperUser();
 
   departments: Department[] = [];
+  usersByDept: Record<number, User[]> = {};
   loading = true;
-  error = '';
+  error   = '';
+
+  showCreateForm = false;
   newName = '';
-  editId: number | null = null;
+  createError = '';
+
+  editingDept: Department | null = null;
   editName = '';
+
+  confirmDeleteId: number | null = null;
+  expandedDepts = new Set<number>();
+
+  toggleExpand(id: number) {
+    if (this.expandedDepts.has(id)) this.expandedDepts.delete(id);
+    else this.expandedDepts.add(id);
+  }
 
   ngOnInit() { setTimeout(() => this.load()); }
 
   load() {
     this.loading = true;
     this.service.getAll().subscribe({
-      next: (res) => { this.departments = res.departments; this.loading = false; this.cdr.detectChanges(); },
-      error: (err) => { this.error = err?.error?.message ?? 'Failed to load'; this.loading = false; this.cdr.detectChanges(); }
+      next: (res) => {
+        this.departments = res.departments;
+        this.usersService.getAll().subscribe({
+          next: (uRes) => {
+            this.usersByDept = {};
+            for (const u of uRes.users) {
+              if (u.departmentId != null) {
+                if (!this.usersByDept[u.departmentId]) this.usersByDept[u.departmentId] = [];
+                this.usersByDept[u.departmentId].push(u);
+              }
+            }
+            this.loading = false;
+            this.cdr.detectChanges();
+          },
+          error: () => { this.loading = false; this.cdr.detectChanges(); }
+        });
+      },
+      error: (err) => { this.error = err?.error?.message ?? 'Error al cargar departamentos'; this.loading = false; this.cdr.detectChanges(); }
     });
+  }
+
+  getUsersOf(deptId: number): User[] {
+    return this.usersByDept[deptId] ?? [];
   }
 
   create() {
-    if (!this.newName.trim()) return;
+    this.createError = '';
+    if (!this.newName.trim()) { this.createError = 'El nombre es requerido'; return; }
     this.service.create(this.newName.trim()).subscribe({
-      next: () => { this.newName = ''; this.load(); },
-      error: (err) => { this.error = err?.error?.message ?? 'Failed to create'; }
+      next: () => { this.newName = ''; this.showCreateForm = false; this.load(); },
+      error: (err) => { this.createError = err?.error?.message ?? 'Error al crear'; this.cdr.detectChanges(); }
     });
   }
 
-  startEdit(d: Department) { this.editId = d.id; this.editName = d.name; }
+  openEdit(d: Department) { this.editingDept = d; this.editName = d.name; }
 
   saveEdit() {
-    if (this.editId === null) return;
-    this.service.update(this.editId, this.editName).subscribe({
-      next: () => { this.editId = null; this.load(); },
-      error: (err) => { this.error = err?.error?.message ?? 'Failed to update'; }
+    if (!this.editingDept) return;
+    this.service.update(this.editingDept.id, this.editName.trim()).subscribe({
+      next: () => { this.editingDept = null; this.load(); },
+      error: (err) => { this.error = err?.error?.message ?? 'Error al actualizar'; this.cdr.detectChanges(); }
     });
   }
 
-  remove(id: number) {
-    if (!confirm('Delete this department?')) return;
-    this.service.remove(id).subscribe({ next: () => this.load() });
+  remove(id: number) { this.confirmDeleteId = id; }
+
+  confirmDelete() {
+    if (this.confirmDeleteId === null) return;
+    this.service.remove(this.confirmDeleteId).subscribe({
+      next: () => { this.confirmDeleteId = null; this.load(); },
+      error: (err) => { this.confirmDeleteId = null; this.error = err?.error?.message ?? 'Error al eliminar'; this.cdr.detectChanges(); }
+    });
   }
+
+  cancelDelete() { this.confirmDeleteId = null; }
 }

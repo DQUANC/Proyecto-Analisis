@@ -1,0 +1,14 @@
+<header>
+  <div class="header-brand">
+    <img class="header-logo" src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
+  </div>
+  <nav>
+    <a *ngIf="isAdmin" routerLink="/dashboard" routerLinkActive="active">Panel</a>
+    <a routerLink="/tasks" routerLinkActive="active">Tareas</a>
+    <a routerLink="/history" routerLinkActive="active">Historial</a>
+    <a *ngIf="isAdmin" routerLink="/users" routerLinkActive="active">Usuarios</a>
+    <a *ngIf="isAdmin" routerLink="/departments" routerLinkActive="active">Áreas</a>
+    <a *ngIf="isAdmin" routerLink="/reports" routerLinkActive="active">Reportes</a>
+    <button class="logout" (click)="logout()">Cerrar Sesión</button>
+  </nav>
+</header>

@@ -1,23 +1,9 @@
 <div class="page">
-  <header>
-    <div class="header-brand">
-      <img class="header-logo" src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
-      <h1>Historial De Tareas</h1>
-    </div>
-    <div>
-      <a *ngIf="isAdmin" routerLink="/dashboard">← Panel De Control</a>
-      <a routerLink="/tasks">Tareas</a>
-      <a *ngIf="isAdmin" routerLink="/reports">Reportes</a>
-      <button class="logout" (click)="logout()">Cerrar Sesión</button>
-    </div>
-  </header>
+<app-navbar></app-navbar>
 
   <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
-  <!-- ── Tarjetas de historial (estilo Jira/Trello) ──
-       Cada tarjeta muestra la información esencial. Al hacer click se abre
-       el modal de detalle con todos los datos del registro. -->
   <div class="cards-grid" *ngIf="!loading && tasks.length">
     <div class="task-card border-done" *ngFor="let t of tasks"
       (click)="openView(t)" tabindex="0" (keydown.enter)="openView(t)">
