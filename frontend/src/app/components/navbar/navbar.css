@@ -22,23 +22,12 @@ header::before {
     background: radial-gradient(circle, rgba(0, 209, 216, 0.1) 0%, transparent 70%);
     pointer-events: none;
 }
-.header-brand {
-    position: relative;
-    z-index: 1;
-}
-.header-logo {
-    height: 30px;
-    width: auto;
-    filter: brightness(0) invert(1);
-    opacity: 0.92;
-}
-nav {
-    display: flex;
-    gap: 0.6rem;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-}
+.header-brand { position: relative; z-index: 1; }
+
+.header-logo { height: 30px; width: auto; filter: brightness(0) invert(1); opacity: 0.92; }
+
+nav { display: flex; gap: 0.6rem; align-items: center; position: relative; z-index: 1; }
+
 nav a {
     color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
