@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIf, NgFor } from '@angular/common';
 import { DepartmentsService, Department } from '../../services/departments.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-departments',
@@ -13,6 +14,9 @@ import { DepartmentsService, Department } from '../../services/departments.servi
 export class DepartmentsComponent implements OnInit {
   private service = inject(DepartmentsService);
   private cdr = inject(ChangeDetectorRef);
+  private auth = inject(AuthService);
+
+  readonly isAdmin = this.auth.isAdmin();
 
   departments: Department[] = [];
   loading = true;

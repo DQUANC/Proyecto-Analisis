@@ -6,6 +6,7 @@
     </div>
     <div>
       <a routerLink="/tasks">← Tareas</a>
+      <a *ngIf="isAdmin" routerLink="/reports">Reportes</a>
       <button (click)="showCreateForm = !showCreateForm">
         {{ showCreateForm ? 'Cancelar' : '+ Nuevo Usuario' }}
       </button>

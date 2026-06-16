@@ -27,6 +27,8 @@ export class UsersComponent implements OnInit {
   currentUserId: number | null = null;
   currentUserIsSuperUser = false;
 
+  readonly isAdmin = this.auth.isAdmin();
+
   showCreateForm = false;
   createForm: CreateUserPayload = {
     name: '',

@@ -4,7 +4,10 @@
       <img class="header-logo" src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
       <h1>Areas de Trabajo</h1>
     </div>
-    <a routerLink="/dashboard">← Panel de Control</a>
+    <nav>
+      <a routerLink="/dashboard">← Panel de Control</a>
+      <a *ngIf="isAdmin" routerLink="/reports">Reportes</a>
+    </nav>
   </header>
 
   <div class="form-row">
