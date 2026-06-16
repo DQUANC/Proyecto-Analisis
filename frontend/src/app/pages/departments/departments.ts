@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor } from '@angular/common';
 import { DepartmentsService, Department } from '../../services/departments.service';
@@ -35,6 +35,12 @@ export class DepartmentsComponent implements OnInit {
 
   confirmDeleteId: number | null = null;
   expandedDepts = new Set<number>();
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.confirmDeleteId !== null) { this.cancelDelete(); return; }
+    if (this.editingDept) { this.editingDept = null; return; }
+  }
 
   toggleExpand(id: number) {
     if (this.expandedDepts.has(id)) this.expandedDepts.delete(id);

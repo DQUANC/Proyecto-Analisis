@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIf, NgFor } from '@angular/common';
@@ -45,6 +45,12 @@ export class UsersComponent implements OnInit {
   editErrors: Record<string, string> = {};
 
   confirmDeleteId: number | null = null;
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.confirmDeleteId !== null) { this.cancelDelete(); return; }
+    if (this.editingUser) { this.editingUser = null; return; }
+  }
 
   ngOnInit() {
     this.currentUserId = this.auth.getUser()?.id ?? null;

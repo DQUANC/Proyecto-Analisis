@@ -1,7 +1,7 @@
 <div class="page">
 <app-navbar></app-navbar>
 
-  <p *ngIf="loading">cargando...</p>
+  <p *ngIf="loading">Cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
   <div class="cards-grid" *ngIf="!loading && tasks.length">
@@ -108,6 +108,7 @@
   <!-- Modal de evaluación (solo admin) -->
   <div class="modal-backdrop" *ngIf="evaluatingTask" (click)="evaluatingTask = null">
     <div class="modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="evaluatingTask = null" aria-label="Cerrar">×</button>
       <h3>Evaluar: {{ evaluatingTask.title }}</h3>
       <form (ngSubmit)="submitEval()">
         <label>Puntuación (1–10)

@@ -302,7 +302,8 @@
   <!-- Se abre al hacer click en "Editar". Clic fuera del modal lo cierra -->
   <div class="modal-backdrop" *ngIf="editingTask" (click)="editingTask = null">
     <div class="modal" (click)="$event.stopPropagation()">
-      <h3>Editar Tareas</h3>
+      <button class="modal-close" type="button" (click)="editingTask = null" aria-label="Cerrar">×</button>
+      <h3>Editar Tarea</h3>
       <form (ngSubmit)="saveEdit()">
         <label>Titulo
           <input type="text" [(ngModel)]="editForm.title" name="title" required />
@@ -335,7 +336,7 @@
 
         <div class="modal-actions">
           <button type="button" class="btn-cancel" (click)="editingTask = null">Cancelar</button>
-          <button type="submit" class="btn-primary">Guardar cambios</button>
+          <button type="submit" class="btn-primary">Guardar Cambios</button>
         </div>
       </form>
     </div>
@@ -345,7 +346,7 @@
   <!-- Se abre al hacer click en "Evaluar". Permite poner puntaje y retroalimentación -->
   <div class="modal-backdrop" *ngIf="evaluatingTask" (click)="evaluatingTask = null">
     <div class="modal" (click)="$event.stopPropagation()">
-      <!-- CAMBIO: título del modal. Antes 'Evaluate: ...' -->
+      <button class="modal-close" type="button" (click)="evaluatingTask = null" aria-label="Cerrar">×</button>
       <h3>Evaluar: {{ evaluatingTask.title }}</h3>
       <form (ngSubmit)="submitEval()">
         <!-- CAMBIO: label 'Score (1–10)' → 'Puntuación (1–10)' -->

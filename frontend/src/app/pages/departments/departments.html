@@ -70,6 +70,7 @@
   <!-- Modal de edición -->
   <div class="modal-backdrop" *ngIf="editingDept" (click)="editingDept = null">
     <div class="modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="editingDept = null" aria-label="Cerrar">×</button>
       <h3>Editar Departamento: {{ editingDept.name }}</h3>
       <form (ngSubmit)="saveEdit()">
         <label>Nombre
@@ -84,8 +85,8 @@
   </div>
 
   <!-- Modal de confirmación de eliminación -->
-  <div class="modal-backdrop" *ngIf="confirmDeleteId !== null">
-    <div class="modal modal-confirm">
+  <div class="modal-backdrop" *ngIf="confirmDeleteId !== null" (click)="cancelDelete()">
+    <div class="modal modal-confirm" (click)="$event.stopPropagation()">
       <h3>Eliminar Departamento</h3>
       <p>¿Estás seguro de que deseas eliminar este departamento? Esta acción no se puede deshacer.</p>
       <div class="modal-actions">

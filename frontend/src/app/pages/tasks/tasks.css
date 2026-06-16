@@ -511,6 +511,7 @@ textarea:focus {
     gap: 1rem;
     box-shadow: 0 24px 64px rgba(11, 29, 61, 0.28);
     border-top: 3px solid var(--color-teal, #00D1D8);
+    position: relative;
 }
 
 .modal h3 {
