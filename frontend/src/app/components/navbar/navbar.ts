@@ -14,8 +14,8 @@ export class NavbarComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  readonly isAdmin = this.auth.isAdmin();
-  readonly currentUser = this.auth.getUser();
+  get isAdmin() { return this.auth.isAdmin(); }
+  get currentUser() { return this.auth.getUser(); }
 
   get roleLabel(): string {
     if (this.currentUser?.isSuperUser) return 'Super Usuario';

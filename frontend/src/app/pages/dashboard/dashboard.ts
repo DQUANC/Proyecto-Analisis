@@ -1,31 +1,44 @@
 ﻿import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { NgIf, NgFor, KeyValuePipe, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../components/navbar/navbar';
 import { ChartModule } from 'primeng/chart';
 import { DashboardService, DashboardSummary, DepartmentStat, UserStat } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
+import { ReportsService, ReportType } from '../../services/reports.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
 
 
-  imports: [ NgIf, NgFor, KeyValuePipe, NgClass, ChartModule, NavbarComponent],
+  imports: [ NgIf, NgFor, KeyValuePipe, NgClass, ChartModule, NavbarComponent, FormsModule],
 
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit {
-  private dashService = inject(DashboardService);
-  private auth        = inject(AuthService);
-  private router      = inject(Router);
-  private cdr         = inject(ChangeDetectorRef);
+  private dashService    = inject(DashboardService);
+  private auth           = inject(AuthService);
+  private reportsService = inject(ReportsService);
+  private router         = inject(Router);
+  private cdr            = inject(ChangeDetectorRef);
 
   summary: DashboardSummary | null = null;
   departments: DepartmentStat[]    = [];
   users: UserStat[]                = [];
   loading = true;
   error   = '';
+
+  selectedReportType: ReportType = 'TASKS_BY_DEPARTMENT';
+  reportLoading = false;
+  reportError   = '';
+
+  readonly reportOptions: { value: ReportType; label: string }[] = [
+    { value: 'TASKS_BY_DEPARTMENT', label: 'Tareas por departamento' },
+    { value: 'COMPLETED_TASKS',     label: 'Tareas completadas' },
+    { value: 'EVALUATIONS',         label: 'Evaluaciones' },
+  ];
 
   chartData: any = null;
   chartOptions: any = {
@@ -84,6 +97,26 @@ export class Dashboard implements OnInit {
       labels,
       datasets: [{ data: values, backgroundColor: bgColors, hoverOffset: 8 }],
     };
+  }
+
+  generatePdf() {
+    this.reportError = '';
+    this.reportLoading = true;
+
+    const generator$ = this.selectedReportType === 'TASKS_BY_DEPARTMENT'
+      ? this.reportsService.generateTasksByDepartmentPdf()
+      : this.selectedReportType === 'COMPLETED_TASKS'
+        ? this.reportsService.generateCompletedTasksPdf()
+        : this.reportsService.generateEvaluationsPdf();
+
+    generator$.subscribe({
+      next: () => { this.reportLoading = false; this.cdr.detectChanges(); },
+      error: (err: any) => {
+        this.reportError = err?.error?.message ?? 'Error al generar el reporte';
+        this.reportLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   logout() {

@@ -331,6 +331,87 @@ tbody tr:hover td {
     box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
 }
 
+/* ═══════════════════════════════════════════
+   Sección de reportes integrada
+═══════════════════════════════════════════ */
+.report-section {
+    border-top: 3px solid var(--color-teal, #00D1D8);
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.form-row label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-navy, #0B1D3D);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex: 1;
+    min-width: 220px;
+}
+
+.form-row select {
+    padding: 0.6rem 0.8rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-family: var(--font-body, 'Inter', Arial, sans-serif);
+    background: #fafbfc;
+    color: var(--color-navy, #0B1D3D);
+    font-weight: 500;
+    transition: all 0.22s ease;
+}
+
+.form-row select:focus {
+    outline: none;
+    border-color: var(--color-teal, #00D1D8);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(0, 209, 216, 0.13);
+}
+
+.btn-primary {
+    padding: 0.7rem 1.4rem;
+    background: linear-gradient(135deg, var(--color-teal, #00D1D8) 0%, #00bcc4 100%);
+    color: var(--color-navy, #0B1D3D);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 800;
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    letter-spacing: 0.03em;
+    transition: all 0.22s ease;
+    white-space: nowrap;
+    box-shadow: 0 3px 10px rgba(0, 209, 216, 0.28);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 209, 216, 0.38);
+    filter: brightness(1.06);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.report-hint {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-slate, #6B7280);
+    font-weight: 600;
+}
+
 /* ── Mensajes de error ── */
 .error {
     color: #b91c1c;
