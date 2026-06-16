@@ -41,10 +41,6 @@ export async function create(req: Request, res: Response, next: NextFunction) {
 
 export async function update(req: Request, res: Response, next: NextFunction) {
   try {
-    if (!req.user?.isSuperUser) {
-      res.status(403).json({ message: 'Solo el Super Usuario puede editar tareas.' });
-      return;
-    }
     const task = await tasksService.updateTask(Number(req.params.id), req.body as Partial<{ title: string; description: string; status: TaskStatus; priority: string; dueDate: string; assignedToId: number }>, req.user!);
     res.json({ task });
   } catch (err) {

@@ -1,7 +1,7 @@
 import prisma from '../prisma';
 import { hashPassword, comparePassword } from '../utils/password.utils';
 import { signToken } from '../utils/jwt.utils';
-import { isUserDisabled, isUserSuperUser } from './users.service';
+import { isUserDisabled } from './users.service';
 
 export async function register(data: {
   name: string;
@@ -28,7 +28,7 @@ export async function register(data: {
   });
 
   const { password: _p, ...safeUser } = user;
-  const token = signToken({ id: user.id, email: user.email, role: user.role, departmentId: user.departmentId, isSuperUser: false });
+  const token = signToken({ id: user.id, email: user.email, role: user.role, departmentId: user.departmentId, isSuperUser: user.isSuperUser });
   return { token, user: safeUser };
 }
 
@@ -57,10 +57,9 @@ export async function login(email: string, password: string) {
     throw err;
   }
 
-  const superUser = await isUserSuperUser(user.id);
   const { password: _p, ...safeUser } = user;
-  const token = signToken({ id: user.id, email: user.email, role: user.role, departmentId: user.departmentId, isSuperUser: superUser });
-  return { token, user: { ...safeUser, isSuperUser: superUser } };
+  const token = signToken({ id: user.id, email: user.email, role: user.role, departmentId: user.departmentId, isSuperUser: user.isSuperUser });
+  return { token, user: safeUser };
 }
 
 export async function getMe(userId: number) {
