@@ -1,21 +1,5 @@
 <div class="page">
-  <header>
-    <div class="header-brand">
-      <img class="header-logo" src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
-      <h1>Tareas</h1>
-    </div>
-    <div>
-      <a *ngIf="isAdmin" routerLink="/dashboard">← Panel De Control</a>
-      <a routerLink="/history">Historial</a>
-
-      <!-- CAMBIO: el botón alterna entre mostrar/ocultar el formulario de creación.
-           Antes decía 'Cancel' / '+ New Task', ahora está en español -->
-      <button *ngIf="isAdmin" (click)="showCreateForm = !showCreateForm">
-        {{ showCreateForm ? 'Cancelar' : '+ Nueva Tarea' }}
-      </button>
-      <button class="logout" (click)="logout()">Cerrar Sesión</button>
-    </div>
-  </header>
+<app-navbar></app-navbar>
 
   <!-- ── Formulario de creación (solo admin) ── -->
   <!-- Este bloque solo se muestra si el usuario es admin Y presionó "+ Nueva Tarea" -->
