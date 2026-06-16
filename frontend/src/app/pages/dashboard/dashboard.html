@@ -1,6 +1,9 @@
 <div class="page">
   <header>
-    <h1>Panel de control</h1>
+    <div class="header-brand">
+      <img class="header-logo" src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
+      <h1>Panel de Control</h1>
+    </div>
     <nav>
       <a routerLink="/tasks">Tareas</a>
       <a routerLink="/history">Historial</a>
@@ -16,16 +19,22 @@
   <div class="top-row" *ngIf="summary">
     <!-- Tarjetas de resumen -->
     <div class="cards">
-      <div class="card">
+      <div class="card card-total">
         <span class="label">Total de tareas</span>
         <span class="value">{{ summary.totalTasks }}</span>
       </div>
-      <div class="card">
+      <div class="card card-users">
         <span class="label">Usuarios</span>
         <span class="value">{{ summary.totalUsers }}</span>
       </div>
-      <!-- Una tarjeta por cada estado. statusLabel() traduce TO_DO/IN_PROGRESS/DONE al español -->
-      <div class="card" *ngFor="let s of summary.tasksByStatus | keyvalue">
+      <!-- Una tarjeta por cada estado. statusLabel() traduce TO_DO/IN_PROGRESS/DONE al español.
+           Cada estado recibe una clase propia para diferenciar el color del valor numerico. -->
+      <div class="card" *ngFor="let s of summary.tasksByStatus | keyvalue"
+        [ngClass]="{
+          'card-todo':     s.key === 'TO_DO',
+          'card-progress': s.key === 'IN_PROGRESS',
+          'card-done':     s.key === 'DONE'
+        }">
         <span class="label">{{ statusLabel(s.key) }}</span>
         <span class="value">{{ s.value }}</span>
       </div>

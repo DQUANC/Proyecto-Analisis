@@ -1,6 +1,9 @@
 <div class="page">
   <header>
-    <h1>Tareas</h1>
+    <div class="header-brand">
+      <img class="header-logo" src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
+      <h1>Tareas</h1>
+    </div>
     <div>
       <a *ngIf="isAdmin" routerLink="/dashboard">← Panel De Control</a>
       <a routerLink="/history">Historial</a>
@@ -23,6 +26,14 @@
         <label>Titulo *
           <input type="text" [(ngModel)]="createForm.title" name="title" />
           <span class="field-error" *ngIf="createErrors['title']">{{ createErrors['title'] }}</span>
+        </label>
+
+        <label>Prioridad *
+          <select [(ngModel)]="createForm.priority" name="priority">
+            <option value="LOW">Baja</option>
+            <option value="MEDIUM">Media</option>
+            <option value="HIGH">Alta</option>
+          </select>
         </label>
 
         <label>Descripcion *
@@ -58,79 +69,244 @@
   <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
-  <!-- ── Tabla de tareas ── -->
-  <div class="table-wrap" *ngIf="!loading && tasks.length">
-    <table>
-      <thead>
-        <tr>
-          <th>Titulo</th>
-          <!-- ELIMINADO: columna "Prioridad" removida de la tabla según requerimiento -->
-          <th>Estado De Tarea</th>
-          <th *ngIf="isAdmin">Asignado A</th>
-          <th>Fecha De Creacion</th>
-          <th>Fecha De Inicio</th>
-          <!-- CAMBIO: columna "Fecha de Finalización" oculta para WORKER.
-               Solo visible para ADMIN y SUPER_USER con *ngIf="isAdmin" -->
-          <th *ngIf="isAdmin">Fecha De Finalizacion</th>
-          <th>Fecha Limite</th>
-          <th *ngIf="isAdmin">Calificacion</th>
-          <th *ngIf="isAdmin">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let t of tasks">
-          <td>
-            <span class="task-title">{{ t.title }}</span>
-            <span class="task-desc" *ngIf="t.description">{{ t.description }}</span>
-          </td>
+  <!-- ── Tablero Kanban ──
+       Las tareas se dividen en tres columnas según su estado. Cada tarjeta
+       mantiene el diseño ya existente (título, badges, fecha, asignado, acciones).
+       Arrastrar una tarjeta a otra columna dispara el mismo cambio de estado que
+       el selector del modal de detalle, respetando la regla TO_DO → DONE bloqueada. -->
+  <div class="kanban-board" *ngIf="!loading && tasks.length">
 
-          <!-- ELIMINADO: celda de prioridad removida de la tabla según requerimiento.
-               El campo priority sigue existiendo en el backend pero ya no se muestra. -->
+    <!-- Columna: Por Hacer -->
+    <div class="kanban-column">
+      <div class="kanban-column-header column-todo">
+        <span class="kanban-column-title">Por Hacer</span>
+        <span class="kanban-column-count">{{ todoTasks.length }}</span>
+      </div>
+      <div class="kanban-column-body"
+        cdkDropList
+        id="kanban-todo"
+        [cdkDropListData]="todoTasks"
+        [cdkDropListConnectedTo]="kanbanListIds"
+        (cdkDropListDropped)="onCardDrop($event, 'TO_DO')">
 
-          <!-- El select de estado guarda TO_DO/IN_PROGRESS/DONE en el backend,
-               pero muestra el texto en español al usuario.
-               VALIDACIÓN: la opción 'Completado' se deshabilita cuando la tarea
-               está en Pendiente para evitar el salto directo TO_DO → DONE -->
-          <td>
-            <select [value]="t.status" (change)="updateStatus(t, $any($event.target).value)" class="task-status"
-              [class.status-todo]="t.status === 'TO_DO'" [class.status-progress]="t.status === 'IN_PROGRESS'"
-              [class.status-done]="t.status === 'DONE'">
-              <option value="TO_DO">Pendiente</option>
-              <option value="IN_PROGRESS">En progreso</option>
-              <!-- VALIDACIÓN: se deshabilita 'Completado' si la tarea está en TO_DO,
-                   así el usuario no puede seleccionarlo directamente desde el selector -->
-              <option value="DONE" [disabled]="t.status === 'TO_DO'">Completado</option>
-            </select>
-          </td>
+        <div class="task-card border-todo" *ngFor="let t of todoTasks"
+          cdkDrag [cdkDragData]="t"
+          (click)="openView(t)" tabindex="0" (keydown.enter)="openView(t)">
 
-          <td *ngIf="isAdmin">{{ t.assignedTo?.name ?? '—' }}</td>
-          <td class="date">{{ t.createdAt | slice:0:10 }}</td>
-          <td class="date">{{ t.startedAt ? (t.startedAt | slice:0:10) : '—' }}</td>
-          <!-- CAMBIO: celda "Fecha de Finalización" oculta para WORKER.
-               Debe coincidir con el *ngIf del <th> para no desalinear la tabla -->
-          <td *ngIf="isAdmin" class="date">{{ t.completedAt ? (t.completedAt | slice:0:10) : '—' }}</td>
-          <td class="date">{{ t.dueDate ? (t.dueDate | slice:0:10) : '—' }}</td>
+          <div class="task-card-top">
+            <span class="badge status-badge status-todo">{{ statusLabel(t.status) }}</span>
+            <span class="badge priority-{{ t.priority.toLowerCase() }}">{{ priorityLabel(t.priority) }}</span>
+          </div>
 
-          <!-- CAMBIO: si la tarea ya tiene evaluación muestra la estrella con el puntaje,
-               si no tiene muestra 'Evaluar' (antes decía 'Evaluate') -->
-          <td *ngIf="isAdmin">
+          <h3 class="task-card-title">{{ t.title }}</h3>
+          <p class="task-card-desc" *ngIf="t.description">{{ t.description }}</p>
+
+          <div class="task-card-meta">
+            <span class="meta-item" *ngIf="isAdmin">
+              <span class="meta-label">Asignado:</span> {{ t.assignedTo?.name ?? '—' }}
+            </span>
+            <span class="meta-item">
+              <span class="meta-label">Fecha límite:</span> {{ t.dueDate ? (t.dueDate | slice:0:10) : '—' }}
+            </span>
+            <span class="meta-item" *ngIf="isAdmin && t.evaluation">
+              <span class="meta-label">Calificación:</span> ★ {{ t.evaluation.score }}
+            </span>
+          </div>
+
+          <div class="task-card-actions" *ngIf="isAdmin" (click)="$event.stopPropagation()">
             <button class="btn-eval" (click)="openEval(t)">
               {{ t.evaluation ? '★ ' + t.evaluation.score : 'Evaluar' }}
             </button>
-          </td>
-
-          <!-- CAMBIO: botones de acción traducidos. Antes 'Edit'/'Delete' -->
-          <td *ngIf="isAdmin" class="actions">
             <button class="btn-edit" *ngIf="isSuperUser" (click)="openEdit(t)">Editar</button>
             <button class="btn-del" *ngIf="isSuperUser" (click)="remove(t.id)">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna: En Progreso -->
+    <div class="kanban-column">
+      <div class="kanban-column-header column-progress">
+        <span class="kanban-column-title">En Progreso</span>
+        <span class="kanban-column-count">{{ inProgressTasks.length }}</span>
+      </div>
+      <div class="kanban-column-body"
+        cdkDropList
+        id="kanban-in-progress"
+        [cdkDropListData]="inProgressTasks"
+        [cdkDropListConnectedTo]="kanbanListIds"
+        (cdkDropListDropped)="onCardDrop($event, 'IN_PROGRESS')">
+
+        <div class="task-card border-progress" *ngFor="let t of inProgressTasks"
+          cdkDrag [cdkDragData]="t"
+          (click)="openView(t)" tabindex="0" (keydown.enter)="openView(t)">
+
+          <div class="task-card-top">
+            <span class="badge status-badge status-progress">{{ statusLabel(t.status) }}</span>
+            <span class="badge priority-{{ t.priority.toLowerCase() }}">{{ priorityLabel(t.priority) }}</span>
+          </div>
+
+          <h3 class="task-card-title">{{ t.title }}</h3>
+          <p class="task-card-desc" *ngIf="t.description">{{ t.description }}</p>
+
+          <div class="task-card-meta">
+            <span class="meta-item" *ngIf="isAdmin">
+              <span class="meta-label">Asignado:</span> {{ t.assignedTo?.name ?? '—' }}
+            </span>
+            <span class="meta-item">
+              <span class="meta-label">Fecha límite:</span> {{ t.dueDate ? (t.dueDate | slice:0:10) : '—' }}
+            </span>
+            <span class="meta-item" *ngIf="isAdmin && t.evaluation">
+              <span class="meta-label">Calificación:</span> ★ {{ t.evaluation.score }}
+            </span>
+          </div>
+
+          <div class="task-card-actions" *ngIf="isAdmin" (click)="$event.stopPropagation()">
+            <button class="btn-eval" (click)="openEval(t)">
+              {{ t.evaluation ? '★ ' + t.evaluation.score : 'Evaluar' }}
+            </button>
+            <button class="btn-edit" *ngIf="isSuperUser" (click)="openEdit(t)">Editar</button>
+            <button class="btn-del" *ngIf="isSuperUser" (click)="remove(t.id)">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna: Terminadas -->
+    <div class="kanban-column">
+      <div class="kanban-column-header column-done">
+        <span class="kanban-column-title">Terminadas</span>
+        <span class="kanban-column-count">{{ doneTasks.length }}</span>
+      </div>
+      <!-- CAMBIO: aclaración para el usuario de que esta columna solo muestra
+           las tareas completadas hoy (las de días anteriores siguen en Historial) -->
+      <p class="kanban-column-hint">Solo se muestran las terminadas hoy. Ver historial completo en "Historial".</p>
+      <div class="kanban-column-body"
+        cdkDropList
+        id="kanban-done"
+        [cdkDropListData]="doneTasks"
+        [cdkDropListConnectedTo]="kanbanListIds"
+        [cdkDropListEnterPredicate]="canEnterDoneColumn"
+        (cdkDropListDropped)="onCardDrop($event, 'DONE')">
+
+        <div class="task-card border-done" *ngFor="let t of doneTasks"
+          cdkDrag [cdkDragData]="t"
+          (click)="openView(t)" tabindex="0" (keydown.enter)="openView(t)">
+
+          <div class="task-card-top">
+            <span class="badge status-badge status-done">{{ statusLabel(t.status) }}</span>
+            <span class="badge priority-{{ t.priority.toLowerCase() }}">{{ priorityLabel(t.priority) }}</span>
+          </div>
+
+          <h3 class="task-card-title">{{ t.title }}</h3>
+          <p class="task-card-desc" *ngIf="t.description">{{ t.description }}</p>
+
+          <div class="task-card-meta">
+            <span class="meta-item" *ngIf="isAdmin">
+              <span class="meta-label">Asignado:</span> {{ t.assignedTo?.name ?? '—' }}
+            </span>
+            <span class="meta-item">
+              <span class="meta-label">Fecha límite:</span> {{ t.dueDate ? (t.dueDate | slice:0:10) : '—' }}
+            </span>
+            <span class="meta-item" *ngIf="isAdmin && t.evaluation">
+              <span class="meta-label">Calificación:</span> ★ {{ t.evaluation.score }}
+            </span>
+          </div>
+
+          <div class="task-card-actions" *ngIf="isAdmin" (click)="$event.stopPropagation()">
+            <button class="btn-eval" (click)="openEval(t)">
+              {{ t.evaluation ? '★ ' + t.evaluation.score : 'Evaluar' }}
+            </button>
+            <button class="btn-edit" *ngIf="isSuperUser" (click)="openEdit(t)">Editar</button>
+            <button class="btn-del" *ngIf="isSuperUser" (click)="remove(t.id)">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- CAMBIO: mensaje vacío traducido. Antes 'No tasks yet.' -->
   <p *ngIf="!loading && !tasks.length && !error">No hay tareas aún.</p>
+
+  <!-- ── Modal de detalle de tarea ──
+       Se abre al hacer click en una tarjeta. Muestra toda la información
+       disponible de la tarea y da acceso a las acciones existentes. -->
+  <div class="modal-backdrop" *ngIf="viewingTask" (click)="closeView()">
+    <div class="modal modal-detail" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="closeView()" aria-label="Cerrar">×</button>
+
+      <div class="modal-detail-header">
+        <span class="badge status-badge"
+          [class.status-todo]="viewingTask.status === 'TO_DO'"
+          [class.status-progress]="viewingTask.status === 'IN_PROGRESS'"
+          [class.status-done]="viewingTask.status === 'DONE'">
+          {{ statusLabel(viewingTask.status) }}
+        </span>
+        <span class="badge priority-{{ viewingTask.priority.toLowerCase() }}">{{ priorityLabel(viewingTask.priority) }}</span>
+      </div>
+
+      <h3 class="modal-detail-title">{{ viewingTask.title }}</h3>
+      <p class="modal-detail-desc">{{ viewingTask.description || 'Sin descripción.' }}</p>
+
+      <!-- Cambio de estado disponible desde el modal de detalle -->
+      <div class="detail-row">
+        <span class="detail-label">Cambiar Estado</span>
+        <select [value]="viewingTask.status" (change)="updateStatus(viewingTask, $any($event.target).value)" class="task-status"
+          [class.status-todo]="viewingTask.status === 'TO_DO'" [class.status-progress]="viewingTask.status === 'IN_PROGRESS'"
+          [class.status-done]="viewingTask.status === 'DONE'">
+          <option value="TO_DO">Pendiente</option>
+          <option value="IN_PROGRESS">En progreso</option>
+          <option value="DONE" [disabled]="viewingTask.status === 'TO_DO'">Completado</option>
+        </select>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-row" *ngIf="isAdmin">
+          <span class="detail-label">Asignado A</span>
+          <span class="detail-value">{{ viewingTask.assignedTo?.name ?? '—' }}</span>
+        </div>
+        <div class="detail-row" *ngIf="isAdmin">
+          <span class="detail-label">Área De Trabajo</span>
+          <span class="detail-value">{{ viewingTask.department?.name ?? '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Fecha De Creación</span>
+          <span class="detail-value">{{ viewingTask.createdAt | slice:0:10 }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Fecha De Inicio</span>
+          <span class="detail-value">{{ viewingTask.startedAt ? (viewingTask.startedAt | slice:0:10) : '—' }}</span>
+        </div>
+        <div class="detail-row" *ngIf="isAdmin">
+          <span class="detail-label">Fecha De Finalización</span>
+          <span class="detail-value">{{ viewingTask.completedAt ? (viewingTask.completedAt | slice:0:10) : '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Fecha Límite</span>
+          <span class="detail-value">{{ viewingTask.dueDate ? (viewingTask.dueDate | slice:0:10) : '—' }}</span>
+        </div>
+      </div>
+
+      <!-- Evaluación: visible solo para admin -->
+      <div class="detail-evaluation" *ngIf="isAdmin">
+        <span class="detail-label">Evaluación</span>
+        <div class="evaluation-box" *ngIf="viewingTask.evaluation">
+          <span class="score">★ {{ viewingTask.evaluation.score }}/10</span>
+          <p class="feedback" *ngIf="viewingTask.evaluation.feedback">{{ viewingTask.evaluation.feedback }}</p>
+        </div>
+        <span class="no-eval" *ngIf="!viewingTask.evaluation">Sin evaluar.</span>
+      </div>
+
+      <div class="modal-actions" *ngIf="isAdmin">
+        <button class="btn-eval" (click)="openEval(viewingTask)">
+          {{ viewingTask.evaluation ? 'Editar Evaluación' : 'Evaluar' }}
+        </button>
+        <button class="btn-edit" *ngIf="isSuperUser" (click)="openEdit(viewingTask)">Editar</button>
+        <button class="btn-del" *ngIf="isSuperUser" (click)="remove(viewingTask.id)">Eliminar</button>
+        <button type="button" class="btn-cancel" (click)="closeView()">Cerrar</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ── Modal de edición (solo admin) ── -->
   <!-- Se abre al hacer click en "Editar". Clic fuera del modal lo cierra -->
@@ -145,7 +321,15 @@
           <input type="text" [(ngModel)]="editForm.description" name="description" />
         </label>
 
-        <!-- ELIMINADO: campo "Prioridad" removido del formulario de edición según requerimiento -->
+        <!-- Mismo patrón que el formulario de creación:
+             value en inglés para el backend, texto visible en español -->
+        <label>Prioridad
+          <select [(ngModel)]="editForm.priority" name="priority">
+            <option value="LOW">Baja</option>
+            <option value="MEDIUM">Media</option>
+            <option value="HIGH">Alta</option>
+          </select>
+        </label>
 
         <label>Fecha Limite
           <input type="date" [(ngModel)]="editForm.dueDate" name="dueDate" />

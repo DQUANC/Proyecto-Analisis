@@ -1,30 +1,38 @@
+<!-- ── Pantalla unificada con estética glassmorphism (adaptada de la
+     propuesta de diseño en DO_NOT_MERGE/Nexora_Identidad_Grafica/propuesta-login.webp)
+     Fondo navy oscuro con esferas translúcidas teal flotando + tarjeta de
+     vidrio esmerilado centrada con el formulario de login. -->
 <div class="login-layout">
 
-  <div class="info-panel">
-    <div class="logo-box">
-      <img src="/Logo.png" alt="Usuario">
+  <!-- Esferas decorativas de fondo (puramente visuales, sin contenido) -->
+  <div class="bg-orb orb-1" aria-hidden="true"></div>
+  <div class="bg-orb orb-2" aria-hidden="true"></div>
+  <div class="bg-orb orb-3" aria-hidden="true"></div>
+
+  <!-- Tarjeta de vidrio con branding + formulario -->
+  <div class="glass-card">
+    <div class="brand">
+      <img src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
+      <p class="tagline">Gestiona tu equipo con precision</p>
     </div>
 
+    <h2>Inicio de Sesion</h2>
 
-    <h1>Nexora</h1>
+    <form (ngSubmit)="submit()">
+      <label>Correo Electronico
+        <input type="email" [(ngModel)]="email" name="email" required placeholder="correo@empresa.com" />
+      </label>
+      <label>Contrasena
+        <input type="password" [(ngModel)]="password" name="password" required placeholder="••••••••" />
+      </label>
 
-    <p>Digital Systems. Software. Business Solutions</p>
+      <a class="forgot-link" href="javascript:void(0)">¿Olvidaste tu contraseña?</a>
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+      <button type="submit" [disabled]="loading">{{ loading ? 'Ingresando...' : 'Iniciar Sesion' }}</button>
+    </form>
+
+    <p class="signup-link">¿No tienes una cuenta? <a routerLink="/register">Regístrate</a></p>
   </div>
 
-  <div class="login-panel">
-
-    <div class="container">
-      <h2>Inicio de Sesión</h2>
-      <form (ngSubmit)="submit()">
-        <label>Correo Electrónico
-          <input type="email" [(ngModel)]="email" name="email" required />
-        </label>
-        <label>Contraseña
-          <input type="password" [(ngModel)]="password" name="password" required />
-        </label>
-        <p class="error" *ngIf="error">{{ error }}</p>
-        <button type="submit" [disabled]="loading">{{ loading ? 'Logging in...' : 'Iniciar Sesión' }}</button>
-      </form>
-    </div>
-  </div>
 </div>

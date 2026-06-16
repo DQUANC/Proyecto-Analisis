@@ -1,64 +1,121 @@
 <div class="page">
   <header>
-    <h1>Historial De Tareas</h1>
+    <div class="header-brand">
+      <img class="header-logo" src="assets/logos/logotipo-monocromo-navy.png" alt="Nexora">
+      <h1>Historial De Tareas</h1>
+    </div>
     <div>
       <a *ngIf="isAdmin" routerLink="/dashboard">← Panel De Control</a>
       <a routerLink="/tasks">Tareas</a>
-      <button class="logout" (click)="logout()">cerrar sesion</button>
+      <button class="logout" (click)="logout()">Cerrar Sesión</button>
     </div>
   </header>
 
   <p *ngIf="loading">cargando...</p>
   <p class="error" *ngIf="error">{{ error }}</p>
 
-  <div class="table-wrap" *ngIf="!loading && tasks.length">
-    <table>
-      <thead>
-        <tr>
-          <th>Titulo</th>
-          <!-- ELIMINADO: columna "Prioridad" removida del historial según requerimiento -->
-          <th *ngIf="isAdmin">Asignado a </th>
-          <th *ngIf="isAdmin">Puesto De Trabajo</th>
-          <th>Fecha De Creacion</th>
-          <th>Fecha De Inicio</th>
-          <!-- CAMBIO: columna "Fecha de Finalización" oculta para WORKER.
-               Solo visible para ADMIN y SUPER_USER con *ngIf="isAdmin" -->
-          <th *ngIf="isAdmin">Fecha De Finalizacion</th>
-          <th>Fecha Limite</th>
-          <th>Tiempo Activo</th>
-          <th *ngIf="isAdmin">Puntuacion</th>
-          <th *ngIf="isAdmin">RetroAlimentacion</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let t of tasks">
-          <td>
-            <span class="task-title">{{ t.title }}</span>
-            <span class="task-desc" *ngIf="t.description">{{ t.description }}</span>
-          </td>
-          <!-- ELIMINADO: celda de prioridad removida del historial según requerimiento -->
-          <td *ngIf="isAdmin">{{ t.assignedTo?.name ?? '—' }}</td>
-          <td *ngIf="isAdmin">{{ t.department?.name ?? '—' }}</td>
-          <td class="date">{{ t.createdAt | slice:0:10 }}</td>
-          <td class="date">{{ t.startedAt   ? (t.startedAt   | slice:0:10) : '—' }}</td>
-          <!-- CAMBIO: celda "Fecha de Finalización" oculta para WORKER.
-               Debe coincidir con el *ngIf del <th> para no desalinear la tabla -->
-          <td *ngIf="isAdmin" class="date">{{ t.completedAt ? (t.completedAt | slice:0:10) : '—' }}</td>
-          <td class="date">{{ t.dueDate     ? (t.dueDate     | slice:0:10) : '—' }}</td>
-          <!-- CAMBIO: antes usaba formatSeconds(t.activeTimeSeconds) que mostraba horas y minutos.
-               Ahora usa formatDays(t.activeTimeDays) que lee el campo en días del backend.
-               Si activeTimeDays no viene en la respuesta, muestra '0 días' sin calcular nada. -->
-          <td class="date">{{ formatDays(t.activeTimeDays) }}</td>
-          <td *ngIf="isAdmin">
-            <span *ngIf="t.evaluation?.score !== null && t.evaluation?.score !== undefined"
-                  class="score">★ {{ t.evaluation!.score }}/10</span>
-            <span *ngIf="!t.evaluation?.score" class="no-eval">—</span>
-          </td>
-          <td *ngIf="isAdmin" class="feedback">{{ t.evaluation?.feedback ?? '—' }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- ── Tarjetas de historial (estilo Jira/Trello) ──
+       Cada tarjeta muestra la información esencial. Al hacer click se abre
+       el modal de detalle con todos los datos del registro. -->
+  <div class="cards-grid" *ngIf="!loading && tasks.length">
+    <div class="task-card border-done" *ngFor="let t of tasks"
+      (click)="openView(t)" tabindex="0" (keydown.enter)="openView(t)">
+
+      <div class="task-card-top">
+        <span class="badge status-badge status-done">Completado</span>
+        <span class="badge priority-{{ t.priority.toLowerCase() }}">{{ priorityLabel(t.priority) }}</span>
+      </div>
+
+      <h3 class="task-card-title">{{ t.title }}</h3>
+      <p class="task-card-desc" *ngIf="t.description">{{ t.description }}</p>
+
+      <div class="task-card-meta">
+        <span class="meta-item" *ngIf="isAdmin">
+          <span class="meta-label">Asignado:</span> {{ t.assignedTo?.name ?? '—' }}
+        </span>
+        <span class="meta-item" *ngIf="isAdmin">
+          <span class="meta-label">Área:</span> {{ t.department?.name ?? '—' }}
+        </span>
+        <!-- CAMBIO: "Finalizada" oculta para WORKER (solo ADMIN/SUPER_USER) -->
+        <span class="meta-item" *ngIf="isAdmin">
+          <span class="meta-label">Finalizada:</span> {{ t.completedAt ? (t.completedAt | slice:0:10) : '—' }}
+        </span>
+        <span class="meta-item">
+          <span class="meta-label">Tiempo activo:</span> {{ formatDays(t.activeTimeDays) }}
+        </span>
+        <span class="meta-item" *ngIf="isAdmin">
+          <span class="meta-label">Puntuación:</span>
+          <span *ngIf="t.evaluation?.score !== null && t.evaluation?.score !== undefined" class="score">★ {{ t.evaluation!.score }}/10</span>
+          <span *ngIf="!t.evaluation?.score" class="no-eval">—</span>
+        </span>
+        <span class="meta-item" *ngIf="isAdmin && t.evaluation?.feedback">
+          <span class="meta-label">Retroalimentación:</span> {{ t.evaluation?.feedback }}
+        </span>
+      </div>
+    </div>
   </div>
 
   <p *ngIf="!loading && !tasks.length && !error">No Hay Tareas Completadas.</p>
+
+  <!-- ── Modal de detalle de historial ──
+       Se abre al hacer click en una tarjeta. Muestra toda la información
+       disponible del registro de historial. -->
+  <div class="modal-backdrop" *ngIf="viewingTask" (click)="closeView()">
+    <div class="modal modal-detail" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="closeView()" aria-label="Cerrar">×</button>
+
+      <div class="modal-detail-header">
+        <span class="badge status-badge status-done">Completado</span>
+        <span class="badge priority-{{ viewingTask.priority.toLowerCase() }}">{{ priorityLabel(viewingTask.priority) }}</span>
+      </div>
+
+      <h3 class="modal-detail-title">{{ viewingTask.title }}</h3>
+      <p class="modal-detail-desc">{{ viewingTask.description || 'Sin descripción.' }}</p>
+
+      <div class="detail-grid">
+        <div class="detail-row" *ngIf="isAdmin">
+          <span class="detail-label">Asignado A</span>
+          <span class="detail-value">{{ viewingTask.assignedTo?.name ?? '—' }}</span>
+        </div>
+        <div class="detail-row" *ngIf="isAdmin">
+          <span class="detail-label">Puesto De Trabajo</span>
+          <span class="detail-value">{{ viewingTask.department?.name ?? '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Fecha De Creación</span>
+          <span class="detail-value">{{ viewingTask.createdAt | slice:0:10 }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Fecha De Inicio</span>
+          <span class="detail-value">{{ viewingTask.startedAt ? (viewingTask.startedAt | slice:0:10) : '—' }}</span>
+        </div>
+        <div class="detail-row" *ngIf="isAdmin">
+          <span class="detail-label">Fecha De Finalización</span>
+          <span class="detail-value">{{ viewingTask.completedAt ? (viewingTask.completedAt | slice:0:10) : '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Fecha Límite</span>
+          <span class="detail-value">{{ viewingTask.dueDate ? (viewingTask.dueDate | slice:0:10) : '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Tiempo Activo</span>
+          <span class="detail-value">{{ formatDays(viewingTask.activeTimeDays) }}</span>
+        </div>
+      </div>
+
+      <!-- Evaluación: visible solo para admin -->
+      <div class="detail-evaluation" *ngIf="isAdmin">
+        <span class="detail-label">Evaluación</span>
+        <div class="evaluation-box" *ngIf="viewingTask.evaluation?.score !== null && viewingTask.evaluation?.score !== undefined">
+          <span class="score">★ {{ viewingTask.evaluation!.score }}/10</span>
+          <p class="feedback" *ngIf="viewingTask.evaluation?.feedback">{{ viewingTask.evaluation!.feedback }}</p>
+        </div>
+        <span class="no-eval" *ngIf="!viewingTask.evaluation?.score">Sin evaluar.</span>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeView()">Cerrar</button>
+      </div>
+    </div>
+  </div>
 </div>
