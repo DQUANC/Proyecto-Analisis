@@ -1,14 +1,14 @@
 <div class="page">
   <app-navbar></app-navbar>
 
-  <div class="action-bar" *ngIf="isSuperUser">
+  <div class="action-bar" *ngIf="isAdmin">
     <button class="btn-primary" (click)="showCreateForm = !showCreateForm">
       {{ showCreateForm ? 'Cancelar' : '+ Nuevo Departamento' }}
     </button>
   </div>
 
   <!-- Formulario de creación -->
-  <div class="form-box" *ngIf="isSuperUser && showCreateForm">
+  <div class="form-box" *ngIf="isAdmin && showCreateForm">
     <h3>Nuevo Departamento</h3>
     <form (ngSubmit)="create()">
       <div class="form-grid">

@@ -1,8 +1,14 @@
 <div class="page">
 <app-navbar></app-navbar>
 
+  <!-- ── Botón para abrir el formulario de creación (solo admin) ── -->
+  <div class="action-bar" *ngIf="isAdmin">
+    <button class="btn-primary" (click)="showCreateForm = !showCreateForm">
+      {{ showCreateForm ? 'Cancelar' : '+ Nueva Tarea' }}
+    </button>
+  </div>
+
   <!-- ── Formulario de creación (solo admin) ── -->
-  <!-- Este bloque solo se muestra si el usuario es admin Y presionó "+ Nueva Tarea" -->
   <div class="form-box" *ngIf="isAdmin && showCreateForm">
     <h3>Nueva Tarea</h3>
     <form (ngSubmit)="create()">
