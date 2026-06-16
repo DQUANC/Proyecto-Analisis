@@ -226,23 +226,10 @@ export class TasksComponent implements OnInit {
     return this.tasks.filter(t => t.status === 'IN_PROGRESS');
   }
 
-  // CAMBIO: la columna "Terminadas" del Kanban solo debe mostrar las tareas
-  // completadas el día de hoy. Las completadas en días anteriores siguen
-  // existiendo (se ven en History) pero se ocultan de este tablero para no
-  // acumular tarjetas viejas. Se compara año/mes/día, no el timestamp exacto.
+  // El backend ya filtra las tareas DONE para devolver solo las completadas hoy,
+  // por lo que basta con mostrar todas las que llegan con status DONE.
   get doneTasks(): Task[] {
-    return this.tasks.filter(t => t.status === 'DONE' && this.isCompletedToday(t));
-  }
-
-  // Compara la fecha de completado de la tarea contra la fecha actual,
-  // ignorando la hora exacta (solo año, mes y día).
-  private isCompletedToday(task: Task): boolean {
-    if (!task.completedAt) return false;
-    const completed = new Date(task.completedAt);
-    const today = new Date();
-    return completed.getFullYear() === today.getFullYear()
-      && completed.getMonth() === today.getMonth()
-      && completed.getDate() === today.getDate();
+    return this.tasks.filter(t => t.status === 'DONE');
   }
 
   // IDs de las listas conectadas entre sí para permitir arrastrar
