@@ -104,7 +104,7 @@
           </div>
 
           <div class="task-card-actions" *ngIf="isAdmin" (click)="$event.stopPropagation()">
-            <button class="btn-eval" (click)="openEval(t)">
+            <button class="btn-eval" *ngIf="t.status === 'DONE'" (click)="openEval(t)">
               {{ t.evaluation ? '★ ' + t.evaluation.score : 'Evaluar' }}
             </button>
             <button class="btn-edit" *ngIf="isSuperUser" (click)="openEdit(t)">Editar</button>
@@ -152,7 +152,7 @@
           </div>
 
           <div class="task-card-actions" *ngIf="isAdmin" (click)="$event.stopPropagation()">
-            <button class="btn-eval" (click)="openEval(t)">
+            <button class="btn-eval" *ngIf="t.status === 'DONE'" (click)="openEval(t)">
               {{ t.evaluation ? '★ ' + t.evaluation.score : 'Evaluar' }}
             </button>
             <button class="btn-edit" *ngIf="isSuperUser" (click)="openEdit(t)">Editar</button>
@@ -204,7 +204,7 @@
           </div>
 
           <div class="task-card-actions" *ngIf="isAdmin" (click)="$event.stopPropagation()">
-            <button class="btn-eval" (click)="openEval(t)">
+            <button class="btn-eval" *ngIf="t.status === 'DONE'" (click)="openEval(t)">
               {{ t.evaluation ? '★ ' + t.evaluation.score : 'Evaluar' }}
             </button>
             <button class="btn-edit" *ngIf="isSuperUser" (click)="openEdit(t)">Editar</button>
@@ -288,7 +288,7 @@
       </div>
 
       <div class="modal-actions" *ngIf="isAdmin">
-        <button class="btn-eval" (click)="openEval(viewingTask)">
+        <button class="btn-eval" *ngIf="viewingTask.status === 'DONE'" (click)="openEval(viewingTask)">
           {{ viewingTask.evaluation ? 'Editar Evaluación' : 'Evaluar' }}
         </button>
         <button class="btn-edit" *ngIf="isSuperUser" (click)="openEdit(viewingTask)">Editar</button>
