@@ -57,6 +57,9 @@ export class TasksComponent implements OnInit {
   evaluatingTask: Task | null         = null;
   evalForm: EvaluateTaskPayload       = { feedback: '', score: undefined };
 
+  // ── Estado del modal de confirmación de eliminación ──
+  confirmDeleteId: number | null = null;
+
   // ── Estado del modal de detalle (tarjeta → click → modal) ──
   // viewingTask guarda la tarea cuya tarjeta fue clickeada (null = modal cerrado).
   // Muestra toda la información de la tarea y da acceso a las acciones existentes.
@@ -67,6 +70,7 @@ export class TasksComponent implements OnInit {
   // priorizando el que esté "más arriba" en caso de que varios estén abiertos.
   @HostListener('document:keydown.escape')
   onEscape() {
+    if (this.confirmDeleteId !== null) { this.cancelDelete(); return; }
     if (this.evaluatingTask) { this.evaluatingTask = null; return; }
     if (this.editingTask)    { this.editingTask = null;    return; }
     if (this.viewingTask)    { this.viewingTask = null;    return; }
@@ -268,13 +272,20 @@ export class TasksComponent implements OnInit {
   }
 
   // ── Eliminar tarea ───────────────────────────────────
-  // Pide confirmación antes de borrar.
-  // CAMBIO: el mensaje del confirm pasó de 'Delete this task?' a español.
   remove(id: number) {
-    if (!confirm('¿Eliminar esta tarea?')) return;
     this.viewingTask = null;
-    this.tasksService.remove(id).subscribe({ next: () => this.load() });
+    this.confirmDeleteId = id;
   }
+
+  confirmDelete() {
+    if (this.confirmDeleteId === null) return;
+    this.tasksService.remove(this.confirmDeleteId).subscribe({
+      next: () => { this.confirmDeleteId = null; this.load(); },
+      error: (err: any) => { this.confirmDeleteId = null; this.error = err?.error?.message ?? 'Error al eliminar'; this.cdr.detectChanges(); }
+    });
+  }
+
+  cancelDelete() { this.confirmDeleteId = null; }
 
   // ── Abrir modal de evaluación ────────────────────────
   // Si la tarea ya tiene evaluación previa, la precarga en el formulario.
