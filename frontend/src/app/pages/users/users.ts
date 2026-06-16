@@ -6,10 +6,11 @@ import { UsersService, User, CreateUserPayload, UpdateUserPayload } from '../../
 import { DepartmentsService, Department } from '../../services/departments.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { NavbarComponent } from '../../components/navbar/navbar';
 
 @Component({
   selector: 'app-users',
-  imports: [FormsModule, RouterLink, NgIf, NgFor],
+  imports: [FormsModule, NgIf, NgFor, NavbarComponent],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
