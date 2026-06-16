@@ -1,9 +1,79 @@
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100dvh;
-  font-family: sans-serif;
-  gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    font-family: var(--font-body, 'Inter', Arial, sans-serif);
+    background: linear-gradient(145deg, #0B1D3D 0%, #122648 55%, #1a3560 100%);
+    gap: 1.25rem;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Circulo decorativo de fondo */
+.container::before {
+    content: "";
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 209, 216, 0.1) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+.container::after {
+    content: "";
+    position: absolute;
+    bottom: -100px;
+    left: -100px;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 209, 216, 0.07) 0%, transparent 65%);
+    pointer-events: none;
+}
+
+.coming-soon-logo {
+    height: 52px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.coming-soon-title {
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.coming-soon-accent {
+    width: 56px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-teal, #00D1D8), var(--color-teal-light, #66F2F4));
+    border-radius: 999px;
+    position: relative;
+    z-index: 1;
+}
+
+.coming-soon-subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.62);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+    text-align: center;
 }

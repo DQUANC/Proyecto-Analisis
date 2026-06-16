@@ -1,3 +1,50 @@
+/* ── Variables globales de identidad grafica Nexora ── */
+:root {
+  --color-navy:            #0B1D3D;
+  --color-navy-mid:        #122648;
+  --color-navy-light:      #1a3560;
+  --color-teal:            #00D1D8;
+  --color-teal-light:      #66F2F4;
+  --color-teal-dim:        rgba(0, 209, 216, 0.12);
+  --color-teal-hover:      rgba(0, 209, 216, 0.08);
+  --color-slate:           #6B7280;
+  --color-slate-light:     #9ca3af;
+  --color-light-bg:        #F1F3F6;
+  --color-white:           #FFFFFF;
+  --color-text:            #0B1D3D;
+  --color-text-secondary:  #6B7280;
+  --color-danger:          #ef4444;
+  --color-danger-hover:    #dc2626;
+  --color-success:         #22c55e;
+  --color-warning:         #f59e0b;
+
+  /* Gradiente principal de headers */
+  --gradient-header:       linear-gradient(135deg, #0B1D3D 0%, #122648 50%, #1a3560 100%);
+  --gradient-header-teal:  linear-gradient(135deg, #0B1D3D 0%, #0f2445 70%, #0B2D4A 100%);
+
+  /* Sombras */
+  --shadow-sm:   0 2px 8px rgba(11, 29, 61, 0.08);
+  --shadow-md:   0 4px 16px rgba(11, 29, 61, 0.12);
+  --shadow-lg:   0 8px 28px rgba(11, 29, 61, 0.18);
+  --shadow-xl:   0 20px 60px rgba(11, 29, 61, 0.22);
+  --shadow-header: 0 6px 24px rgba(11, 29, 61, 0.32);
+
+  /* Radios */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-pill: 999px;
+
+  /* Tipografias */
+  --font-heading: 'Montserrat', Arial, sans-serif;
+  --font-body:    'Inter', Arial, sans-serif;
+
+  /* Transiciones */
+  --transition-fast: 0.18s ease;
+  --transition-base: 0.25s ease;
+  --transition-slow: 0.35s ease;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -6,7 +53,23 @@
 
 html, body {
   min-height: 100%;
-  background-color: #f0f7ff;
-  color: #0f172a;
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-light-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+/* ── Scrollbar Nexora ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-light-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(11, 29, 61, 0.25);
+  border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-teal);
 }

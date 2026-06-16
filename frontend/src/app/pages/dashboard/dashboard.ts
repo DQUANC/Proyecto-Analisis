@@ -77,9 +77,11 @@ export class Dashboard implements OnInit {
       IN_PROGRESS: 'En progreso',
       DONE:        'Completado',
     };
+    // Colores coherentes con la paleta Nexora y con significado semantico:
+    // Pendiente = slate neutro, En progreso = electric teal, Completado = verde exito
     const colors: Record<string, string> = {
-      TO_DO:       '#ef4444',
-      IN_PROGRESS: '#3b82f6',
+      TO_DO:       '#6B7280',
+      IN_PROGRESS: '#00D1D8',
       DONE:        '#22c55e',
     };
 

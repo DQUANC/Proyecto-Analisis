@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
 import { TasksService, Task } from '../../services/tasks.service';
@@ -22,6 +22,25 @@ export class HistoryComponent implements OnInit {
   error = '';
 
   readonly isAdmin = this.auth.isAdmin();
+
+  // ── Estado del modal de detalle (tarjeta → click → modal) ──
+  // viewingTask guarda el registro de historial cuya tarjeta fue clickeada
+  // (null = modal cerrado). Muestra todos los campos disponibles.
+  viewingTask: Task | null = null;
+
+  openView(task: Task) {
+    this.viewingTask = task;
+  }
+
+  closeView() {
+    this.viewingTask = null;
+  }
+
+  // ── Cierre con tecla Escape ──────────────────────────
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    this.viewingTask = null;
+  }
 
   ngOnInit() {
     setTimeout(() => {

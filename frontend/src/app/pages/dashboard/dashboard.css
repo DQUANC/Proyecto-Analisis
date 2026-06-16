@@ -1,74 +1,118 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;600;700;800&display=swap');
-
 .page {
-    max-width: 85%;
+    max-width: 1080px;
     margin: 0 auto;
     padding: 2rem;
-    font-family: 'Inter', sans-serif;
-    color: #0B1D3D;
-    background: #F1F3F6;
+    font-family: var(--font-body, 'Inter', Arial, sans-serif);
+    color: var(--color-text, #0B1D3D);
+    background: var(--color-light-bg, #F1F3F6);
     min-height: 100vh;
 }
 
+/* ═══════════════════════════════════════════
+   Header con gradiente moderno
+═══════════════════════════════════════════ */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
     padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, #0B1D3D 0%, #123A73 60%, #00D1B8 100%);
-    border-radius: 18px;
-    box-shadow: 0 10px 25px rgba(11, 29, 61, 0.18);
+    background: linear-gradient(135deg, #0B1D3D 0%, #122648 55%, #163058 100%);
+    border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(11, 29, 61, 0.32);
+    border-bottom: 2px solid rgba(0, 209, 216, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Brillo sutil en esquina superior derecha del header */
+header::before {
+    content: "";
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 209, 216, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Logo en header navy — convertido a blanco */
+.header-logo {
+    height: 30px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.92;
 }
 
 header h1 {
     margin: 0;
-    font-size: 1.8rem;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-size: 1.35rem;
     color: white;
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
 nav {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     align-items: center;
+    position: relative;
+    z-index: 1;
 }
 
 nav a {
-    color: white;
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
     font-weight: 600;
-    padding: 0.5rem 0.9rem;
+    font-size: 0.875rem;
+    padding: 0.45rem 0.85rem;
     border-radius: 8px;
-    transition: 0.3s ease;
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
 }
 
 nav a:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
 }
 
 nav button {
-    padding: 0.6rem 1.1rem;
-    background: linear-gradient(90deg, #00D1B8, #66F2F4);
-    color: #0B1D3D;
+    padding: 0.5rem 1.1rem;
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 600;
-    transition: 0.3s ease;
+    font-weight: 700;
+    font-size: 0.875rem;
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    transition: all 0.2s ease;
+    letter-spacing: 0.02em;
 }
 
 nav button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 209, 184, 0.25);
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
+/* ═══════════════════════════════════════════
+   Fila superior: cards + chart
+═══════════════════════════════════════════ */
 .top-row {
     display: flex;
-    gap: 2rem;
+    gap: 1.75rem;
     align-items: flex-start;
     margin-bottom: 2rem;
     flex-wrap: wrap;
@@ -81,141 +125,221 @@ nav button:hover {
     flex: 1;
 }
 
+/* ── Tarjeta de estadistica ── */
 .card {
-    padding: 1.2rem 1.5rem;
-    border-radius: 16px;
+    padding: 1.4rem 1.6rem;
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.4rem;
-    min-width: 130px;
+    gap: 0.5rem;
+    min-width: 140px;
     background: white;
-    border-top: 4px solid #00D1B8;
-    box-shadow: 0 8px 20px rgba(11, 29, 61, 0.08);
-    transition: 0.3s ease;
+    border-top: 3px solid var(--color-teal, #00D1D8);
+    box-shadow: 0 4px 16px rgba(11, 29, 61, 0.09);
+    transition: all 0.28s ease;
+    cursor: default;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(11, 29, 61, 0.15);
+    box-shadow: 0 12px 32px rgba(11, 29, 61, 0.16);
 }
 
 .label {
-    font-size: 0.78rem;
-    color: #6B7280;
+    font-size: 0.72rem;
+    color: var(--color-slate, #6B7280);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 600;
+    letter-spacing: 0.06em;
+    font-weight: 700;
     text-align: center;
 }
 
 .value {
-    font-size: 1.9rem;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 700;
-    color: #0B1D3D;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-navy, #0B1D3D);
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    line-height: 1;
 }
 
+/* ── Colores semanticos por tipo de tarjeta/estado ──
+   Cada estado tiene un color distintivo y coherente con la paleta Nexora:
+   - Total/Usuarios: navy (neutro, informativo general)
+   - Por hacer: slate gray (neutro, aun sin avance)
+   - En progreso: electric teal (color de marca, accion en curso)
+   - Terminadas: verde saturado (exito/completado, distinto del teal)
+*/
+.card-total .value,
+.card-users .value {
+    color: var(--color-navy, #0B1D3D);
+}
+
+.card-total {
+    border-top-color: var(--color-navy, #0B1D3D);
+}
+
+.card-users {
+    border-top-color: var(--color-navy-light, #1a3560);
+}
+
+.card-todo {
+    border-top-color: var(--color-slate, #6B7280);
+}
+
+.card-todo .value {
+    color: var(--color-slate, #6B7280);
+}
+
+.card-progress {
+    border-top-color: var(--color-teal, #00D1D8);
+}
+
+.card-progress .value {
+    color: #00a8ae;
+}
+
+.card-done {
+    border-top-color: #16a34a;
+}
+
+.card-done .value {
+    color: #16a34a;
+}
+
+.card:hover.card-todo     { border-top-color: var(--color-slate-light, #9ca3af); }
+.card:hover.card-progress { border-top-color: var(--color-teal-light, #66F2F4); }
+.card:hover.card-done     { border-top-color: #22c55e; }
+.card:hover.card-total,
+.card:hover.card-users    { border-top-color: var(--color-teal-light, #66F2F4); }
+
+/* ── Caja del grafico ── */
 .chart-box {
-    border-radius: 16px;
-    padding: 1.5rem;
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
     background: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.8rem;
     min-width: 300px;
-    box-shadow: 0 8px 20px rgba(11, 29, 61, 0.08);
+    box-shadow: 0 4px 16px rgba(11, 29, 61, 0.09);
+    border-top: 3px solid var(--color-navy, #0B1D3D);
 }
 
 .chart-box h2 {
     margin: 0;
-    font-size: 1rem;
-    font-family: 'Orbitron', sans-serif;
-    color: #0B1D3D;
+    font-size: 0.95rem;
+    color: var(--color-navy, #0B1D3D);
     font-weight: 700;
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
+/* ═══════════════════════════════════════════
+   Secciones / tablas
+═══════════════════════════════════════════ */
 section {
     margin-bottom: 2rem;
     background: white;
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 1.5rem;
-    box-shadow: 0 8px 20px rgba(11, 29, 61, 0.08);
+    box-shadow: 0 4px 16px rgba(11, 29, 61, 0.09);
+    border: 1px solid rgba(11, 29, 61, 0.04);
 }
 
 h2 {
-    margin-bottom: 1rem;
-    font-size: 1.15rem;
-    font-family: 'Orbitron', sans-serif;
-    color: #0B1D3D;
+    margin-bottom: 1.1rem;
+    font-size: 1rem;
+    color: var(--color-navy, #0B1D3D);
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
     font-weight: 700;
-    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--color-light-bg, #F1F3F6);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
 }
 
-th,
-td {
-    padding: 0.85rem 1rem;
-    border: 1px solid #E5E7EB;
+th, td {
+    padding: 0.8rem 1rem;
     text-align: left;
 }
 
 th {
-    background: #0B1D3D;
+    background: linear-gradient(135deg, var(--color-navy, #0B1D3D) 0%, #122648 100%);
     color: white;
-    font-family: 'Orbitron', sans-serif;
-    font-weight: 600;
+    font-weight: 700;
+    font-family: var(--font-heading, 'Montserrat', Arial, sans-serif);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+th:first-child { border-radius: 8px 0 0 0; }
+th:last-child  { border-radius: 0 8px 0 0; }
+
+td {
+    border-bottom: 1px solid #f0f2f6;
+    vertical-align: middle;
 }
 
 tbody tr:nth-child(even) {
-    background: #F8FAFC;
+    background: #fafbfd;
 }
 
-tbody tr:hover {
-    background: #E8FCFB;
+tbody tr:hover td {
+    background: rgba(0, 209, 216, 0.05);
 }
 
+/* ── Badges de estado ── */
 .badge {
     display: inline-block;
-    margin-right: 0.4rem;
-    margin-bottom: 0.2rem;
-    padding: 0.35rem 0.8rem;
-    background: rgba(0, 209, 184, 0.12);
-    color: #0B1D3D;
+    margin-right: 0.35rem;
+    margin-bottom: 0.25rem;
+    padding: 0.3rem 0.75rem;
     border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
-
-.error {
-    color: #B91C1C;
-    background: #FEE2E2;
-    border: 1px solid #FECACA;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-/* Estados */
 
 .badge-done {
-    background-color: #22C55E;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
     color: white;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
 }
 
 .badge-progress {
-    background-color: #3B82F6;
-    color: white;
+    background: linear-gradient(135deg, var(--color-teal, #00D1D8), #00b8c0);
+    color: var(--color-navy, #0B1D3D);
+    font-weight: 800;
+    box-shadow: 0 2px 8px rgba(0, 209, 216, 0.3);
 }
 
+/* Pendiente/To Do: tono neutro (slate), no es un estado de alerta */
 .badge-todo {
-    background-color: #EF4444;
+    background: linear-gradient(135deg, var(--color-slate, #6B7280), #4b5563);
     color: white;
+    box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+}
+
+/* ── Mensajes de error ── */
+.error {
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #ef4444;
+    padding: 0.85rem 1.1rem;
+    border-radius: 10px;
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+    font-size: 0.875rem;
 }
