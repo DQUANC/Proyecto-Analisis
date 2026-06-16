@@ -41,6 +41,30 @@ nav a:hover, nav a.active {
     background: rgba(255, 255, 255, 0.14);
     color: white;
 }
+.current-user {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.2;
+    margin-left: 0.4rem;
+    padding-right: 0.6rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.18);
+}
+.current-user-name {
+    color: white;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+.current-user-role {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.current-user-role.role-super {
+    color: var(--color-teal-light, #66F2F4);
+}
 .logout {
     padding: 0.45rem 1rem;
     background: rgba(239, 68, 68, 0.85);

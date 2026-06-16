@@ -165,22 +165,6 @@ input:focus {
     box-shadow: 0 0 0 4px rgba(0, 209, 216, 0.18);
 }
 
-/* Link "Olvidaste tu contraseña" */
-.forgot-link {
-    align-self: flex-end;
-    margin-top: -0.4rem;
-    font-size: 0.78rem;
-    color: var(--color-teal-light, #66F2F4);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s ease;
-}
-
-.forgot-link:hover {
-    color: white;
-    text-decoration: underline;
-}
-
 .error {
     color: #fecaca;
     font-size: 0.82rem;
@@ -224,26 +208,6 @@ button[type="submit"]:disabled {
     opacity: 0.55;
     cursor: not-allowed;
     transform: none;
-}
-
-/* Texto de ayuda bajo el form */
-.signup-link {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.82rem;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.signup-link a {
-    color: var(--color-teal-light, #66F2F4);
-    font-weight: 700;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.signup-link a:hover {
-    color: white;
-    text-decoration: underline;
 }
 
 /* Responsive */

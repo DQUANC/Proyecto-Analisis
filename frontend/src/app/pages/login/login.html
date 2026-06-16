@@ -26,13 +26,9 @@
         <input type="password" [(ngModel)]="password" name="password" required placeholder="••••••••" />
       </label>
 
-      <a class="forgot-link" href="javascript:void(0)">¿Olvidaste tu contraseña?</a>
-
       <p class="error" *ngIf="error">{{ error }}</p>
       <button type="submit" [disabled]="loading">{{ loading ? 'Ingresando...' : 'Iniciar Sesion' }}</button>
     </form>
-
-    <p class="signup-link">¿No tienes una cuenta? <a routerLink="/register">Regístrate</a></p>
   </div>
 
 </div>
