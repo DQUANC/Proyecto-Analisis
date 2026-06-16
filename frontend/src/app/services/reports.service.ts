@@ -65,13 +65,15 @@ export class ReportsService {
         const rows = departments.map((d) => [
           d.departmentName,
           String(d.totalTasks),
-          this.statusBreakdown(d.tasksByStatus),
+          String(d.tasksByStatus['TO_DO'] ?? 0),
+          String(d.tasksByStatus['IN_PROGRESS'] ?? 0),
+          String(d.tasksByStatus['DONE'] ?? 0),
         ]);
         const cards = this.departmentSummaryCards(departments);
         const pieData = this.departmentStatusTotals(departments);
         return this.buildPdf(
           'TASKS_BY_DEPARTMENT',
-          ['Departamento', 'Total', 'Distribución por estado'],
+          ['Departamento', 'Total', STATUS_LABELS['TO_DO'], STATUS_LABELS['IN_PROGRESS'], STATUS_LABELS['DONE']],
           rows,
           cards,
           pieData
@@ -118,12 +120,6 @@ export class ReportsService {
         return this.buildPdf('EVALUATIONS', ['Tarea', 'Asignado a', 'Puntaje', 'Retroalimentación'], rows, cards);
       })
     );
-  }
-
-  private statusBreakdown(tasksByStatus: DepartmentStat['tasksByStatus']): string {
-    const entries = Object.entries(tasksByStatus);
-    if (!entries.length) return '—';
-    return entries.map(([key, value]) => `${STATUS_LABELS[key] ?? key}: ${value}`).join(', ');
   }
 
   private departmentSummaryCards(departments: DepartmentStat[]): SummaryCard[] {
