@@ -137,7 +137,7 @@ export async function updateTask(
     dueDate: string;
     assignedToId: number;
   }>,
-  user: { id: number; role: string; departmentId: number | null }
+  user: { id: number; role: string; departmentId: number | null; isSuperUser: boolean }
 ) {
   const existing = await prisma.task.findUnique({ where: { id } });
   if (!existing) {
@@ -152,9 +152,18 @@ export async function updateTask(
     throw err;
   }
 
+  const editsFullFields = data.title !== undefined || data.description !== undefined
+    || data.priority !== undefined || data.dueDate !== undefined || data.assignedToId !== undefined;
+
+  if (editsFullFields && !user.isSuperUser) {
+    const err = new Error('Solo el Super Usuario puede editar tareas.') as Error & { statusCode: number };
+    err.statusCode = 403;
+    throw err;
+  }
+
   const updateData: Prisma.TaskUpdateInput = {};
 
-  if (user.role === 'ADMIN') {
+  if (user.isSuperUser) {
     if (data.title !== undefined) updateData.title = data.title;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.priority !== undefined) updateData.priority = data.priority as 'LOW' | 'MEDIUM' | 'HIGH';

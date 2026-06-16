@@ -14,9 +14,7 @@ function safe<T extends { password: string }>(user: T) {
 
 export async function initDisabledUsersTable() {
   await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS disabled_users (user_id INTEGER PRIMARY KEY)`;
-  await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS super_users   (user_id INTEGER PRIMARY KEY)`;
   await loadDisabledCache();
-  await loadSuperUsersCache();
 }
 
 // ── Cache: usuarios deshabilitados ───────────────────────────────────────────
@@ -57,32 +55,6 @@ export async function isUserDisabled(id: number): Promise<boolean> {
   return cache.has(id);
 }
 
-// ── Cache: super usuarios ────────────────────────────────────────────────────
-
-let superUsersCache: Set<number> | null = null;
-
-async function loadSuperUsersCache(): Promise<Set<number>> {
-  if (superUsersCache !== null) return superUsersCache;
-  const rows: AuxRow[] = await prisma.$queryRaw`SELECT user_id FROM super_users`;
-  superUsersCache = new Set(rows.map((r: AuxRow) => Number(r.user_id)));
-  return superUsersCache;
-}
-
-export async function isUserSuperUser(id: number): Promise<boolean> {
-  const cache = await loadSuperUsersCache();
-  return cache.has(id);
-}
-
-async function addSuperUser(id: number) {
-  await prisma.$executeRaw`INSERT INTO super_users (user_id) VALUES (${id}) ON CONFLICT DO NOTHING`;
-  if (superUsersCache !== null) superUsersCache.add(id);
-}
-
-async function removeSuperUser(id: number) {
-  await prisma.$executeRaw`DELETE FROM super_users WHERE user_id = ${id}`;
-  if (superUsersCache !== null) superUsersCache.delete(id);
-}
-
 // ── CRUD usuarios ────────────────────────────────────────────────────────────
 
 export async function getAll(filters: { role?: string }) {
@@ -98,13 +70,11 @@ export async function getAll(filters: { role?: string }) {
     orderBy: { name: 'asc' },
   });
 
-  const disabledIds   = await loadDisabledCache();
-  const superIds      = await loadSuperUsersCache();
+  const disabledIds = await loadDisabledCache();
 
   return users.map((u: UserWithDept) => ({
     ...safe(u),
-    isActive:    !disabledIds.has(u.id),
-    isSuperUser: superIds.has(u.id),
+    isActive: !disabledIds.has(u.id),
   }));
 }
 
@@ -118,8 +88,7 @@ export async function getById(id: number) {
     err.statusCode = 404;
     throw err;
   }
-  const superIds = await loadSuperUsersCache();
-  return { ...safe(user), isSuperUser: superIds.has(id) };
+  return safe(user);
 }
 
 export async function create(data: {
@@ -158,14 +127,13 @@ export async function create(data: {
       email: data.email,
       password: hashed,
       role: dbRole,
+      isSuperUser,
       departmentId: deptId ?? null,
     },
     include: { department: true },
   });
 
-  if (isSuperUser) await addSuperUser(user.id);
-
-  return { ...safe(user), isSuperUser };
+  return safe(user);
 }
 
 export async function update(
@@ -208,12 +176,6 @@ export async function update(
   if (data.role !== undefined) {
     isSuperUser = data.role === 'SUPER_USER';
     dbRole = (isSuperUser || data.role === 'ADMIN') ? 'ADMIN' : 'WORKER';
-
-    if (isSuperUser) {
-      await addSuperUser(id);
-    } else {
-      await removeSuperUser(id);
-    }
   }
 
   const user = await prisma.user.update({
@@ -222,14 +184,14 @@ export async function update(
       ...(data.name !== undefined     && { name: data.name }),
       ...(data.email !== undefined    && { email: data.email }),
       ...(dbRole !== undefined        && { role: dbRole }),
+      ...(isSuperUser !== undefined   && { isSuperUser }),
       ...(deptId !== undefined        && { departmentId: deptId }),
       ...(hashedPassword              && { password: hashedPassword }),
     },
     include: { department: true },
   });
 
-  const superIds = await loadSuperUsersCache();
-  return { ...safe(user), isSuperUser: superIds.has(id) };
+  return safe(user);
 }
 
 export async function remove(id: number) {
@@ -257,6 +219,5 @@ export async function remove(id: number) {
     err.statusCode = 409;
     throw err;
   }
-  await removeSuperUser(id);
   await prisma.user.delete({ where: { id } });
 }
