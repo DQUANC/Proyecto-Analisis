@@ -30,7 +30,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, [number, number, number]> = {
-  TO_DO: [107, 114, 128],
+  TO_DO: [239, 68, 68],
   IN_PROGRESS: [0, 209, 216],
   DONE: [34, 197, 94],
 };
