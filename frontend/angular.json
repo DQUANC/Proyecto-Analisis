@@ -91,7 +91,7 @@
               "outputHashing": "all",
               "optimization": true
             },
-            "nexsolutions": {
+            "PROD": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
