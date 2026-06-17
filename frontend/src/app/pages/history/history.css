@@ -416,31 +416,6 @@ header button:hover {
     font-size: 0.82rem;
 }
 
-.task-card-actions {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    padding-top: 0.5rem;
-}
-
-.btn-del {
-    padding: 0.32rem 0.75rem;
-    background: var(--color-danger, #ef4444);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.78rem;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.btn-del:hover {
-    background: #dc2626;
-    transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(239, 68, 68, 0.35);
-}
-
 /* ── Botones del modal ── */
 .btn-eval {
     padding: 0.5rem 1.1rem;
