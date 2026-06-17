@@ -32,6 +32,11 @@ const angularApp = new AngularNodeAppEngine({ allowedHosts });
  * ```
  */
 
+app.use((_req, res, next) => {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+  next();
+});
+
 /**
  * Serve static files from /browser
  */
