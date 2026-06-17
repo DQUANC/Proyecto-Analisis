@@ -90,6 +90,28 @@
               ],
               "outputHashing": "all",
               "optimization": true
+            },
+            "nexsolutions": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.nexsolutions.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "12kB",
+                  "maximumError": "14kB"
+                }
+              ],
+              "outputHashing": "all",
+              "optimization": true
             }
           },
           "defaultConfiguration": "production"
