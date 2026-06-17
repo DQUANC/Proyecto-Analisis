@@ -571,6 +571,10 @@ textarea:focus {
     transform: rotate(90deg);
 }
 
+.modal-status-todo     { border-top-color: #ef4444; }
+.modal-status-progress { border-top-color: var(--color-teal, #00D1D8); }
+.modal-status-done     { border-top-color: #16a34a; }
+
 .modal-detail-header {
     display: flex;
     gap: 0.5rem;

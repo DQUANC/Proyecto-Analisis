@@ -222,7 +222,10 @@
        Se abre al hacer click en una tarjeta. Muestra toda la información
        disponible de la tarea y da acceso a las acciones existentes. -->
   <div class="modal-backdrop" *ngIf="viewingTask" (click)="closeView()">
-    <div class="modal modal-detail" (click)="$event.stopPropagation()">
+    <div class="modal modal-detail" (click)="$event.stopPropagation()"
+      [class.modal-status-todo]="viewingTask.status === 'TO_DO'"
+      [class.modal-status-progress]="viewingTask.status === 'IN_PROGRESS'"
+      [class.modal-status-done]="viewingTask.status === 'DONE'">
       <button class="modal-close" type="button" (click)="closeView()" aria-label="Cerrar">×</button>
 
       <div class="modal-detail-header">
