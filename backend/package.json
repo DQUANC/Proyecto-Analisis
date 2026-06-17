@@ -8,11 +8,8 @@
     "start": "node dist/app.js",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "prisma:seed": "ts-node prisma/seed.ts",
+    "bootstrap": "ts-node prisma/bootstrap.ts",
     "test": "node --require ts-node/register/transpile-only --test test/**/*.test.ts"
-  },
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
