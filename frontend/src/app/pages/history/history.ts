@@ -22,7 +22,26 @@ export class HistoryComponent implements OnInit {
   loading = true;
   error = '';
 
-  get isAdmin() { return this.auth.isAdmin(); }
+  get isAdmin()     { return this.auth.isAdmin(); }
+  get isSuperUser() { return this.auth.isSuperUser(); }
+
+  confirmDeleteId: number | null = null;
+
+  remove(id: number) { this.confirmDeleteId = id; }
+  cancelDelete()     { this.confirmDeleteId = null; }
+  confirmDelete() {
+    if (this.confirmDeleteId === null) return;
+    const id = this.confirmDeleteId;
+    this.confirmDeleteId = null;
+    this.viewingTask = null;
+    this.tasksService.remove(id).subscribe({
+      next: () => {
+        this.tasks = this.tasks.filter(t => t.id !== id);
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => { this.error = err?.error?.message ?? 'Error al eliminar'; this.cdr.detectChanges(); }
+    });
+  }
 
   viewingTask: Task | null = null;
   evaluatingTask: Task | null = null;
