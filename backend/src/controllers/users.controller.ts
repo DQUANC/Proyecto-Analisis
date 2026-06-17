@@ -41,17 +41,9 @@ export async function update(req: Request, res: Response, next: NextFunction) {
     const id = Number(req.params.id);
     const body = req.body as Partial<{ name: string; email: string; role: 'ADMIN' | 'WORKER' | 'SUPER_USER'; departmentId: number | null; password: string }>;
 
-    if (body.role === 'SUPER_USER' && !req.user?.isSuperUser) {
-      res.status(403).json({ message: 'Solo el Super Usuario puede asignar el rol de Super Usuario.' });
+    if (!req.user?.isSuperUser) {
+      res.status(403).json({ message: 'Solo el Super Usuario puede editar usuarios.' });
       return;
-    }
-
-    if (req.user?.id !== id && !req.user?.isSuperUser) {
-      const target = await usersService.getById(id);
-      if (target.role === 'ADMIN' || target.isSuperUser) {
-        res.status(403).json({ message: 'Solo el Super Usuario puede editar a otros administradores.' });
-        return;
-      }
     }
 
     const user = await usersService.update(id, body);

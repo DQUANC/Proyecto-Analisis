@@ -84,7 +84,7 @@
           </td>
           <td class="actions">
             <button class="btn-edit"
-              *ngIf="u.id === currentUserId || u.role === 'WORKER' || currentUserIsSuperUser"
+              *ngIf="currentUserIsSuperUser"
               (click)="openEdit(u)">Editar</button>
             <button class="btn-toggle"
               *ngIf="u.id !== currentUserId && (u.role === 'WORKER' || currentUserIsSuperUser)"
