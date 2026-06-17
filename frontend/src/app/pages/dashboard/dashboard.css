@@ -166,7 +166,7 @@ nav button:hover {
 /* ── Colores semanticos por tipo de tarjeta/estado ──
    Cada estado tiene un color distintivo y coherente con la paleta Nexora:
    - Total/Usuarios: navy (neutro, informativo general)
-   - Por hacer: slate gray (neutro, aun sin avance)
+   - Por hacer: rojo (alerta, tarea sin iniciar)
    - En progreso: electric teal (color de marca, accion en curso)
    - Terminadas: verde saturado (exito/completado, distinto del teal)
 */
@@ -184,11 +184,11 @@ nav button:hover {
 }
 
 .card-todo {
-    border-top-color: var(--color-slate, #6B7280);
+    border-top-color: #ef4444;
 }
 
 .card-todo .value {
-    color: var(--color-slate, #6B7280);
+    color: #b91c1c;
 }
 
 .card-progress {
@@ -207,7 +207,7 @@ nav button:hover {
     color: #16a34a;
 }
 
-.card:hover.card-todo     { border-top-color: var(--color-slate-light, #9ca3af); }
+.card:hover.card-todo     { border-top-color: #f87171; }
 .card:hover.card-progress { border-top-color: var(--color-teal-light, #66F2F4); }
 .card:hover.card-done     { border-top-color: #22c55e; }
 .card:hover.card-total,
@@ -324,11 +324,11 @@ tbody tr:hover td {
     box-shadow: 0 2px 8px rgba(0, 209, 216, 0.3);
 }
 
-/* Pendiente/To Do: tono neutro (slate), no es un estado de alerta */
 .badge-todo {
-    background: linear-gradient(135deg, var(--color-slate, #6B7280), #4b5563);
-    color: white;
-    box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3);
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    box-shadow: 0 2px 8px rgba(185, 28, 28, 0.15);
 }
 
 /* ═══════════════════════════════════════════
