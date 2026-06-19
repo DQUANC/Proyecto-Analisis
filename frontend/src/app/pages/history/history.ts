@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TasksService, Task, EvaluateTaskPayload } from '../../services/tasks.service';
@@ -12,7 +12,7 @@ import { NavbarComponent } from '../../components/navbar/navbar';
   templateUrl: './history.html',
   styleUrl: './history.css',
 })
-export class HistoryComponent implements OnInit {
+export class HistoryComponent implements OnInit, OnDestroy {
   private tasksService = inject(TasksService);
   private auth = inject(AuthService);
   private router = inject(Router);
@@ -20,7 +20,24 @@ export class HistoryComponent implements OnInit {
 
   tasks: Task[] = [];
   loading = true;
-  error = '';
+  error     = '';
+  evalError = '';
+
+  private timers: Partial<Record<string, ReturnType<typeof setTimeout>>> = {};
+
+  private setError(field: 'error' | 'evalError', msg: string) {
+    clearTimeout(this.timers[field]);
+    (this as any)[field] = msg;
+    this.cdr.detectChanges();
+    this.timers[field] = setTimeout(() => {
+      (this as any)[field] = '';
+      this.cdr.detectChanges();
+    }, 4000);
+  }
+
+  ngOnDestroy() {
+    Object.values(this.timers).forEach(t => clearTimeout(t));
+  }
 
   get isAdmin() { return this.auth.isAdmin(); }
 
@@ -33,6 +50,7 @@ export class HistoryComponent implements OnInit {
 
   openEval(task: Task) {
     this.viewingTask = null;
+    this.evalError = '';
     this.evaluatingTask = task;
     this.evalForm = {
       feedback: task.evaluation?.feedback ?? '',
@@ -50,7 +68,7 @@ export class HistoryComponent implements OnInit {
           error: () => {}
         });
       },
-      error: (err: any) => { this.error = err?.error?.message ?? 'Error al evaluar'; this.cdr.detectChanges(); }
+      error: (err: any) => { this.setError('evalError', err?.error?.message ?? 'Error al evaluar'); }
     });
   }
 
@@ -64,7 +82,7 @@ export class HistoryComponent implements OnInit {
     setTimeout(() => {
       this.tasksService.getHistory().subscribe({
         next: (res) => { this.tasks = res.tasks; this.loading = false; this.cdr.detectChanges(); },
-        error: (err: any) => { this.error = err?.error?.message ?? 'Failed to load history'; this.loading = false; this.cdr.detectChanges(); }
+        error: (err: any) => { this.loading = false; this.setError('error', err?.error?.message ?? 'Error al cargar historial'); }
       });
     });
   }
