@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import prisma from '../prisma';
 
 export async function getSummary() {
@@ -14,9 +15,17 @@ export async function getSummary() {
   return { totalTasks, totalUsers, totalDepartments, tasksByStatus };
 }
 
-export async function getByDepartment() {
+export async function getByDepartment(filters: { dateFrom?: string; dateTo?: string } = {}) {
+  const taskWhere: Prisma.TaskWhereInput = {};
+  if (filters.dateFrom || filters.dateTo) {
+    const gte = filters.dateFrom ? new Date(filters.dateFrom) : undefined;
+    const lte = filters.dateTo ? new Date(filters.dateTo) : undefined;
+    if (lte) lte.setHours(23, 59, 59, 999);
+    taskWhere.createdAt = { ...(gte ? { gte } : {}), ...(lte ? { lte } : {}) };
+  }
+
   const departments = await prisma.department.findMany({
-    include: { tasks: { select: { status: true } } },
+    include: { tasks: { where: taskWhere, select: { status: true } } },
     orderBy: { name: 'asc' },
   });
 

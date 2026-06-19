@@ -122,7 +122,7 @@ export class TasksService {
     return this.http.get<{ task: Task }>(`${this.apiUrl}/${id}`);
   }
 
-  getHistory(): Observable<{ tasks: Task[] }> {
+  getHistory(filters: { dateFrom?: string; dateTo?: string } = {}): Observable<{ tasks: Task[] }> {
     if (environment.useMocks) {
       let done = MOCK_TASKS.filter(t => t.status === 'DONE');
       if (typeof window !== 'undefined') {
@@ -137,7 +137,10 @@ export class TasksService {
         .map(t => this.enrich(t));
       return of({ tasks });
     }
-    return this.http.get<{ tasks: Task[] }>(`${this.apiUrl}/history`);
+    const params: Record<string, string> = {};
+    if (filters.dateFrom) params['dateFrom'] = filters.dateFrom;
+    if (filters.dateTo) params['dateTo'] = filters.dateTo;
+    return this.http.get<{ tasks: Task[] }>(`${this.apiUrl}/history`, { params });
   }
 
   create(payload: CreateTaskPayload): Observable<{ task: Task }> {
