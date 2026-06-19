@@ -100,7 +100,9 @@ export class TasksService {
 
   getAll(): Observable<TasksResponse> {
     if (environment.useMocks) {
-      let allTasks = MOCK_TASKS.map(t => this.enrich(t));
+      let allTasks = MOCK_TASKS
+        .filter(t => t.status !== 'DONE' || !MOCK_EVALUATIONS.some(e => e.taskId === t.id))
+        .map(t => this.enrich(t));
       // filter for workers using assignedToId directly (no localStorage dependency)
       if (typeof window !== 'undefined') {
         const raw = localStorage.getItem('user');

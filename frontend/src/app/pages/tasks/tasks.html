@@ -168,9 +168,7 @@
         <span class="kanban-column-title">Terminadas</span>
         <span class="kanban-column-count">{{ doneTasks.length }}</span>
       </div>
-      <!-- CAMBIO: aclaración para el usuario de que esta columna solo muestra
-           las tareas completadas hoy (las de días anteriores siguen en Historial) -->
-      <p class="kanban-column-hint">Solo se muestran las terminadas hoy. Ver historial completo en "Historial".</p>
+      <p class="kanban-column-hint">Tareas completadas pendientes de evaluación. Las evaluadas se mueven a "Historial".</p>
       <div class="kanban-column-body"
         cdkDropList
         id="kanban-done"
