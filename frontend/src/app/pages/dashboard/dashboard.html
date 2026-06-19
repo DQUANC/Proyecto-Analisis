@@ -112,10 +112,11 @@
       <label>Hasta
         <input type="date" [(ngModel)]="reportDateTo" name="reportDateTo" [min]="reportDateFrom || ''">
       </label>
-      <button class="btn-primary" (click)="generatePdf()" [disabled]="reportLoading">
+      <button class="btn-primary" (click)="generatePdf()" [disabled]="reportLoading || !reportDateFrom || !reportDateTo">
         {{ reportLoading ? 'Generando...' : 'Generar PDF' }}
       </button>
     </div>
+    <p class="report-hint" *ngIf="!reportDateFrom || !reportDateTo">Selecciona un período (Desde y Hasta) para generar el reporte.</p>
     <p *ngIf="reportLoading" class="report-hint">Obteniendo datos, por favor espera...</p>
     <p class="error" *ngIf="reportError">{{ reportError }}</p>
   </section>

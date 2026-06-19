@@ -100,6 +100,8 @@ export class Dashboard implements OnInit {
   }
 
   generatePdf() {
+    if (!this.reportDateFrom || !this.reportDateTo) return;
+
     this.reportError = '';
     this.reportLoading = true;
 
