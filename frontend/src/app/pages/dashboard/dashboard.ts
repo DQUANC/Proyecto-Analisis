@@ -5,7 +5,7 @@ import { NavbarComponent } from '../../components/navbar/navbar';
 import { ChartModule } from 'primeng/chart';
 import { DashboardService, DashboardSummary, DepartmentStat, UserStat } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
-import { ReportsService, ReportType } from '../../services/reports.service';
+import { ReportsService, ReportType, DateRange } from '../../services/reports.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -31,8 +31,10 @@ export class Dashboard implements OnInit {
   error   = '';
 
   selectedReportType: ReportType = 'TASKS_BY_DEPARTMENT';
-  reportLoading = false;
-  reportError   = '';
+  reportDateFrom = '';
+  reportDateTo   = '';
+  reportLoading  = false;
+  reportError    = '';
 
   readonly reportOptions: { value: ReportType; label: string }[] = [
     { value: 'TASKS_BY_DEPARTMENT', label: 'Tareas por departamento' },
@@ -101,11 +103,16 @@ export class Dashboard implements OnInit {
     this.reportError = '';
     this.reportLoading = true;
 
+    const dateRange: DateRange = {
+      dateFrom: this.reportDateFrom || undefined,
+      dateTo:   this.reportDateTo   || undefined,
+    };
+
     const generator$ = this.selectedReportType === 'TASKS_BY_DEPARTMENT'
-      ? this.reportsService.generateTasksByDepartmentPdf()
+      ? this.reportsService.generateTasksByDepartmentPdf(dateRange)
       : this.selectedReportType === 'COMPLETED_TASKS'
-        ? this.reportsService.generateCompletedTasksPdf()
-        : this.reportsService.generateEvaluationsPdf();
+        ? this.reportsService.generateCompletedTasksPdf(dateRange)
+        : this.reportsService.generateEvaluationsPdf(dateRange);
 
     generator$.subscribe({
       next: () => { this.reportLoading = false; this.cdr.detectChanges(); },

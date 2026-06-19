@@ -10,6 +10,7 @@ import { TasksService } from './tasks.service';
 import { DashboardService, DepartmentStat } from './dashboard.service';
 
 export type ReportType = 'TASKS_BY_DEPARTMENT' | 'COMPLETED_TASKS' | 'EVALUATIONS';
+export interface DateRange { dateFrom?: string; dateTo?: string; }
 
 const REPORT_TITLES: Record<ReportType, string> = {
   TASKS_BY_DEPARTMENT: 'Tareas por departamento',
@@ -59,8 +60,8 @@ export class ReportsService {
     return REPORT_TITLES[type];
   }
 
-  generateTasksByDepartmentPdf(): Observable<void> {
-    return this.dashboardService.getByDepartment().pipe(
+  generateTasksByDepartmentPdf(dateRange: DateRange = {}): Observable<void> {
+    return this.dashboardService.getByDepartment(dateRange).pipe(
       switchMap((departments) => {
         const rows = departments.map((d) => [
           d.departmentName,
@@ -76,14 +77,15 @@ export class ReportsService {
           ['Departamento', 'Total', STATUS_LABELS['TO_DO'], STATUS_LABELS['IN_PROGRESS'], STATUS_LABELS['DONE']],
           rows,
           cards,
-          pieData
+          pieData,
+          dateRange
         );
       })
     );
   }
 
-  generateCompletedTasksPdf(): Observable<void> {
-    return this.tasksService.getHistory().pipe(
+  generateCompletedTasksPdf(dateRange: DateRange = {}): Observable<void> {
+    return this.tasksService.getHistory(dateRange).pipe(
       switchMap((res) => {
         const rows = res.tasks.map((t) => [
           t.title,
@@ -94,13 +96,13 @@ export class ReportsService {
         const cards: SummaryCard[] = [
           { label: 'Total completadas', value: String(res.tasks.length), color: STATUS_COLORS['DONE'] },
         ];
-        return this.buildPdf('COMPLETED_TASKS', ['Tarea', 'Departamento', 'Asignado a', 'Fecha de finalización'], rows, cards);
+        return this.buildPdf('COMPLETED_TASKS', ['Tarea', 'Departamento', 'Asignado a', 'Fecha de finalización'], rows, cards, undefined, dateRange);
       })
     );
   }
 
-  generateEvaluationsPdf(): Observable<void> {
-    return this.tasksService.getHistory().pipe(
+  generateEvaluationsPdf(dateRange: DateRange = {}): Observable<void> {
+    return this.tasksService.getHistory(dateRange).pipe(
       switchMap((res) => {
         const evaluated = res.tasks.filter((t) => t.evaluation != null);
         const rows = evaluated.map((t) => [
@@ -117,7 +119,7 @@ export class ReportsService {
           { label: 'Total evaluaciones', value: String(evaluated.length), color: BRAND_NAVY },
           { label: 'Promedio de puntaje', value: avgScore != null ? avgScore.toFixed(1) : '—', color: STATUS_COLORS['IN_PROGRESS'] },
         ];
-        return this.buildPdf('EVALUATIONS', ['Tarea', 'Asignado a', 'Puntaje', 'Retroalimentación'], rows, cards);
+        return this.buildPdf('EVALUATIONS', ['Tarea', 'Asignado a', 'Puntaje', 'Retroalimentación'], rows, cards, undefined, dateRange);
       })
     );
   }
@@ -325,7 +327,8 @@ export class ReportsService {
     head: string[],
     rows: string[][],
     cards: SummaryCard[] = [],
-    statusTotals?: Record<string, number>
+    statusTotals?: Record<string, number>,
+    dateRange: DateRange = {}
   ): Observable<void> {
     if (!isPlatformBrowser(this.platformId)) return of(void 0);
 
@@ -343,6 +346,16 @@ export class ReportsService {
         this.drawHeader(doc, title, generatedAt, logo);
 
         let cursorY = HEADER_HEIGHT + 10;
+
+        if (dateRange.dateFrom || dateRange.dateTo) {
+          const fmt = (s: string) => new Date(s).toLocaleDateString('es', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          const from = dateRange.dateFrom ? fmt(dateRange.dateFrom) : 'inicio';
+          const to   = dateRange.dateTo   ? fmt(dateRange.dateTo)   : 'hoy';
+          doc.setFontSize(9);
+          doc.setTextColor(...BRAND_NAVY);
+          doc.text(`Período: ${from} – ${to}`, 14, cursorY);
+          cursorY += 7;
+        }
         if (cards.length) {
           cursorY = this.drawSummaryCards(doc, cards, cursorY);
         }

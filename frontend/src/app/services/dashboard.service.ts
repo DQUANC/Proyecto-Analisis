@@ -36,9 +36,12 @@ export class DashboardService {
     return this.http.get<DashboardSummary>(`${this.apiUrl}/summary`);
   }
 
-  getByDepartment(): Observable<DepartmentStat[]> {
+  getByDepartment(filters: { dateFrom?: string; dateTo?: string } = {}): Observable<DepartmentStat[]> {
     if (environment.useMocks) return of([...MOCK_DEPARTMENT_STATS]);
-    return this.http.get<DepartmentStat[]>(`${this.apiUrl}/by-department`);
+    const params: Record<string, string> = {};
+    if (filters.dateFrom) params['dateFrom'] = filters.dateFrom;
+    if (filters.dateTo) params['dateTo'] = filters.dateTo;
+    return this.http.get<DepartmentStat[]>(`${this.apiUrl}/by-department`, { params });
   }
 
   getByUser(): Observable<UserStat[]> {

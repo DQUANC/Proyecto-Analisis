@@ -10,9 +10,10 @@ export async function summary(_req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export async function byDepartment(_req: Request, res: Response, next: NextFunction) {
+export async function byDepartment(req: Request, res: Response, next: NextFunction) {
   try {
-    const departments = await dashboardService.getByDepartment();
+    const { dateFrom, dateTo } = req.query as { dateFrom?: string; dateTo?: string };
+    const departments = await dashboardService.getByDepartment({ dateFrom, dateTo });
     res.json(departments);
   } catch (err) {
     next(err);
