@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
 import { DragDropModule, CdkDragDrop, CdkDrag } from '@angular/cdk/drag-drop';
@@ -15,7 +15,7 @@ import { NavbarComponent } from '../../components/navbar/navbar';
   templateUrl: './tasks.html',
   styleUrl: './tasks.css',
 })
-export class TasksComponent implements OnInit {
+export class TasksComponent implements OnInit, OnDestroy {
   private tasksService = inject(TasksService);
   private deptService  = inject(DepartmentsService);
   private usersService = inject(UsersService);
@@ -64,6 +64,24 @@ export class TasksComponent implements OnInit {
   // viewingTask guarda la tarea cuya tarjeta fue clickeada (null = modal cerrado).
   // Muestra toda la información de la tarea y da acceso a las acciones existentes.
   viewingTask: Task | null = null;
+  evalError  = '';
+  editError  = '';
+
+  private timers: Partial<Record<string, ReturnType<typeof setTimeout>>> = {};
+
+  private setError(field: 'error' | 'evalError' | 'editError', msg: string) {
+    clearTimeout(this.timers[field]);
+    (this as any)[field] = msg;
+    this.cdr.detectChanges();
+    this.timers[field] = setTimeout(() => {
+      (this as any)[field] = '';
+      this.cdr.detectChanges();
+    }, 4000);
+  }
+
+  ngOnDestroy() {
+    Object.values(this.timers).forEach(t => clearTimeout(t));
+  }
 
   // ── Cierre con tecla Escape ──────────────────────────
   // Cierra el modal que esté abierto en este momento (detalle, edición o evaluación),
@@ -113,9 +131,8 @@ export class TasksComponent implements OnInit {
       },
       // CAMBIO: mensaje de error traducido al español
       error: (err: any) => {
-        this.error = err?.error?.message ?? 'Error al cargar';
         this.loading = false;
-        this.cdr.detectChanges();
+        this.setError('error', err?.error?.message ?? 'Error al cargar');
       }
     });
   }
@@ -148,10 +165,7 @@ export class TasksComponent implements OnInit {
         this.createForm = { title: '', description: '', priority: 'MEDIUM', departmentId: 0, assignedToId: undefined };
         this.load();
       },
-      error: (err: any) => {
-        this.error = err?.error?.message ?? 'Error al crear';
-        this.cdr.detectChanges();
-      }
+      error: (err: any) => { this.setError('error', err?.error?.message ?? 'Error al crear'); }
     });
   }
 
@@ -170,6 +184,7 @@ export class TasksComponent implements OnInit {
   // Si se abre desde el modal de detalle, lo cierra para no apilar dos modales.
   openEdit(task: Task) {
     this.viewingTask = null;
+    this.editError = '';
     this.editingTask = task;
     this.editForm = {
       title:        task.title,
@@ -185,8 +200,7 @@ export class TasksComponent implements OnInit {
     if (!this.editingTask) return;
     this.tasksService.update(this.editingTask.id, this.editForm).subscribe({
       next: () => { this.editingTask = null; this.load(); },
-      // CAMBIO: mensaje de error traducido
-      error: (err: any) => { this.error = err?.error?.message ?? 'Error al actualizar'; }
+      error: (err: any) => { this.setError('editError', err?.error?.message ?? 'Error al actualizar'); }
     });
   }
 
@@ -199,22 +213,17 @@ export class TasksComponent implements OnInit {
 
     // Validación en el frontend: evitar pasar de TO_DO directo a DONE
     if (task.status === 'TO_DO' && status === 'DONE') {
-      this.error = 'La tarea debe estar en proceso antes de marcarla como completada.';
-      this.cdr.detectChanges();
-      return; // se bloquea la acción, no se llama al backend
+      this.setError('error', 'La tarea debe estar en proceso antes de marcarla como completada.');
+      return;
     }
 
-    // Si pasa la validación, se envía el cambio al backend
     this.tasksService.update(task.id, { status: status as any }).subscribe({
       next: () => {
-        this.error = ''; // limpia cualquier error previo al tener éxito
+        clearTimeout(this.timers['error']);
+        this.error = '';
         this.load();
       },
-      // Captura error 400 del backend (por si la validación también está en el servidor)
-      error: (err: any) => {
-        this.error = err?.error?.message ?? 'Error al actualizar estado';
-        this.cdr.detectChanges();
-      }
+      error: (err: any) => { this.setError('error', err?.error?.message ?? 'Error al actualizar estado'); }
     });
   }
 
@@ -250,8 +259,7 @@ export class TasksComponent implements OnInit {
   canEnterDoneColumn = (drag: CdkDrag<Task>): boolean => {
     const task = drag?.data;
     if (task?.status === 'TO_DO') {
-      this.error = 'La tarea debe estar en proceso antes de marcarla como completada.';
-      this.cdr.detectChanges();
+      this.setError('error', 'La tarea debe estar en proceso antes de marcarla como completada.');
       return false;
     }
     return true;
@@ -281,7 +289,7 @@ export class TasksComponent implements OnInit {
     if (this.confirmDeleteId === null) return;
     this.tasksService.remove(this.confirmDeleteId).subscribe({
       next: () => { this.confirmDeleteId = null; this.load(); },
-      error: (err: any) => { this.confirmDeleteId = null; this.error = err?.error?.message ?? 'Error al eliminar'; this.cdr.detectChanges(); }
+      error: (err: any) => { this.confirmDeleteId = null; this.setError('error', err?.error?.message ?? 'Error al eliminar'); }
     });
   }
 
@@ -292,6 +300,7 @@ export class TasksComponent implements OnInit {
   // Si se abre desde el modal de detalle, lo cierra para no apilar dos modales.
   openEval(task: Task) {
     this.viewingTask = null;
+    this.evalError = '';
     this.evaluatingTask = task;
     this.evalForm = {
       feedback: task.evaluation?.feedback ?? '',
@@ -299,13 +308,11 @@ export class TasksComponent implements OnInit {
     };
   }
 
-  // Guarda la evaluación (puntaje + retroalimentación) y cierra el modal.
   submitEval() {
     if (!this.evaluatingTask) return;
     this.tasksService.evaluate(this.evaluatingTask.id, this.evalForm).subscribe({
       next: () => { this.evaluatingTask = null; this.load(); },
-      // CAMBIO: mensaje de error traducido
-      error: (err: any) => { this.error = err?.error?.message ?? 'Error al evaluar'; }
+      error: (err: any) => { this.setError('evalError', err?.error?.message ?? 'Error al evaluar'); }
     });
   }
 

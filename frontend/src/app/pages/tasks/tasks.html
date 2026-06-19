@@ -335,6 +335,7 @@
           </select>
         </label>
 
+        <p class="error modal-error" *ngIf="editError">{{ editError }}</p>
         <div class="modal-actions">
           <button type="button" class="btn-cancel" (click)="editingTask = null">Cancelar</button>
           <button type="submit" class="btn-primary">Guardar Cambios</button>
@@ -360,6 +361,7 @@
           <textarea [(ngModel)]="evalForm.feedback" name="feedback" rows="4"></textarea>
         </label>
 
+        <p class="error modal-error" *ngIf="evalError">{{ evalError }}</p>
         <div class="modal-actions">
           <button type="button" class="btn-cancel" (click)="evaluatingTask = null">Cancelar</button>
           <button type="submit" class="btn-primary">Guardar Evaluacion</button>
