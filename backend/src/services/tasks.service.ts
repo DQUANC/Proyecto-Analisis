@@ -243,7 +243,7 @@ export async function deleteTask(id: number) {
 
 export async function getHistory(
   user: { id: number; role: string; departmentId: number | null },
-  filters: { departmentId?: number; assignedToId?: number; dateFrom?: string; dateTo?: string }
+  filters: { departmentId?: number; assignedToId?: number; dateFrom?: string; dateTo?: string; page?: number; limit?: number }
 ) {
   const where: Prisma.TaskWhereInput = { status: 'DONE' };
 
@@ -259,17 +259,30 @@ export async function getHistory(
     };
   }
 
-  const tasks = await prisma.task.findMany({
-    where,
-    include: taskInclude,
-    orderBy: { completedAt: 'desc' },
-  });
+  const page = filters.page ?? 1;
+  const limit = filters.limit ?? 20;
 
-  return tasks.map(t => {
-    const r = withActiveTime(t);
-    if (user.role === 'WORKER') r.completedAt = null;
-    return r;
-  });
+  const [tasks, total] = await Promise.all([
+    prisma.task.findMany({
+      where,
+      include: taskInclude,
+      orderBy: { completedAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.task.count({ where }),
+  ]);
+
+  return {
+    tasks: tasks.map(t => {
+      const r = withActiveTime(t);
+      if (user.role === 'WORKER') r.completedAt = null;
+      return r;
+    }),
+    total,
+    page,
+    limit,
+  };
 }
 
 export async function getTaskStatusHistory(
