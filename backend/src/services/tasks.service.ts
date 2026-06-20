@@ -189,6 +189,20 @@ export async function updateTask(
   }
 
   if (data.status !== undefined && data.status !== existing.status) {
+    const VALID_TRANSITIONS: Record<string, TaskStatus[]> = {
+      TO_DO: ['IN_PROGRESS'],
+      IN_PROGRESS: ['DONE', 'TO_DO'],
+      DONE: [],
+    };
+    const allowed = VALID_TRANSITIONS[existing.status] ?? [];
+    if (!allowed.includes(data.status)) {
+      const err = new Error(
+        `Transición de estado inválida: ${existing.status} → ${data.status}`
+      ) as Error & { statusCode: number };
+      err.statusCode = 422;
+      throw err;
+    }
+
     updateData.status = data.status;
 
     if (data.status === 'IN_PROGRESS' && !existing.startedAt) {
