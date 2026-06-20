@@ -12,6 +12,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes';
 import tasksRoutes from './routes/tasks.routes';
 import departmentsRoutes from './routes/departments.routes';
@@ -23,6 +24,7 @@ import { initDisabledUsersTable } from './services/users.service';
 const app = express();
 
 app.use(helmet());
+app.use(cookieParser());
 
 const allowedOrigins = [
   'http://localhost:4200',
