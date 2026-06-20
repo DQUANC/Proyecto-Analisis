@@ -10,14 +10,13 @@ declare global {
 }
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction): void {
-  const header = req.headers.authorization;
-  if (!header?.startsWith('Bearer ')) {
+  const token = req.cookies?.token as string | undefined;
+  if (!token) {
     res.status(401).json({ message: 'Token requerido' });
     return;
   }
 
   try {
-    const token = header.slice(7);
     req.user = verifyToken(token);
     next();
   } catch {
