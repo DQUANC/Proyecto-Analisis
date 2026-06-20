@@ -63,14 +63,16 @@ export async function remove(req: Request, res: Response, next: NextFunction) {
 
 export async function getHistory(req: Request, res: Response, next: NextFunction) {
   try {
-    const { departmentId, assignedToId, dateFrom, dateTo } = req.query as Record<string, string>;
-    const tasks = await tasksService.getHistory(req.user!, {
+    const { departmentId, assignedToId, dateFrom, dateTo, page, limit } = req.query as Record<string, string>;
+    const result = await tasksService.getHistory(req.user!, {
       departmentId: departmentId ? Number(departmentId) : undefined,
       assignedToId: assignedToId ? Number(assignedToId) : undefined,
       dateFrom: dateFrom || undefined,
       dateTo: dateTo || undefined,
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
     });
-    res.json({ tasks });
+    res.json(result);
   } catch (err) {
     next(err);
   }

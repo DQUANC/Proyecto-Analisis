@@ -1,5 +1,5 @@
 import { PrismaClient, Role } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { hashPassword } from '../src/utils/password.utils';
 
 const prisma = new PrismaClient();
 
@@ -21,7 +21,7 @@ async function main() {
 
   await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS disabled_users (user_id INTEGER PRIMARY KEY)`;
 
-  const hashed = await bcrypt.hash(password, 10);
+  const hashed = await hashPassword(password);
   const user = await prisma.user.create({
     data: {
       name,

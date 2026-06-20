@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
 import { NgIf, NgFor, SlicePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TasksService, Task, EvaluateTaskPayload } from '../../services/tasks.service';
+import { TasksService, Task, EvaluateTaskPayload, HistoryResponse } from '../../services/tasks.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { NavbarComponent } from '../../components/navbar/navbar';
@@ -22,6 +22,10 @@ export class HistoryComponent implements OnInit, OnDestroy {
   loading = true;
   error     = '';
   evalError = '';
+  page = 1;
+  limit = 20;
+  total = 0;
+  get totalPages() { return Math.max(1, Math.ceil(this.total / this.limit)); }
 
   private timers: Partial<Record<string, ReturnType<typeof setTimeout>>> = {};
 
@@ -63,12 +67,27 @@ export class HistoryComponent implements OnInit, OnDestroy {
     this.tasksService.evaluate(this.evaluatingTask.id, this.evalForm).subscribe({
       next: () => {
         this.evaluatingTask = null;
-        this.tasksService.getHistory().subscribe({
-          next: (res) => { this.tasks = res.tasks; this.cdr.detectChanges(); },
-          error: () => {}
-        });
+        this.loadPage(this.page);
       },
       error: (err: any) => { this.setError('evalError', err?.error?.message ?? 'Error al evaluar'); }
+    });
+  }
+
+  loadPage(page: number) {
+    this.loading = true;
+    this.page = page;
+    this.tasksService.getHistory({ page: this.page, limit: this.limit }).subscribe({
+      next: (res: HistoryResponse) => {
+        this.tasks = res.tasks;
+        this.total = res.total;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        this.error = err?.error?.message ?? 'Error al cargar el historial';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -79,12 +98,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    setTimeout(() => {
-      this.tasksService.getHistory().subscribe({
-        next: (res) => { this.tasks = res.tasks; this.loading = false; this.cdr.detectChanges(); },
-        error: (err: any) => { this.loading = false; this.setError('error', err?.error?.message ?? 'Error al cargar historial'); }
-      });
-    });
+    this.loadPage(1);
   }
 
   // CAMBIO: reemplaza formatSeconds() que ya no se usa en la columna Tiempo Activo.

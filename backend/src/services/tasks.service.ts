@@ -186,6 +186,20 @@ export async function updateTask(
   }
 
   if (data.status !== undefined && data.status !== existing.status) {
+    const VALID_TRANSITIONS: Record<string, TaskStatus[]> = {
+      TO_DO: ['IN_PROGRESS'],
+      IN_PROGRESS: ['DONE', 'TO_DO'],
+      DONE: [],
+    };
+    const allowed = VALID_TRANSITIONS[existing.status] ?? [];
+    if (!allowed.includes(data.status)) {
+      const err = new Error(
+        `Transición de estado inválida: ${existing.status} → ${data.status}`
+      ) as Error & { statusCode: number };
+      err.statusCode = 422;
+      throw err;
+    }
+
     updateData.status = data.status;
 
     if (data.status === 'IN_PROGRESS' && !existing.startedAt) {
@@ -226,7 +240,7 @@ export async function deleteTask(id: number) {
 
 export async function getHistory(
   user: { id: number; role: string; departmentId: number | null },
-  filters: { departmentId?: number; assignedToId?: number; dateFrom?: string; dateTo?: string }
+  filters: { departmentId?: number; assignedToId?: number; dateFrom?: string; dateTo?: string; page?: number; limit?: number }
 ) {
   const where: Prisma.TaskWhereInput = { status: 'DONE' };
 
@@ -242,17 +256,30 @@ export async function getHistory(
     };
   }
 
-  const tasks = await prisma.task.findMany({
-    where,
-    include: taskInclude,
-    orderBy: { completedAt: 'desc' },
-  });
+  const page = filters.page ?? 1;
+  const limit = filters.limit ?? 20;
 
-  return tasks.map(t => {
-    const r = withActiveTime(t);
-    if (user.role === 'WORKER') r.completedAt = null;
-    return r;
-  });
+  const [tasks, total] = await Promise.all([
+    prisma.task.findMany({
+      where,
+      include: taskInclude,
+      orderBy: { completedAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.task.count({ where }),
+  ]);
+
+  return {
+    tasks: tasks.map(t => {
+      const r = withActiveTime(t);
+      if (user.role === 'WORKER') r.completedAt = null;
+      return r;
+    }),
+    total,
+    page,
+    limit,
+  };
 }
 
 export async function getTaskStatusHistory(
@@ -296,6 +323,12 @@ export async function evaluateTask(
   if (!task) {
     const err = new Error('Tarea no encontrada') as Error & { statusCode: number };
     err.statusCode = 404;
+    throw err;
+  }
+
+  if (task.status !== 'DONE') {
+    const err = new Error('Solo se pueden evaluar tareas en estado DONE') as Error & { statusCode: number };
+    err.statusCode = 400;
     throw err;
   }
 

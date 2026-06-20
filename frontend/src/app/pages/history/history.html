@@ -41,6 +41,12 @@
 
   <p *ngIf="!loading && !tasks.length && !error">No Hay Tareas Completadas.</p>
 
+  <div class="pagination" *ngIf="!loading && total > limit">
+    <button class="btn-page" [disabled]="page <= 1" (click)="loadPage(page - 1)">← Anterior</button>
+    <span class="page-info">Página {{ page }} de {{ totalPages }} &nbsp;·&nbsp; {{ total }} tareas</span>
+    <button class="btn-page" [disabled]="page >= totalPages" (click)="loadPage(page + 1)">Siguiente →</button>
+  </div>
+
   <!-- ── Modal de detalle de historial ──
        Se abre al hacer click en una tarjeta. Muestra toda la información
        disponible del registro de historial. -->

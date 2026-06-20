@@ -16,7 +16,6 @@ export interface AppUser {
 }
 
 export interface LoginResponse {
-  token: string;
   user: AppUser;
 }
 
@@ -31,7 +30,7 @@ export class AuthService {
       const found = MOCK_USERS.find(u => u.email === email && u.password === password);
       if (!found) return throwError(() => ({ error: { message: 'Credenciales inválidas' } }));
       const { password: _p, ...user } = found;
-      const res: LoginResponse = { token: 'mock-token-' + user.id, user };
+      const res: LoginResponse = { user };
       this.saveSession(res);
       return of(res);
     }
@@ -49,15 +48,14 @@ export class AuthService {
   }
 
   logout(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+    if (environment.useMocks) {
+      this.clearSession();
+      return;
     }
-  }
-
-  getToken(): string | null {
-    if (isPlatformBrowser(this.platformId)) return localStorage.getItem('token');
-    return null;
+    this.http.post(`${this.apiUrl}/logout`, {}).subscribe({
+      complete: () => this.clearSession(),
+      error: () => this.clearSession(),
+    });
   }
 
   getUser(): AppUser | null {
@@ -68,13 +66,12 @@ export class AuthService {
     return null;
   }
 
-  getRole(): 'ADMIN' | 'WORKER' | 'SUPER_USER' | null {
+  getRole(): 'ADMIN' | 'WORKER' | null {
     return this.getUser()?.role ?? null;
   }
 
   isAdmin(): boolean {
-    const role = this.getRole();
-    return role === 'ADMIN' || role === 'SUPER_USER';
+    return this.getRole() === 'ADMIN' || this.isSuperUser();
   }
 
   isSuperUser(): boolean {
@@ -82,13 +79,18 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    return this.getUser() !== null;
   }
 
   private saveSession(res: LoginResponse): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('token', res.token);
       localStorage.setItem('user', JSON.stringify(res.user));
+    }
+  }
+
+  private clearSession(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('user');
     }
   }
 }
