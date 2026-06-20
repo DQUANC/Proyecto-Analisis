@@ -56,6 +56,13 @@ export interface TasksResponse {
   limit: number;
 }
 
+export interface HistoryResponse {
+  tasks: Task[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 export interface CreateTaskPayload {
   title: string;
   description?: string;
@@ -122,7 +129,7 @@ export class TasksService {
     return this.http.get<{ task: Task }>(`${this.apiUrl}/${id}`);
   }
 
-  getHistory(filters: { dateFrom?: string; dateTo?: string } = {}): Observable<{ tasks: Task[] }> {
+  getHistory(filters: { dateFrom?: string; dateTo?: string; page?: number; limit?: number } = {}): Observable<HistoryResponse> {
     if (environment.useMocks) {
       let done = MOCK_TASKS.filter(t => t.status === 'DONE');
       if (typeof window !== 'undefined') {
@@ -132,15 +139,20 @@ export class TasksService {
           done = done.filter(t => t.assignedToId === user.id);
         }
       }
-      const tasks = done
+      const all = done
         .sort((a, b) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime())
         .map(t => this.enrich(t));
-      return of({ tasks });
+      const page = filters.page ?? 1;
+      const limit = filters.limit ?? 20;
+      const tasks = all.slice((page - 1) * limit, page * limit);
+      return of({ tasks, total: all.length, page, limit });
     }
     const params: Record<string, string> = {};
     if (filters.dateFrom) params['dateFrom'] = filters.dateFrom;
     if (filters.dateTo) params['dateTo'] = filters.dateTo;
-    return this.http.get<{ tasks: Task[] }>(`${this.apiUrl}/history`, { params });
+    if (filters.page) params['page'] = String(filters.page);
+    if (filters.limit) params['limit'] = String(filters.limit);
+    return this.http.get<HistoryResponse>(`${this.apiUrl}/history`, { params });
   }
 
   create(payload: CreateTaskPayload): Observable<{ task: Task }> {
