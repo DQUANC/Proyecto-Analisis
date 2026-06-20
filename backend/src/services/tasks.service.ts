@@ -32,21 +32,18 @@ export async function getTasks(
     ];
   }
 
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-
   if (!filters.status) {
     where.AND = [
       {
         OR: [
           { status: { notIn: ['DONE'] } },
-          { status: 'DONE', completedAt: { gte: startOfToday } },
+          { status: 'DONE', evaluation: { is: null } },
         ],
       },
     ];
   } else if (filters.status === 'DONE') {
     where.status = 'DONE';
-    where.completedAt = { gte: startOfToday };
+    where.evaluation = { is: null };
   } else {
     where.status = filters.status;
   }

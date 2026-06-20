@@ -124,6 +124,7 @@
         <label>Retroalimentación
           <textarea [(ngModel)]="evalForm.feedback" name="feedback" rows="4"></textarea>
         </label>
+        <p class="error modal-error" *ngIf="evalError">{{ evalError }}</p>
         <div class="modal-actions">
           <button type="button" class="btn-cancel" (click)="evaluatingTask = null">Cancelar</button>
           <button type="submit" class="btn-primary">Guardar Evaluación</button>

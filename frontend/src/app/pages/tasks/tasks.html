@@ -168,9 +168,7 @@
         <span class="kanban-column-title">Terminadas</span>
         <span class="kanban-column-count">{{ doneTasks.length }}</span>
       </div>
-      <!-- CAMBIO: aclaración para el usuario de que esta columna solo muestra
-           las tareas completadas hoy (las de días anteriores siguen en Historial) -->
-      <p class="kanban-column-hint">Solo se muestran las terminadas hoy. Ver historial completo en "Historial".</p>
+      <p class="kanban-column-hint">Tareas completadas pendientes de evaluación. Las evaluadas se mueven a "Historial".</p>
       <div class="kanban-column-body"
         cdkDropList
         id="kanban-done"
@@ -337,6 +335,7 @@
           </select>
         </label>
 
+        <p class="error modal-error" *ngIf="editError">{{ editError }}</p>
         <div class="modal-actions">
           <button type="button" class="btn-cancel" (click)="editingTask = null">Cancelar</button>
           <button type="submit" class="btn-primary">Guardar Cambios</button>
@@ -362,6 +361,7 @@
           <textarea [(ngModel)]="evalForm.feedback" name="feedback" rows="4"></textarea>
         </label>
 
+        <p class="error modal-error" *ngIf="evalError">{{ evalError }}</p>
         <div class="modal-actions">
           <button type="button" class="btn-cancel" (click)="evaluatingTask = null">Cancelar</button>
           <button type="submit" class="btn-primary">Guardar Evaluacion</button>
