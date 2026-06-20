@@ -302,6 +302,12 @@ export async function evaluateTask(
     throw err;
   }
 
+  if (task.status !== 'DONE') {
+    const err = new Error('Solo se pueden evaluar tareas en estado DONE') as Error & { statusCode: number };
+    err.statusCode = 400;
+    throw err;
+  }
+
   return prisma.taskEvaluation.upsert({
     where: { taskId },
     create: { taskId, feedback: data.feedback, score: data.score, evaluatedById },
