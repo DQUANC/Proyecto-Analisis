@@ -3,9 +3,15 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
+process.on('unhandledRejection', (reason: unknown) => {
+  console.error('UNHANDLED REJECTION:', reason);
+  process.exit(1);
+});
+
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import authRoutes from './routes/auth.routes';
 import tasksRoutes from './routes/tasks.routes';
 import departmentsRoutes from './routes/departments.routes';
@@ -16,6 +22,8 @@ import { initDisabledUsersTable } from './services/users.service';
 
 const app = express();
 
+app.use(helmet());
+
 const allowedOrigins = [
   'http://localhost:4200',
   process.env.FRONTEND_URL,
@@ -23,7 +31,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.railway.app')) {
+    if (!origin || allowedOrigins.includes(origin)) {
       cb(null, true);
     } else {
       cb(new Error('Not allowed by CORS'));
